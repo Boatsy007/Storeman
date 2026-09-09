@@ -84,3 +84,9 @@ footer{background:#090909!important;color:#fff;border-top:1px solid #202020}
 
   footer{border-top:0;background:#080808!important}.footer-inner{padding:34px 0 24px!important;display:grid!important;grid-template-columns:1fr!important;grid-template-areas:"brand" "nav" "badge" "social" "copy"!important;gap:24px!important}.footer-brand{width:250px!important}.footer-brand .brand-name{font-size:31px!important}.footer-nav{grid-template-columns:1fr 1fr!important;gap:0!important;border-top:1px solid #272727;border-bottom:1px solid #272727;padding:10px 0!important}.footer-nav a{font-size:11px!important;padding:12px 0!important}.australia{justify-self:start!important;min-width:0!important;border-left:0!important;padding-left:0!important;align-self:auto!important}.socials{align-self:auto!important}.footer-copy{font-size:9px!important;color:#888!important;align-self:auto!important}.footer-inner:after{font-size:7px;line-height:1.5;margin-top:0;padding-top:18px;letter-spacing:.9px}
 }
+
+/* Footer logo: use only the yellow Storeman header logo and suppress the old text-built mark. */
+.footer-brand{display:block!important;width:280px!important;height:70px!important;background:url('/assets/storemanlogo.jpg') left center/contain no-repeat!important;overflow:hidden!important}
+.footer-brand>*{display:none!important}
+.footer-brand:before,.footer-brand:after{content:none!important;display:none!important}
+@media(max-width:680px){.footer-brand{width:250px!important;height:62px!important}}
