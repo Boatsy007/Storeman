@@ -106,7 +106,7 @@ document.querySelectorAll('[data-next-step]').forEach((button) => {
 });
 
 document.querySelectorAll('[data-prev-step]').forEach((button) => {
-  button.addEventListener('click', () => setStep(Number(button.dataset.prevStep));
+  button.addEventListener('click', () => setStep(Number(button.dataset.prevStep)));
 });
 
 if (fileInput && fileSummary) {
