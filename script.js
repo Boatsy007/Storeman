@@ -106,6 +106,69 @@ if (showcase) {
   document.head.appendChild(style);
 }
 
+// Conversion-focused quote capture after the visitor has seen services and why Storeman.
+// It stays compact: details first, then continues into the existing service-selection flow.
+const whySection = document.querySelector('.why');
+if (whySection) {
+  const inlineQuote = document.createElement('section');
+  inlineQuote.className = 'inline-quote';
+  inlineQuote.id = 'start-quote';
+  inlineQuote.innerHTML = `
+    <div class="container inline-quote-inner">
+      <div class="inline-quote-copy">
+        <p class="label light">GET YOUR FREE SITE QUOTE</p>
+        <h2>READY FOR A<br><span>CLEANER SITE?</span></h2>
+        <p>Start your quote here. Add your details, then choose the services you want Storeman to assess.</p>
+        <div class="inline-quote-trust"><span>✓ FREE SITE ASSESSMENT</span><span>✓ NO OBLIGATION</span><span>✓ SOUTH EAST QLD</span></div>
+      </div>
+      <form class="inline-quote-card" data-inline-quote-form>
+        <div class="inline-quote-fields">
+          <label><span>Contact Name *</span><input name="name" autocomplete="name" required placeholder="John Smith"></label>
+          <label><span>Business Name *</span><input name="business" autocomplete="organization" required placeholder="ABC Pty Ltd"></label>
+          <label><span>Email *</span><input type="email" name="email" autocomplete="email" required placeholder="you@company.com"></label>
+          <label><span>Phone *</span><input name="phone" autocomplete="tel" required placeholder="0400 123 456"></label>
+          <label class="inline-quote-full"><span>Business Address / Location *</span><input name="address" autocomplete="street-address" required placeholder="Street address, suburb"></label>
+        </div>
+        <button class="inline-quote-submit" type="submit">START MY FREE QUOTE <span>→</span></button>
+        <p class="inline-quote-note">Next: select the services you need. Storeman will then contact you to arrange the site visit.</p>
+      </form>
+    </div>`;
+  whySection.insertAdjacentElement('afterend', inlineQuote);
+
+  const inlineForm = inlineQuote.querySelector('[data-inline-quote-form]');
+  inlineForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!inlineForm.reportValidity()) return;
+
+    const data = new FormData(inlineForm);
+    const prefill = {
+      name: String(data.get('name') || '').trim(),
+      business: String(data.get('business') || '').trim(),
+      email: String(data.get('email') || '').trim(),
+      phone: String(data.get('phone') || '').trim(),
+      address: String(data.get('address') || '').trim()
+    };
+
+    try { sessionStorage.setItem('storeman-quote-prefill', JSON.stringify(prefill)); } catch (_) {}
+
+    if (window.innerWidth <= 620) {
+      window.location.href = '/quote.html?prefill=1';
+      return;
+    }
+
+    openModal();
+    window.setTimeout(() => {
+      const modalForm = modal?.querySelector('[data-quote-form]');
+      if (!modalForm) return;
+      Object.entries(prefill).forEach(([name, value]) => {
+        const field = modalForm.elements.namedItem(name);
+        if (field) field.value = value;
+      });
+      modalForm.querySelector('[data-save-quote-lead]')?.click();
+    }, 100);
+  });
+}
+
 // Soft scroll reveals: longer easing, smaller movement and tighter staggering so
 // sections feel like they glide into place instead of popping on screen.
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -116,7 +179,11 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
     ['.service-card', 42],
     ['.why-left > *', 36],
     ['.why-image', 0],
+    ['.inline-quote-copy > *', 34],
+    ['.inline-quote-card', 0],
     ['.capability-tile', 38],
+    ['.service-areas-copy > *', 34],
+    ['.service-areas-grid > *', 36],
     ['.cta-inner > *', 40],
     ['.footer-inner > *', 34]
   ];
