@@ -32,9 +32,7 @@ document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && 
 const servicePages = {
   '.service-sweeping': '/sweeping.html',
   '.service-grounds': '/grounds.html',
-  '.service-lawn': '/lawn-garden.html',
-  '.service-pressure': '/pressure-washing.html',
-  '.service-fleet': '/fleet-washing.html'
+  '.service-lawn': '/lawn-garden.html'
 };
 Object.entries(servicePages).forEach(([selector, href]) => {
   const card = document.querySelector(selector); if (!card) return;
@@ -50,14 +48,14 @@ if (showcase) {
   const heading = showcase.querySelector('.section-heading h2');
   const grid = showcase.querySelector('.industry-grid');
   if (label) label.textContent = 'MORE OF WHAT WE DO';
-  if (heading) heading.textContent = 'FIVE CORE SERVICES. ONE STOREMAN TEAM.';
+  if (heading) heading.textContent = 'THREE CORE SERVICES. ONE STOREMAN TEAM.';
   if (grid) {
     grid.className = 'capability-grid';
-    grid.innerHTML = `<a class="capability-tile" href="/sweeping.html"><img src="/assets/sweeping.jpg" alt="Storeman sweeping service" loading="lazy"><span>SWEEPING</span></a><a class="capability-tile" href="/grounds.html"><img src="/assets/grounds.jpg" alt="Storeman grounds service" loading="lazy"><span>GROUNDS</span></a><a class="capability-tile" href="/lawn-garden.html"><img src="/assets/mowing.jpg" alt="Storeman lawn and garden service" loading="lazy"><span>LAWN &amp; GARDEN</span></a><a class="capability-tile" href="/pressure-washing.html"><img src="/assets/pressure%20washing.jpg" alt="Storeman pressure washing service" loading="lazy"><span>PRESSURE WASHING</span></a><a class="capability-tile" href="/fleet-washing.html"><img src="/assets/fleetwash.jpg" alt="Storeman fleet washing service" loading="lazy"><span>FLEET WASHING</span></a>`;
+    grid.innerHTML = `<a class="capability-tile" href="/sweeping.html"><img src="/assets/sweeping.jpg" alt="Storeman sweeping service" loading="lazy"><span>SWEEPING</span></a><a class="capability-tile" href="/grounds.html"><img src="/assets/grounds.jpg" alt="Storeman grounds service" loading="lazy"><span>GROUNDS</span></a><a class="capability-tile" href="/lawn-garden.html"><img src="/assets/mowing.jpg" alt="Storeman lawn and garden service" loading="lazy"><span>LAWN &amp; GARDEN</span></a>`;
   }
   document.querySelectorAll('a[href="#industries"]').forEach((link) => { link.href = '#capabilities'; link.textContent = 'Capabilities'; });
   const style = document.createElement('style');
-  style.textContent = `.capability-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.capability-tile{position:relative;height:180px;overflow:hidden;background:#ddd;display:block}.capability-tile img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}.capability-tile:after{content:"";position:absolute;inset:38% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.84))}.capability-tile span{position:absolute;z-index:2;left:14px;bottom:12px;color:#fff;font-family:"Archivo Black",sans-serif;font-size:15px;line-height:1}.capability-tile:hover img{transform:scale(1.035)}@media(max-width:980px){.capability-grid{grid-template-columns:repeat(2,1fr)}.capability-tile{height:180px}}@media(max-width:620px){.capability-grid{grid-template-columns:1fr}.capability-tile{height:220px}}`;
+  style.textContent = `.capability-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.capability-tile{position:relative;height:180px;overflow:hidden;background:#ddd;display:block}.capability-tile img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}.capability-tile:after{content:"";position:absolute;inset:38% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.84))}.capability-tile span{position:absolute;z-index:2;left:14px;bottom:12px;color:#fff;font-family:"Archivo Black",sans-serif;font-size:15px;line-height:1}.capability-tile:hover img{transform:scale(1.035)}@media(max-width:980px){.capability-grid{grid-template-columns:repeat(2,1fr)}.capability-tile{height:180px}}@media(max-width:620px){.capability-grid{grid-template-columns:1fr}.capability-tile{height:220px}}`;
   document.head.appendChild(style);
 }
 
@@ -76,7 +74,7 @@ if (whoSection) {
   const aboutSection = document.createElement('section');
   aboutSection.className = 'about-storeman';
   aboutSection.id = 'about';
-  aboutSection.innerHTML = `<div class="container about-storeman-inner"><div class="about-storeman-copy"><p class="label">ABOUT STOREMAN</p><h2>ONE TEAM.<br><span>EVERY EXTERIOR.</span></h2><p>Storeman was built around a simple idea: property managers and business owners should not need a different contractor for every part of a site’s exterior.</p><p>We bring sweeping, grounds maintenance, lawn and garden care, exterior cleaning and fleet washing together under one service. That means fewer suppliers to manage, clearer communication and a more consistent standard across the property.</p><button class="button button-yellow quote-trigger about-quote-trigger" type="button">GET YOUR FREE QUOTE <span>→</span></button></div><div class="about-storeman-panel"><div><b>01</b><strong>ONE POINT OF CONTACT</strong><span>Less contractor juggling. One team responsible for the exterior.</span></div><div><b>02</b><strong>BUILT AROUND THE SITE</strong><span>Services can be combined around what the property actually needs.</span></div><div><b>03</b><strong>CONSISTENT PRESENTATION</strong><span>Recurring maintenance keeps the whole exterior working to one standard.</span></div><div><b>04</b><strong>LOCAL SEQ SERVICE</strong><span>Focused across the Gold Coast, Yatala, Logan, Brisbane and surrounding areas.</span></div></div></div>`;
+  aboutSection.innerHTML = `<div class="container about-storeman-inner"><div class="about-storeman-copy"><p class="label">ABOUT STOREMAN</p><h2>ONE TEAM.<br><span>EVERY EXTERIOR.</span></h2><p>Storeman was built around a simple idea: property managers and business owners should not need a different contractor for every part of a site’s exterior.</p><p>We bring mechanical sweeping, grounds maintenance and lawn and garden care together under one service. That means fewer suppliers to manage, clearer communication and a more consistent standard across the property.</p><button class="button button-yellow quote-trigger about-quote-trigger" type="button">GET YOUR FREE QUOTE <span>→</span></button></div><div class="about-storeman-panel"><div><b>01</b><strong>ONE POINT OF CONTACT</strong><span>Less contractor juggling. One team responsible for the exterior.</span></div><div><b>02</b><strong>BUILT AROUND THE SITE</strong><span>Services can be combined around what the property actually needs.</span></div><div><b>03</b><strong>CONSISTENT PRESENTATION</strong><span>Recurring maintenance keeps the whole exterior working to one standard.</span></div><div><b>04</b><strong>LOCAL SEQ SERVICE</strong><span>Focused across the Gold Coast, Yatala, Logan, Brisbane and surrounding areas.</span></div></div></div>`;
   whoSection.insertAdjacentElement('afterend', aboutSection);
 
   aboutSection.querySelector('.about-quote-trigger')?.addEventListener('click', () => openModal());

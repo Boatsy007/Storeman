@@ -57,7 +57,7 @@
     image: `${BASE}/assets/hero.jpg`,
     telephone: '+61 1300 786 736',
     email: 'hello@storeman.com.au',
-    description: 'Commercial exterior property services including mechanical sweeping, grounds maintenance, lawn and garden maintenance, exterior cleaning and fleet washing across South East Queensland.',
+    description: 'Commercial property maintenance including mechanical sweeping, grounds maintenance and lawn and garden maintenance across South East Queensland.',
     areaServed: [
       { '@type': 'City', name: 'Gold Coast' },
       { '@type': 'City', name: 'Brisbane' },
@@ -81,10 +81,7 @@
     ['grounds-maintenance', 'Grounds Maintenance'],
     ['grounds.html', 'Grounds Maintenance'],
     ['lawn-garden-maintenance', 'Lawn & Garden Maintenance'],
-    ['lawn-garden.html', 'Lawn & Garden Maintenance'],
-    ['commercial-pressure-washing', 'Commercial Pressure Washing'],
-    ['pressure-washing.html', 'Commercial Pressure Washing'],
-    ['fleet-washing', 'Fleet & Vehicle Washing']
+    ['lawn-garden.html', 'Lawn & Garden Maintenance']
   ];
   const match = serviceMap.find(([needle]) => path.includes(needle));
   if (match) {
