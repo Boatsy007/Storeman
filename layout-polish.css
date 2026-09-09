@@ -30,7 +30,6 @@
   .eyebrow{font-size:11px;letter-spacing:3.4px}
   .hero-actions{margin-top:30px}
   .button{min-height:54px;padding:0 28px;font-size:12.5px}
-  .hero-ticks{font-size:10.5px;gap:28px;margin-top:22px}
 
   .services{padding:40px 0 56px}
   .section-heading h2{font-size:38px}
@@ -94,6 +93,18 @@
 .hero-actions .button-yellow:hover{transform:translateY(-2px);box-shadow:0 10px 0 #111}
 .hero-actions .button-yellow:active{transform:translateY(3px);box-shadow:0 5px 0 #111}
 
+/* Hero proof row */
+.hero-proof{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 16px;margin-top:26px;max-width:650px}
+.hero-proof>div{display:flex;align-items:center;gap:9px;min-width:0;font-size:11px;line-height:1.25;color:#222}
+.hero-proof>div:last-child{grid-column:1/-1}
+.hero-proof-icon{width:27px;height:27px;display:grid;place-items:center;flex:0 0 27px;background:#ffe000;border:1px solid #111;font-size:14px;font-weight:900}
+.hero-proof strong{font-weight:800}
+
+/* Service areas section */
+.service-areas{background:#0a0a0a;color:#fff;padding:58px 0 62px;border-top:1px solid #222}
+.service-areas-inner{display:grid;grid-template-columns:.82fr 1.18fr;gap:58px;align-items:center}
+.service-areas .label{color:#fff}.service-areas-copy h2{font-family:"Archivo Black",sans-serif;font-size:52px;line-height:.92;letter-spacing:-2.3px;margin:0 0 18px}.service-areas-copy h2 span{color:#ffe000}.service-areas-copy>p:not(.label){font-size:15px;line-height:1.6;color:#d2d2d2;max-width:520px;margin:0 0 24px}.areas-link{display:inline-flex;align-items:center;gap:12px;color:#ffe000;font-size:11px;font-weight:900}.service-areas-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.service-areas-grid a{min-height:145px;background:#151515;border:1px solid #2b2b2b;border-top:5px solid #ffe000;padding:20px;display:flex;flex-direction:column;transition:transform .2s ease,border-color .2s ease,background .2s ease}.service-areas-grid a:hover{transform:translateY(-2px);background:#1b1b1b;border-color:#444}.service-areas-grid b{font-family:"Archivo Black",sans-serif;color:#ffe000;font-size:11px}.service-areas-grid strong{font-family:"Archivo Black",sans-serif;font-size:23px;margin:14px 0 8px}.service-areas-grid span{font-size:11px;line-height:1.45;color:#bdbdbd}
+
 /* One-time attention nudge for whichever free-quote CTA is actually visible. */
 @keyframes storemanQuoteNudge{
   0%,100%{transform:translateY(0) scale(1)}
@@ -115,8 +126,8 @@
   opacity:1;
   transform:translateY(0);
 }
-.service-card.scroll-reveal,.capability-tile.scroll-reveal{transform:translateY(10px) scale(.995)}
-.service-card.scroll-reveal.scroll-in,.capability-tile.scroll-reveal.scroll-in{transform:translateY(0) scale(1)}
+.service-card.scroll-reveal,.capability-tile.scroll-reveal,.service-areas-grid a.scroll-reveal{transform:translateY(10px) scale(.995)}
+.service-card.scroll-reveal.scroll-in,.capability-tile.scroll-reveal.scroll-in,.service-areas-grid a.scroll-reveal.scroll-in{transform:translateY(0) scale(1)}
 .why-image.scroll-reveal{transform:translateX(10px);opacity:.72}
 .why-image.scroll-reveal.scroll-in{transform:translateX(0);opacity:1}
 .hero-image img{transform:translateY(var(--scroll-shift,0));transition:transform .18s ease-out;will-change:transform}
@@ -127,8 +138,18 @@
   .hero-image img{transform:none!important;transition:none}
 }
 
+@media(max-width:980px){
+  .hero-proof{max-width:100%}
+  .service-areas-inner{grid-template-columns:1fr;gap:34px}
+}
+
 @media(max-width:680px){
   .hero-actions .button-yellow{min-height:58px;font-size:14px;letter-spacing:0;border-width:2px;box-shadow:0 7px 0 #111}
+  .hero-proof{grid-template-columns:1fr;gap:8px;margin-top:24px}
+  .hero-proof>div:last-child{grid-column:auto}
+  .hero-proof>div{font-size:11px}
+  .hero-proof-icon{width:25px;height:25px;flex-basis:25px}
+  .service-areas{padding:44px 0 48px}.service-areas-copy h2{font-size:39px}.service-areas-copy>p:not(.label){font-size:14px}.service-areas-grid{grid-template-columns:1fr}.service-areas-grid a{min-height:125px}
   .scroll-reveal{transform:translateY(8px);transition-duration:.92s}
-  .service-card.scroll-reveal,.capability-tile.scroll-reveal{transform:translateY(8px) scale(.997)}
+  .service-card.scroll-reveal,.capability-tile.scroll-reveal,.service-areas-grid a.scroll-reveal{transform:translateY(8px) scale(.997)}
 }
