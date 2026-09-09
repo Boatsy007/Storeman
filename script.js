@@ -145,6 +145,33 @@ if (form) {
   });
 }
 
+// Replace the former industries strip with a second, highly visual services showcase.
+const showcase = document.querySelector('.industries');
+if (showcase) {
+  showcase.id = 'capabilities';
+  const label = showcase.querySelector('.section-heading .label');
+  const heading = showcase.querySelector('.section-heading h2');
+  const grid = showcase.querySelector('.industry-grid');
+
+  if (label) label.textContent = 'MORE OF WHAT WE DO';
+  if (heading) heading.textContent = 'FIVE CORE SERVICES. ONE STOREMAN TEAM.';
+
+  if (grid) {
+    grid.className = 'capability-grid';
+    grid.innerHTML = `
+      <figure><img src="/assets/sweeping.jpg" alt="Storeman sweeping service" loading="lazy"><figcaption>SWEEPING</figcaption></figure>
+      <figure><img src="/assets/grounds.jpg" alt="Storeman grounds service" loading="lazy"><figcaption>GROUNDS</figcaption></figure>
+      <figure><img src="/assets/mowing.jpg" alt="Storeman lawn and garden service" loading="lazy"><figcaption>LAWN &amp; GARDEN</figcaption></figure>
+      <figure><img src="/assets/pressure%20washing.jpg" alt="Storeman pressure washing service" loading="lazy"><figcaption>PRESSURE WASHING</figcaption></figure>
+      <figure><img src="/assets/fleetwash.jpg" alt="Storeman fleet washing service" loading="lazy"><figcaption>FLEET WASHING</figcaption></figure>`;
+  }
+
+  document.querySelectorAll('a[href="#industries"]').forEach((link) => {
+    link.href = '#capabilities';
+    link.textContent = 'Capabilities';
+  });
+}
+
 // Ecommerce-style behaviour: automatically present the quote offer shortly after the page loads.
 // All existing GET A QUOTE buttons still open it immediately.
 if (modal) {
