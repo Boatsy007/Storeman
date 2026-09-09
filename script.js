@@ -106,7 +106,7 @@ document.querySelectorAll('[data-next-step]').forEach((button) => {
 });
 
 document.querySelectorAll('[data-prev-step]').forEach((button) => {
-  button.addEventListener('click', () => setStep(Number(button.dataset.prevStep)));
+  button.addEventListener('click', () => setStep(Number(button.dataset.prevStep));
 });
 
 if (fileInput && fileSummary) {
@@ -146,7 +146,6 @@ if (form) {
   });
 }
 
-// Make the main service cards behave as clear links to dedicated service pages.
 const servicePages = {
   '.service-sweeping': '/sweeping.html',
   '.service-grounds': '/grounds.html',
@@ -169,7 +168,6 @@ Object.entries(servicePages).forEach(([selector, href]) => {
   });
 });
 
-// Replace the former industries strip with a second, highly visual services showcase.
 const showcase = document.querySelector('.industries');
 if (showcase) {
   showcase.id = 'capabilities';
@@ -194,9 +192,12 @@ if (showcase) {
     link.href = '#capabilities';
     link.textContent = 'Capabilities';
   });
+
+  const style = document.createElement('style');
+  style.textContent = `.capability-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.capability-tile{position:relative;height:180px;overflow:hidden;background:#ddd;display:block}.capability-tile img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}.capability-tile:after{content:"";position:absolute;inset:38% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.84))}.capability-tile span{position:absolute;z-index:2;left:14px;bottom:12px;color:#fff;font-family:"Archivo Black",sans-serif;font-size:15px;line-height:1}.capability-tile:hover img{transform:scale(1.035)}@media(max-width:980px){.capability-grid{grid-template-columns:repeat(2,1fr)}.capability-tile{height:180px}}@media(max-width:620px){.capability-grid{grid-template-columns:1fr}.capability-tile{height:220px}}`;
+  document.head.appendChild(style);
 }
 
-// Ecommerce-style behaviour on desktop/tablet only. Mobile intentionally has no popup.
 if (modal && window.innerWidth > 620) {
   autoPopupTimer = window.setTimeout(() => openModal({ auto: true }), 1600);
 }
