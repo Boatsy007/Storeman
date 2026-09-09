@@ -1,0 +1,52 @@
+/* Desktop scale polish: use more of the viewport while preserving the approved composition. */
+@media (min-width:1181px){
+  :root{--wide:1840px}
+  .container,.header-inner{width:min(var(--wide),calc(100% - 44px))}
+  .site-header{height:92px}
+  .header-inner{gap:40px}
+  .header-brand{width:285px}
+  .header-logo{width:100%;height:66px;object-fit:contain;object-position:left center}
+  .desktop-nav{gap:34px}
+  .desktop-nav a{font-size:11px}
+  .phone-block strong{font-size:14px}.phone-block small{font-size:12px}
+  .header-cta{min-width:175px;min-height:56px;font-size:13px}
+
+  .hero-inner{width:min(var(--wide),100%);min-height:690px}
+  .hero-copy{width:44%;min-height:690px;padding:60px 28px 44px 36px}
+  .hero-image{width:69%}
+  .hero-copy h1{font-size:clamp(72px,5.75vw,104px);letter-spacing:-4.2px}
+  .hero-copy h2{font-size:27px;margin-top:25px}
+  .hero-copy>p:not(.eyebrow){font-size:16px;max-width:540px}
+  .eyebrow{font-size:11px;letter-spacing:3.4px}
+  .hero-actions{margin-top:30px}
+  .button{min-height:54px;padding:0 28px;font-size:12.5px}
+  .hero-ticks{font-size:10.5px;gap:28px;margin-top:22px}
+
+  .services{padding:40px 0 56px}
+  .section-heading h2{font-size:38px}
+  .service-grid{gap:20px}
+  .service-image{height:230px}
+  .service-copy{min-height:160px;padding:0 20px 20px}
+  .service-title h3{font-size:22px}
+  .service-copy p{font-size:14px}
+
+  .why{grid-template-columns:55% 45%;min-height:420px}
+  .why-left{padding-top:52px;padding-bottom:44px;padding-left:max(36px,calc((100vw - var(--wide))/2 + 22px))}
+  .why-left h2{font-size:64px}
+  .benefits strong{font-size:14px}.benefits p{font-size:12px;max-width:175px}
+  .why-overlay-text{font-size:30px;right:46px;top:58px}
+
+  .industries{padding:38px 0 44px}
+  .industry-grid{gap:14px}
+  .industry-grid figure{height:180px}
+  .industry-grid figcaption{font-size:14px}
+
+  .cta-inner{min-height:150px;grid-template-columns:1.4fr auto .66fr .74fr;gap:42px}
+  .cta h2{font-size:44px}
+  .footer-inner{min-height:96px}
+}
+
+@media (min-width:1600px){
+  .hero-copy{padding-left:24px}
+  .hero-image img{object-position:57% center}
+}
