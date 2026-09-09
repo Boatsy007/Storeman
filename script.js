@@ -61,6 +61,15 @@ if (showcase) {
   document.head.appendChild(style);
 }
 
+// Keep the footer branding consistent with the header: yellow Storeman logo on black.
+const footerBrand = document.querySelector('.footer-brand');
+if (footerBrand) {
+  footerBrand.innerHTML = '<img class="footer-logo-image" src="/assets/storemanlogo.jpg" alt="Storeman External Property Solutions">';
+  const footerLogoStyle = document.createElement('style');
+  footerLogoStyle.textContent = `.footer-logo-image{display:block;width:100%;max-width:280px;height:auto;object-fit:contain;object-position:left center}@media(max-width:680px){.footer-logo-image{max-width:245px}}`;
+  document.head.appendChild(footerLogoStyle);
+}
+
 const whySection = document.querySelector('.why');
 if (whySection) {
   const inlineQuote = document.createElement('section');
