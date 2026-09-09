@@ -1,19 +1,25 @@
 (() => {
+  // Launch pricing model v2. These are intentionally broad market-calibrated
+  // starter bands. Replace them with Storeman job data as real quotes build up.
+  const MODEL_VERSION = 'market-v2-2026-09';
   const SERVICE_BANDS = {
-    sweeping: { min: 450, max: 950 },
-    grounds: { min: 450, max: 1200 },
-    lawn: { min: 350, max: 950 },
-    pressure: { min: 650, max: 1900 },
-    fleet: { min: 500, max: 1900 }
+    sweeping: { min: 500, max: 1500, uncertainty: 1 },
+    grounds: { min: 350, max: 1200, uncertainty: 1 },
+    lawn: { min: 300, max: 1000, uncertainty: 1 },
+    pressure: { min: 500, max: 2500, uncertainty: 1.18 },
+    fleet: { min: 400, max: 2000, uncertainty: 1.18 }
   };
 
   const FREQUENCY_FACTORS = {
     'One-off': 1,
-    Weekly: 0.82,
-    Fortnightly: 0.86,
-    Monthly: 0.9,
+    Weekly: 0.8,
+    Fortnightly: 0.85,
+    Monthly: 0.93,
     'Not sure': 1
   };
+
+  // Bundled services share travel/setup. The customer only sees one combined range.
+  const BUNDLE_WEIGHTS = [1, 0.75, 0.65, 0.58, 0.55];
 
   const money = new Intl.NumberFormat('en-AU', {
     style: 'currency',
@@ -34,25 +40,31 @@
   }
 
   function calculateEstimate(services, frequency) {
+    // Rank selected services by midpoint so the largest likely scope carries the
+    // full visit cost and additional services receive the bundle efficiencies.
+    const selected = services
+      .map((service) => ({ service, ...SERVICE_BANDS[service] }))
+      .filter((item) => Number.isFinite(item.min) && Number.isFinite(item.max))
+      .sort((a, b) => ((b.min + b.max) / 2) - ((a.min + a.max) / 2));
+
     let min = 0;
     let max = 0;
 
-    services.forEach((service) => {
-      const band = SERVICE_BANDS[service];
-      if (!band) return;
-      min += band.min;
-      max += band.max;
+    selected.forEach((item, index) => {
+      const weight = BUNDLE_WEIGHTS[Math.min(index, BUNDLE_WEIGHTS.length - 1)];
+      min += item.min * weight;
+      max += item.max * weight * item.uncertainty;
     });
 
     const factor = FREQUENCY_FACTORS[frequency] ?? 1;
-    const bundleFactor = services.length >= 4 ? 0.78 : services.length === 3 ? 0.84 : services.length === 2 ? 0.9 : 1;
+    min = roundTo50(min * factor);
+    max = roundTo50(max * factor);
 
-    min = roundTo50(min * factor * bundleFactor);
-    max = roundTo50(max * factor * Math.min(1, bundleFactor + 0.08));
-
-    // Deliberately broad because we do not yet know site size, condition, access,
-    // building area, fleet size or the final scope of work.
-    max = Math.max(max, roundTo50(min * 1.65));
+    // Keep a genuinely useful gap. Exterior/fleet work carries more uncertainty
+    // because building area, height, condition and fleet size are unknown online.
+    const hasHighUncertaintyService = services.includes('pressure') || services.includes('fleet');
+    const minimumSpread = hasHighUncertaintyService ? 2.0 : 1.65;
+    max = Math.max(max, roundTo50(min * minimumSpread));
 
     return { min, max };
   }
@@ -127,6 +139,7 @@
         const lead = {
           id: leadId,
           stage: 'details_saved',
+          modelVersion: MODEL_VERSION,
           createdAt: new Date().toISOString(),
           name: safe(data.get('name')),
           business: safe(data.get('business')),
@@ -170,6 +183,7 @@
         const updatedLead = {
           id: leadId || `stm_${Date.now().toString(36)}`,
           stage: 'estimate_completed',
+          modelVersion: MODEL_VERSION,
           updatedAt: new Date().toISOString(),
           name: safe(data.get('name')),
           business: safe(data.get('business')),
@@ -206,6 +220,7 @@
       const payload = {
         id: leadId || `stm_${Date.now().toString(36)}`,
         stage: 'site_visit_requested',
+        modelVersion: MODEL_VERSION,
         updatedAt: new Date().toISOString(),
         name: safe(data.get('name')),
         business: safe(data.get('business')),
