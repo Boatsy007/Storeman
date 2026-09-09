@@ -20,125 +20,48 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install Pillow
-        run: python -m pip install --quiet pillow
-      - name: Apply technical SEO and image optimisation
+      - name: Repair and finish technical SEO markup
         run: |
-          cat > /tmp/storeman_seo.py <<'PY'
+          cat > /tmp/storeman_seo_repair.py <<'PY'
           from pathlib import Path
-          from PIL import Image
           import re
-          import html
 
-          ROOT = Path('.')
-          BASE = 'https://storeman.com.au'
-          TODAY = '2026-09-09'
-
-          def meta_content(text, name):
-              m = re.search(rf'<meta\s+name=["\']{re.escape(name)}["\']\s+content=["\']([^"\']*)["\']', text, re.I)
-              if not m:
-                  m = re.search(rf'<meta\s+content=["\']([^"\']*)["\']\s+name=["\']{re.escape(name)}["\']', text, re.I)
-              return html.unescape(m.group(1)).strip() if m else ''
-
-          def title_of(text):
-              m = re.search(r'<title>(.*?)</title>', text, re.I|re.S)
-              return re.sub(r'\s+', ' ', html.unescape(m.group(1))).strip() if m else 'Storeman | External Property Solutions'
-
-          def hero_for(path, text):
-              candidates = re.findall(r'<img[^>]+src=["\']([^"\']+)["\']', text, re.I)
-              for src in candidates:
-                  if any(x in src.lower() for x in ['hero', 'sweeping', 'grounds', 'mowing', 'pressure', 'fleetwash']):
-                      return src
-              return '/assets/hero.jpg'
-
-          def canonical_for(path):
-              return BASE + ('/' if path.name == 'index.html' else '/' + path.name)
-
-          def add_static_seo(path):
+          for path in Path('.').glob('*.html'):
+              if path.name == 'estimate.html':
+                  continue
               text = path.read_text(encoding='utf-8')
-              if '<head' not in text.lower():
-                  return
-              title = title_of(text)
-              desc = meta_content(text, 'description') or 'Commercial exterior property services across South East Queensland.'
-              canonical = canonical_for(path)
-              hero = hero_for(path, text)
-              hero_abs = hero if hero.startswith('http') else BASE + ('/' if not hero.startswith('/') else '') + hero
-
-              if not re.search(r'<link[^>]+rel=["\']canonical["\']', text, re.I):
-                  text = re.sub(r'(</title>)', r'\1\n  <link rel="canonical" href="' + canonical + '">', text, count=1, flags=re.I)
-
-              tags = []
-              if 'property="og:title"' not in text and "property='og:title'" not in text:
-                  esc_title = html.escape(title, quote=True)
-                  esc_desc = html.escape(desc, quote=True)
-                  tags.extend([
-                      f'<meta property="og:type" content="website">',
-                      f'<meta property="og:site_name" content="Storeman">',
-                      f'<meta property="og:title" content="{esc_title}">',
-                      f'<meta property="og:description" content="{esc_desc}">',
-                      f'<meta property="og:url" content="{canonical}">',
-                      f'<meta property="og:image" content="{hero_abs}">',
-                      f'<meta name="twitter:card" content="summary_large_image">',
-                      f'<meta name="twitter:title" content="{esc_title}">',
-                      f'<meta name="twitter:description" content="{esc_desc}">',
-                      f'<meta name="twitter:image" content="{hero_abs}">'
-                  ])
-              if tags:
-                  text = re.sub(r'(</head>)', '  ' + '\n  '.join(tags) + '\n\1', text, count=1, flags=re.I)
-
-              if '/seo.js' not in text:
-                  text = re.sub(r'(</head>)', '  <script src="/seo.js" defer></script>\n\1', text, count=1, flags=re.I)
-
+              # Repair the control character produced by the first one-time pass.
+              text = text.replace('\x01', '</head>')
+              # Ensure the shared structured-data helper is loaded on every indexable HTML page.
+              if '/seo.js' not in text and '</head>' in text.lower():
+                  idx = text.lower().find('</head>')
+                  text = text[:idx] + '  <script src="/seo.js" defer></script>\n' + text[idx:]
               path.write_text(text, encoding='utf-8')
-
-          for page in ROOT.glob('*.html'):
-              if page.name == 'estimate.html':
-                  continue
-              add_static_seo(page)
-
-          # Compress the existing JPEGs in place so no site references need to change.
-          image_rules = {
-              'hero.jpg': (1800, 82),
-              'sweeping.jpg': (1800, 80),
-              'grounds.jpg': (1800, 80),
-              'mowing.jpg': (1800, 80),
-              'pressure washing.jpg': (1800, 80),
-              'fleetwash.jpg': (1800, 80),
-              'vac.jpg': (1800, 80),
-              'storemanlogo.jpg': (1000, 88),
-              'footerlogo.jpg': (1000, 86),
-              'storemanfavicon.jpg': (128, 88),
-          }
-          assets = ROOT / 'assets'
-          for name, (max_width, quality) in image_rules.items():
-              p = assets / name
-              if not p.exists():
-                  continue
-              with Image.open(p) as im:
-                  im = im.convert('RGB')
-                  if im.width > max_width:
-                      new_h = round(im.height * (max_width / im.width))
-                      im = im.resize((max_width, new_h), Image.Resampling.LANCZOS)
-                  im.save(p, 'JPEG', quality=quality, optimize=True, progressive=True, subsampling='4:2:0')
-
-          # Add meaningful lastmod for this technical/content update without changing URL inventory.
-          sitemap = ROOT / 'sitemap.xml'
-          if sitemap.exists():
-              xml = sitemap.read_text(encoding='utf-8')
-              xml = re.sub(r'<url><loc>(.*?)</loc>(?:<lastmod>.*?</lastmod>)?</url>', lambda m: f'<url><loc>{m.group(1)}</loc><lastmod>{TODAY}</lastmod></url>', xml)
-              sitemap.write_text(xml, encoding='utf-8')
           PY
-          python /tmp/storeman_seo.py
-      - name: Show image size savings
-        run: du -h assets/* | sort -h
-      - name: Commit optimisation
+          python /tmp/storeman_seo_repair.py
+      - name: Validate HTML heads and SEO helper
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          bad=[]
+          for p in Path('.').glob('*.html'):
+              if p.name == 'estimate.html':
+                  continue
+              t=p.read_text(encoding='utf-8')
+              if '</head>' not in t.lower() or '/seo.js' not in t or '\x01' in t:
+                  bad.append(p.name)
+          if bad:
+              raise SystemExit('SEO validation failed: ' + ', '.join(bad))
+          print('Validated all indexable HTML pages.')
+          PY
+      - name: Commit repair
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add '*.html' sitemap.xml assets/*.jpg
+          git add '*.html'
           if git diff --cached --quiet; then
-            echo 'No SEO changes needed.'
+            echo 'No repair changes needed.'
           else
-            git commit -m 'Apply technical SEO metadata and optimise images'
+            git commit -m 'Repair HTML heads and finish SEO helper rollout'
             git push origin main
           fi
