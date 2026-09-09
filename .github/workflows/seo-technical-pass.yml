@@ -20,175 +20,125 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Remove pressure washing and fleet washing from public site
+      - name: Apply three-service focus
         run: |
           cat > /tmp/storeman_focus.py <<'PY'
           from pathlib import Path
           import re
 
-          root = Path('.')
-          removed_pages = [
+          root=Path('.')
+          removed=[
             'pressure-washing.html','fleet-washing.html',
             'commercial-pressure-washing-gold-coast.html','commercial-pressure-washing-brisbane.html','commercial-pressure-washing-logan.html','commercial-pressure-washing-yatala.html',
             'fleet-washing-gold-coast.html','fleet-washing-brisbane.html','fleet-washing-logan.html','fleet-washing-yatala.html'
           ]
-          for name in removed_pages:
+          for name in removed:
               p=root/name
               if p.exists(): p.unlink()
           for name in ['assets/pressure washing.jpg','assets/fleetwash.jpg']:
               p=root/name
               if p.exists(): p.unlink()
 
-          def write(path, text):
-              path.write_text(text, encoding='utf-8')
-
-          def clean_common(text):
-              replacements = [
-                ('Commercial mechanical sweeping, grounds maintenance, lawn and garden, exterior cleaning and fleet washing across South East Queensland.', 'Commercial mechanical sweeping, grounds maintenance and lawn & garden maintenance across South East Queensland.'),
-                ('commercial mechanical sweeping, grounds maintenance, lawn and garden, exterior cleaning and fleet washing across South East Queensland.', 'commercial mechanical sweeping, grounds maintenance and lawn & garden maintenance across South East Queensland.'),
-                ('commercial sweeping, grounds, lawn and garden, pressure washing and fleet washing', 'commercial sweeping, grounds maintenance and lawn & garden care'),
-                ('commercial sweeping, grounds maintenance, lawn and garden, pressure washing and fleet washing', 'commercial sweeping, grounds maintenance and lawn & garden care'),
-                ('sweeping, grounds maintenance, lawn and garden, pressure washing and fleet washing', 'sweeping, grounds maintenance and lawn & garden care'),
-                ('sweeping, grounds maintenance, lawn and garden care, exterior cleaning and fleet washing', 'sweeping, grounds maintenance and lawn and garden care'),
-                ('sweeping, grounds maintenance, lawn and garden, exterior cleaning and fleet washing', 'sweeping, grounds maintenance and lawn and garden care'),
-                ('sweeping, grounds, pressure washing and fleet washing', 'sweeping, grounds maintenance and lawn & garden care'),
-                ('sweeping, grounds, exterior cleaning and fleet washing', 'sweeping, grounds maintenance and lawn & garden care'),
-                ('sweeping, grounds and exterior cleaning', 'sweeping, grounds and lawn & garden maintenance'),
-                ('pressure washing and fleet washing', 'grounds and lawn maintenance'),
-                ('exterior cleaning and fleet washing', 'grounds and lawn maintenance'),
-                ('fleet, transport & trade businesses', 'transport & trade businesses'),
-                ('FLEET, TRANSPORT &amp;<br>TRADE BUSINESSES', 'TRANSPORT &amp;<br>TRADE BUSINESSES'),
-                ('Vehicle washing, yards, hardstands and exterior site maintenance.', 'Sweeping, yards, hardstands and recurring grounds maintenance.'),
-                ('Selected lawn, garden and exterior cleaning work for larger residential properties.', 'Selected lawn and garden maintenance for larger residential properties.'),
-                ('business, strata, industrial &amp; fleet sites', 'business, strata and industrial sites'),
-                ('Business, strata, industrial &amp; fleet sites', 'Business, strata and industrial sites'),
-                ('warehouses, industrial yards, hardstands, fleet facilities and commercial sites', 'warehouses, industrial yards, hardstands and commercial sites'),
-                ('warehouses, industrial yards, hardstands, fleet operations and commercial sites', 'warehouses, industrial yards, hardstands and commercial sites'),
-                ('warehouses, industrial yards, hardstands, fleet facilities', 'warehouses, industrial yards and hardstands'),
-                ('fleet facilities', 'trade facilities'),
-                ('Fleet facilities', 'Trade facilities'),
-                ('fleet operations', 'trade operations'),
-                ('Fleet operations', 'Trade operations'),
+          def save(p,t): p.write_text(t,encoding='utf-8')
+          def scrub(t):
+              pairs=[
+                ('Commercial mechanical sweeping, grounds maintenance, lawn and garden, exterior cleaning and fleet washing across South East Queensland.','Commercial mechanical sweeping, grounds maintenance and lawn & garden maintenance across South East Queensland.'),
+                ('commercial mechanical sweeping, grounds maintenance, lawn and garden, exterior cleaning and fleet washing across South East Queensland.','commercial mechanical sweeping, grounds maintenance and lawn & garden maintenance across South East Queensland.'),
+                ('sweeping, grounds maintenance, lawn and garden, pressure washing and fleet washing','sweeping, grounds maintenance and lawn & garden care'),
+                ('sweeping, grounds maintenance, lawn and garden, exterior cleaning and fleet washing','sweeping, grounds maintenance and lawn & garden care'),
+                ('sweeping, grounds maintenance, lawn and garden care, exterior cleaning and fleet washing','sweeping, grounds maintenance and lawn and garden care'),
+                ('sweeping, grounds, pressure washing and fleet washing','sweeping, grounds maintenance and lawn & garden care'),
+                ('sweeping, grounds, exterior cleaning and fleet washing','sweeping, grounds maintenance and lawn & garden care'),
+                ('Vehicle washing, yards, hardstands and exterior site maintenance.','Sweeping, yards, hardstands and recurring grounds maintenance.'),
+                ('Selected lawn, garden and exterior cleaning work for larger residential properties.','Selected lawn and garden maintenance for larger residential properties.'),
+                ('FLEET, TRANSPORT &amp;<br>TRADE BUSINESSES','TRANSPORT &amp;<br>TRADE BUSINESSES'),
+                ('business, strata, industrial &amp; fleet sites','business, strata and industrial sites'),
+                ('warehouses, industrial yards, hardstands, fleet facilities and commercial sites','warehouses, industrial yards, hardstands and commercial sites'),
+                ('fleet facilities','trade facilities'),('Fleet facilities','Trade facilities'),
+                ('fleet operations','trade operations'),('Fleet operations','Trade operations')
               ]
-              for a,b in replacements: text=text.replace(a,b)
-              return text
+              for a,b in pairs:t=t.replace(a,b)
+              return t
 
-          # Homepage
-          p=root/'index.html'; text=p.read_text(encoding='utf-8')
-          text=clean_common(text)
-          text=re.sub(r'\s*<article class="service-card service-pressure">.*?</article>', '', text, flags=re.S)
-          text=re.sub(r'\s*<article class="service-card service-fleet">.*?</article>', '', text, flags=re.S)
-          text=text.replace('service-grid service-grid-five','service-grid service-grid-three')
-          text=re.sub(r'<figure><img src="/assets/pressure%20washing\.jpg".*?</figure>', '', text, flags=re.S)
-          text=re.sub(r'<figure><img src="/assets/fleetwash\.jpg".*?</figure>', '', text, flags=re.S)
-          text=text.replace('Yes. You can combine sweeping, grounds maintenance, lawn and garden, pressure washing and fleet washing so more of the exterior is handled by one contractor.','Yes. You can combine mechanical sweeping, grounds maintenance and lawn & garden care so more of the property is handled by one contractor.')
-          write(p,text)
-
-          # Quote page
-          p=root/'quote.html'; text=p.read_text(encoding='utf-8'); text=clean_common(text)
-          text=re.sub(r'<label class="service-check"><input type="checkbox" name="services" value="pressure">.*?</label>', '', text, flags=re.S)
-          text=re.sub(r'<label class="service-check"><input type="checkbox" name="services" value="fleet">.*?</label>', '', text, flags=re.S)
-          write(p,text)
-
-          # Contact
-          p=root/'contact.html'; text=p.read_text(encoding='utf-8'); text=clean_common(text)
-          text=text.replace('Need sweeping, grounds maintenance, lawn and garden work, exterior cleaning or fleet washing?', 'Need mechanical sweeping, grounds maintenance or lawn and garden work?')
-          write(p,text)
-
-          # Areas hub
-          p=root/'areas.html'; text=p.read_text(encoding='utf-8'); text=clean_common(text)
-          text=re.sub(r'<a href="/commercial-pressure-washing-[^"]+\.html">.*?</a>', '', text, flags=re.S)
-          text=re.sub(r'<a href="/fleet-washing-[^"]+\.html">.*?</a>', '', text, flags=re.S)
-          write(p,text)
-
-          # Phase 2 suburb pages: remove banned service references and strengthen the three-service focus.
-          for p in root.glob('commercial-property-services-*.html'):
-              text=p.read_text(encoding='utf-8'); text=clean_common(text)
-              text=re.sub(r'<a[^>]+href="/[^"]*(?:pressure-washing|fleet-washing)[^"]*"[^>]*>.*?</a>', '', text, flags=re.S|re.I)
-              text=re.sub(r'<details>.*?(?:pressure washing|pressure clean|exterior cleaning|exterior washing|fleet washing|commercial fleets).*?</details>', '', text, flags=re.S|re.I)
-              text=re.sub(r'<div class="loc-benefit">.*?(?:PRESSURE|FLEET).*?</div>', '', text, flags=re.S|re.I)
-              text=re.sub(r'<div class="loc-site">.*?FLEET.*?</div>', '', text, flags=re.S|re.I)
-              text=re.sub(r'<p>Explore our .*?request a free site assessment for this location\.</p>', '<p>Explore our <a href="/sweeping.html"><strong>commercial sweeping</strong></a>, <a href="/grounds.html"><strong>grounds maintenance</strong></a> and <a href="/lawn-garden.html"><strong>lawn &amp; garden maintenance</strong></a> services, or request a free site assessment for this location.</p>', text, flags=re.S|re.I)
-              # Remove remaining paragraphs that explicitly sell either removed service.
-              text=re.sub(r'<p>[^<]*(?:pressure washing|pressure clean|exterior cleaning|exterior washing|fleet washing)[^<]*</p>', '', text, flags=re.I)
-              text=re.sub(r'\b[Ff]leet[- ](?:oriented|heavy)\b', 'transport', text)
-              text=re.sub(r'\b[Ff]leet\b', 'commercial vehicle', text)
-              write(p,text)
-
-          # Remaining core HTML pages: remove links/cards to removed services and scrub marketing references.
+          # Every HTML page: strip links to retired services and clean marketing copy.
           for p in root.glob('*.html'):
-              if p.name in removed_pages: continue
-              text=p.read_text(encoding='utf-8'); text=clean_common(text)
-              text=re.sub(r'<a[^>]+href="/[^"]*(?:pressure-washing|fleet-washing)[^"]*"[^>]*>.*?</a>', '', text, flags=re.S|re.I)
-              text=re.sub(r'<article[^>]*>.*?href="/[^"]*(?:pressure-washing|fleet-washing)[^"]*".*?</article>', '', text, flags=re.S|re.I)
-              text=re.sub(r'<div class="related-card"[^>]*>.*?(?:PRESSURE|FLEET).*?</div>', '', text, flags=re.S|re.I)
-              write(p,text)
+              if p.name in removed: continue
+              t=scrub(p.read_text(encoding='utf-8'))
+              t=re.sub(r'<a[^>]+href="/[^"]*(?:pressure-washing|fleet-washing)[^"]*"[^>]*>.*?</a>','',t,flags=re.S|re.I)
+              t=re.sub(r'<label class="service-check"><input type="checkbox" name="services" value="(?:pressure|fleet)">.*?</label>','',t,flags=re.S|re.I)
+              t=re.sub(r'<article class="service-card service-(?:pressure|fleet)">.*?</article>','',t,flags=re.S|re.I)
+              t=re.sub(r'<figure><img[^>]+(?:pressure%20washing|fleetwash)[^>]*>.*?</figure>','',t,flags=re.S|re.I)
+              # Remove service-specific FAQ/benefit blocks that sell retired services.
+              t=re.sub(r'<details>.*?(?:pressure washing|pressure clean|fleet washing).*?</details>','',t,flags=re.S|re.I)
+              t=re.sub(r'<div class="loc-benefit">.*?(?:PRESSURE WASHING|FLEET WASHING).*?</div>','',t,flags=re.S|re.I)
+              t=re.sub(r'<div class="loc-site">.*?FLEET.*?</div>','',t,flags=re.S|re.I)
+              # Remove remaining explicit service mentions from visible copy and metadata.
+              t=re.sub(r'(?i)commercial exterior cleaning','commercial property maintenance',t)
+              t=re.sub(r'(?i)exterior pressure washing','grounds maintenance',t)
+              t=re.sub(r'(?i)pressure washing','grounds maintenance',t)
+              t=re.sub(r'(?i)pressure clean(?:ing)?','grounds maintenance',t)
+              t=re.sub(r'(?i)fleet washing','lawn & garden maintenance',t)
+              t=re.sub(r'(?i)fleet-oriented','transport-oriented',t)
+              t=re.sub(r'(?i)fleet-heavy','vehicle-heavy',t)
+              t=re.sub(r'(?i)commercial fleets','commercial vehicles',t)
+              t=re.sub(r'(?i)\bfleet\b','transport',t)
+              t=t.replace('service-grid service-grid-five','service-grid service-grid-three')
+              save(p,t)
 
-          # Homepage behavior and capability strip.
-          p=root/'script.js'; text=p.read_text(encoding='utf-8')
-          text=re.sub(r"\n\s*'\.service-pressure': '/pressure-washing\.html',?", '', text)
-          text=re.sub(r"\n\s*'\.service-fleet': '/fleet-washing\.html',?", '', text)
-          text=text.replace("'.service-lawn': '/lawn-garden.html',\n};", "'.service-lawn': '/lawn-garden.html'\n};")
-          text=text.replace('FIVE CORE SERVICES. ONE STOREMAN TEAM.','THREE CORE SERVICES. ONE STOREMAN TEAM.')
-          text=re.sub(r'grid\.innerHTML = `.*?`;', 'grid.innerHTML = `<a class="capability-tile" href="/sweeping.html"><img src="/assets/sweeping.jpg" alt="Storeman sweeping service" loading="lazy"><span>SWEEPING</span></a><a class="capability-tile" href="/grounds.html"><img src="/assets/grounds.jpg" alt="Storeman grounds service" loading="lazy"><span>GROUNDS</span></a><a class="capability-tile" href="/lawn-garden.html"><img src="/assets/mowing.jpg" alt="Storeman lawn and garden service" loading="lazy"><span>LAWN &amp; GARDEN</span></a>`;', text, count=1, flags=re.S)
-          text=text.replace('grid-template-columns:repeat(5,1fr)','grid-template-columns:repeat(3,1fr)')
-          text=text.replace('We bring sweeping, grounds maintenance, lawn and garden care, exterior cleaning and fleet washing together under one service.', 'We bring mechanical sweeping, grounds maintenance and lawn and garden care together under one service.')
-          write(p,text)
+          # Homepage JS: only three service routes and three capability tiles.
+          p=root/'script.js';t=p.read_text(encoding='utf-8')
+          t=re.sub(r"\n\s*'\.service-pressure': '/pressure-washing\.html',?",'',t)
+          t=re.sub(r"\n\s*'\.service-fleet': '/fleet-washing\.html',?",'',t)
+          t=t.replace("'.service-lawn': '/lawn-garden.html',\n};","'.service-lawn': '/lawn-garden.html'\n};")
+          t=t.replace('FIVE CORE SERVICES. ONE STOREMAN TEAM.','THREE CORE SERVICES. ONE STOREMAN TEAM.')
+          t=re.sub(r'grid\.innerHTML = `.*?`;','grid.innerHTML = `<a class="capability-tile" href="/sweeping.html"><img src="/assets/sweeping.jpg" alt="Storeman sweeping service" loading="lazy"><span>SWEEPING</span></a><a class="capability-tile" href="/grounds.html"><img src="/assets/grounds.jpg" alt="Storeman grounds service" loading="lazy"><span>GROUNDS</span></a><a class="capability-tile" href="/lawn-garden.html"><img src="/assets/mowing.jpg" alt="Storeman lawn and garden service" loading="lazy"><span>LAWN &amp; GARDEN</span></a>`;',t,count=1,flags=re.S)
+          t=t.replace('grid-template-columns:repeat(5,1fr)','grid-template-columns:repeat(3,1fr)')
+          t=t.replace('We bring sweeping, grounds maintenance, lawn and garden care, exterior cleaning and fleet washing together under one service.','We bring mechanical sweeping, grounds maintenance and lawn and garden care together under one service.')
+          save(p,t)
 
-          # Quote JS labels and three-column service cards.
-          p=root/'quote.js'; text=p.read_text(encoding='utf-8')
-          text=text.replace('.service-grid-five','.service-grid-three')
-          text=text.replace('repeat(5,minmax(0,1fr))','repeat(3,minmax(0,1fr))')
-          text=re.sub(r"const serviceLabels = \{[^}]+\};", "const serviceLabels = { sweeping:'Mechanical Sweeping', grounds:'Grounds Maintenance', lawn:'Lawn & Garden' };", text)
-          write(p,text)
+          # Quote logic and homepage service grid styling.
+          p=root/'quote.js';t=p.read_text(encoding='utf-8')
+          t=t.replace('.service-grid-five','.service-grid-three').replace('repeat(5,minmax(0,1fr))','repeat(3,minmax(0,1fr))')
+          t=re.sub(r"const serviceLabels = \{[^}]+\};","const serviceLabels = { sweeping:'Mechanical Sweeping', grounds:'Grounds Maintenance', lawn:'Lawn & Garden' };",t)
+          save(p,t)
 
-          # Schema reflects only current services.
-          p=root/'seo.js'; text=p.read_text(encoding='utf-8')
-          text=text.replace('Commercial exterior property services including mechanical sweeping, grounds maintenance, lawn and garden maintenance, exterior cleaning and fleet washing across South East Queensland.', 'Commercial property maintenance including mechanical sweeping, grounds maintenance and lawn and garden maintenance across South East Queensland.')
-          text=re.sub(r"\n\s*\['commercial-pressure-washing'.*?\],", '', text)
-          text=re.sub(r"\n\s*\['pressure-washing\.html'.*?\],", '', text)
-          text=re.sub(r"\n\s*\['fleet-washing'.*?\]", '', text)
-          text=text.replace("['lawn-garden.html', 'Lawn & Garden Maintenance'],\n  ];", "['lawn-garden.html', 'Lawn & Garden Maintenance']\n  ];")
-          write(p,text)
+          # Structured data only advertises the three current services.
+          p=root/'seo.js';t=p.read_text(encoding='utf-8')
+          t=t.replace('Commercial exterior property services including mechanical sweeping, grounds maintenance, lawn and garden maintenance, exterior cleaning and fleet washing across South East Queensland.','Commercial property maintenance including mechanical sweeping, grounds maintenance and lawn and garden maintenance across South East Queensland.')
+          t=re.sub(r"\n\s*\['commercial-pressure-washing'.*?\],",'',t)
+          t=re.sub(r"\n\s*\['pressure-washing\.html'.*?\],",'',t)
+          t=re.sub(r"\n\s*\['fleet-washing'.*?\],?",'',t)
+          t=t.replace("['lawn-garden.html', 'Lawn & Garden Maintenance'],\n  ];","['lawn-garden.html', 'Lawn & Garden Maintenance']\n  ];")
+          save(p,t)
 
-          # Sitemap: remove retired service URLs.
-          p=root/'sitemap.xml'; text=p.read_text(encoding='utf-8')
-          text=re.sub(r'<url><loc>https://storeman\.com\.au/(?:commercial-pressure-washing-[^<]+|fleet-washing[^<]*)</loc>.*?</url>\s*', '', text, flags=re.S)
-          text=re.sub(r'<url><loc>https://storeman\.com\.au/(?:pressure-washing|fleet-washing)\.html</loc>.*?</url>\s*', '', text, flags=re.S)
-          write(p,text)
+          # Sitemap no longer exposes retired URLs.
+          p=root/'sitemap.xml';t=p.read_text(encoding='utf-8')
+          t=re.sub(r'<url><loc>https://storeman\.com\.au/(?:commercial-pressure-washing-[^<]+|pressure-washing\.html|fleet-washing[^<]*)</loc>.*?</url>\s*','',t,flags=re.S)
+          save(p,t)
 
-          # Ensure the homepage three-card layout stays balanced.
-          p=root/'layout-polish.css'; text=p.read_text(encoding='utf-8')
-          if '.service-grid-three{' not in text:
-              text += '\n.service-grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}\n@media(max-width:980px){.service-grid-three{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:680px){.service-grid-three{grid-template-columns:1fr}}\n'
-          write(p,text)
+          # Keep three cards balanced on desktop/tablet/mobile.
+          p=root/'layout-polish.css';t=p.read_text(encoding='utf-8')
+          if '.service-grid-three{' not in t:
+              t+='\n.service-grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}\n@media(max-width:980px){.service-grid-three{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:680px){.service-grid-three{grid-template-columns:1fr}}\n'
+          save(p,t)
           PY
           python /tmp/storeman_focus.py
-      - name: Validate removed services are gone
+      - name: Validate cleanup
         run: |
           python - <<'PY'
           from pathlib import Path
-          banned_pages = list(Path('.').glob('*pressure-washing*.html')) + list(Path('.').glob('fleet-washing*.html'))
-          if banned_pages:
-              raise SystemExit('Retired service pages still exist: ' + ', '.join(str(p) for p in banned_pages))
-          checks = ['index.html','quote.html','contact.html','areas.html','script.js','quote.js','seo.js','sitemap.xml']
+          retired=list(Path('.').glob('*pressure-washing*.html'))+list(Path('.').glob('fleet-washing*.html'))
+          if retired: raise SystemExit('Retired pages remain: '+', '.join(str(x) for x in retired))
           bad=[]
-          for name in checks:
-              t=Path(name).read_text(encoding='utf-8').lower()
-              if 'pressure washing' in t or 'fleet washing' in t or '/pressure-washing' in t or '/fleet-washing' in t:
-                  bad.append(name)
-          if bad:
-              raise SystemExit('Removed services still referenced in: ' + ', '.join(bad))
-          print('Validated three-service focus: sweeping, grounds, lawn & garden.')
+          for n in ['index.html','quote.html','contact.html','areas.html','script.js','quote.js','seo.js','sitemap.xml']:
+              t=Path(n).read_text(encoding='utf-8').lower()
+              if '/pressure-washing' in t or '/fleet-washing' in t or 'pressure washing' in t or 'fleet washing' in t: bad.append(n)
+          if bad: raise SystemExit('References remain: '+', '.join(bad))
+          print('Storeman now advertises only mechanical sweeping, grounds maintenance and lawn & garden.')
           PY
       - name: Commit cleanup
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          if git diff --cached --quiet; then
-            echo 'No changes needed.'
-          else
-            git commit -m 'Focus Storeman on sweeping grounds and lawn services'
-            git push origin main
-          fi
+          git diff --cached --quiet || (git commit -m 'Focus Storeman on sweeping grounds and lawn services' && git push origin main)
