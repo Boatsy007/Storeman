@@ -106,29 +106,34 @@ if (showcase) {
   document.head.appendChild(style);
 }
 
-// Give the sticky header quote CTA one restrained attention nudge after the
-// visitor has moved through roughly the first quarter of the page. It runs once
-// only and respects reduced-motion preferences.
-const headerQuoteButton = document.querySelector('.header-cta.quote-trigger');
+// Nudge the visible primary quote CTA once after the visitor starts scrolling.
+// Desktop uses the header CTA; mobile/tablet uses the hero CTA because the
+// header quote button is hidden there.
 let quoteNudgePlayed = false;
 
-function maybeNudgeQuoteButton() {
-  if (!headerQuoteButton || quoteNudgePlayed || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-  if (scrollable <= 0) return;
-  const progress = window.scrollY / scrollable;
-  if (progress >= 0.25) {
-    quoteNudgePlayed = true;
-    headerQuoteButton.classList.add('quote-scroll-nudge');
-    window.setTimeout(() => headerQuoteButton.classList.remove('quote-scroll-nudge'), 1200);
-    window.removeEventListener('scroll', maybeNudgeQuoteButton);
-  }
+function getVisibleQuoteNudgeTarget() {
+  const preferred = window.innerWidth <= 980
+    ? document.querySelector('.hero-actions .button-yellow.quote-trigger')
+    : document.querySelector('.header-cta.quote-trigger');
+
+  if (preferred && preferred.getClientRects().length) return preferred;
+  return [...document.querySelectorAll('.quote-trigger')].find((el) => el.getClientRects().length) || null;
 }
 
-if (headerQuoteButton) {
-  window.addEventListener('scroll', maybeNudgeQuoteButton, { passive: true });
-  maybeNudgeQuoteButton();
+function maybeNudgeQuoteButton() {
+  if (quoteNudgePlayed || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.scrollY < 120) return;
+
+  const target = getVisibleQuoteNudgeTarget();
+  if (!target) return;
+
+  quoteNudgePlayed = true;
+  target.classList.add('quote-scroll-nudge');
+  window.setTimeout(() => target.classList.remove('quote-scroll-nudge'), 1250);
+  window.removeEventListener('scroll', maybeNudgeQuoteButton);
 }
+
+window.addEventListener('scroll', maybeNudgeQuoteButton, { passive: true });
 
 const params = new URLSearchParams(window.location.search);
 if (params.get('quote') === '1' || params.get('estimate') === '1') {
