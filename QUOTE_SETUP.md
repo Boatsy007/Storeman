@@ -1,6 +1,6 @@
-# Storeman Instant Estimate — production setup
+# Storeman Free Quote — production setup
 
-The estimate UI, lead capture flow and `/api/lead` endpoint are built.
+The free quote UI, lead capture flow and `/api/lead` endpoint are built.
 
 ## Vercel environment variables
 
@@ -15,16 +15,13 @@ After adding environment variables, redeploy the project.
 
 ## Lead events
 
-The endpoint receives three stages:
+The endpoint receives two stages:
 
-1. `details_saved` — sent immediately when the customer enters contact/business/location details and clicks Save & Continue.
-2. `estimate_completed` — sent after services/frequency are selected and the estimated range is calculated.
-3. `site_visit_requested` — sent when the customer asks Storeman to contact them for a site visit.
+1. `details_saved` — sent when the customer enters contact, business and location details and clicks Save & Continue.
+2. `quote_requested` — sent after the customer selects services and frequency and submits the free quote request.
 
-The same lead ID is reused across all three stages.
+The same lead ID is reused across both stages.
 
-## Estimate logic
+When `quote_requested` is received, Storeman is emailed the customer details, selected services and frequency. The customer also receives a confirmation email explaining that Storeman will contact them to arrange a site visit and prepare an accurate quote.
 
-The current pricing bands are deliberately broad because the website does not yet know site size, access, building area, condition or fleet size. They are configured in `estimate.js` under `SERVICE_BANDS` and can be tuned as Storeman gathers real job data.
-
-Customers see one bundled range only. They do not see individual service prices.
+There is no automated price estimate in the website flow.
