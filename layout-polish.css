@@ -9,7 +9,7 @@
   .desktop-nav{gap:34px}
   .desktop-nav a{font-size:11px}
   .phone-block strong{font-size:14px}.phone-block small{font-size:12px}
-  .header-cta{min-width:175px;min-height:56px;font-size:13px}
+  .header-cta{min-width:218px;min-height:56px;font-size:13px;white-space:nowrap}
 
   .hero-inner{width:min(var(--wide),100%);min-height:690px}
   .hero-copy{width:46%;min-height:690px;padding:60px 28px 44px 36px}
