@@ -54,33 +54,41 @@
       return true;
     }
 
+    async function saveDetailsAndContinue(button) {
+      if (!validateStage(1)) return;
+
+      const data = new FormData(form);
+      leadId = leadId || `stm_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+      const lead = {
+        id: leadId,
+        stage: 'details_saved',
+        createdAt: new Date().toISOString(),
+        name: safe(data.get('name')),
+        business: safe(data.get('business')),
+        email: safe(data.get('email')),
+        phone: safe(data.get('phone')),
+        address: safe(data.get('address'))
+      };
+
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'SAVING…';
+      }
+      if (status) status.textContent = '';
+      persistLocalLead(lead);
+      await postLead(lead);
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = 'SAVE &amp; CONTINUE <span>→</span>';
+      }
+      setStep(2);
+    }
+
     form.addEventListener('click', async (event) => {
       const saveButton = event.target.closest('[data-save-quote-lead]');
       if (saveButton) {
         event.preventDefault();
-        if (!validateStage(1)) return;
-
-        const data = new FormData(form);
-        leadId = leadId || `stm_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
-        const lead = {
-          id: leadId,
-          stage: 'details_saved',
-          createdAt: new Date().toISOString(),
-          name: safe(data.get('name')),
-          business: safe(data.get('business')),
-          email: safe(data.get('email')),
-          phone: safe(data.get('phone')),
-          address: safe(data.get('address'))
-        };
-
-        saveButton.disabled = true;
-        saveButton.textContent = 'SAVING…';
-        if (status) status.textContent = '';
-        persistLocalLead(lead);
-        await postLead(lead);
-        saveButton.disabled = false;
-        saveButton.innerHTML = 'SAVE &amp; CONTINUE <span>→</span>';
-        setStep(2);
+        await saveDetailsAndContinue(saveButton);
         return;
       }
 
@@ -136,5 +144,24 @@
     });
 
     form.addEventListener('submit', (event) => event.preventDefault());
+
+    // On mobile, the compact homepage form sends the visitor to quote.html.
+    // Restore those details and move straight to service selection so nothing is retyped.
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('prefill') === '1') {
+      let prefill = null;
+      try {
+        prefill = JSON.parse(sessionStorage.getItem('storeman-quote-prefill') || 'null');
+        sessionStorage.removeItem('storeman-quote-prefill');
+      } catch (_) {}
+
+      if (prefill) {
+        Object.entries(prefill).forEach(([name, value]) => {
+          const field = form.elements.namedItem(name);
+          if (field) field.value = value;
+        });
+        window.setTimeout(() => saveDetailsAndContinue(form.querySelector('[data-save-quote-lead]')), 80);
+      }
+    }
   });
 })();
