@@ -103,6 +103,9 @@
     let step = 1;
     let leadId = '';
 
+    const detailsNote = estimator.querySelector('[data-estimate-stage="1"] .estimate-note');
+    if (detailsNote) detailsNote.remove();
+
     // The estimate is now the final step. Storeman follows up automatically to
     // arrange the site visit, so there is no second confirmation button.
     if (finalActions) finalActions.remove();
