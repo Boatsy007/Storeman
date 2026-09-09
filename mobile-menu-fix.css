@@ -14,3 +14,19 @@
   .desktop-nav{left:-14px;right:-14px;padding-left:14px;padding-right:14px}
   .menu-button{width:42px;height:42px;font-size:24px}
 }
+
+/* Footer brand asset */
+.footer-brand{
+  width:220px;
+  height:64px;
+  display:block;
+  flex:0 0 220px;
+  background:url('/assets/footerlogo.jpg') left center/contain no-repeat;
+}
+.footer-brand .brand-name,
+.footer-brand .brand-line,
+.footer-brand .brand-sub{display:none!important}
+
+@media(max-width:680px){
+  .footer-brand{width:190px;height:58px;flex-basis:190px}
+}
