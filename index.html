@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/layout-polish.css" />
   <link rel="stylesheet" href="/quote-popup.css" />
+  <link rel="stylesheet" href="/mobile-menu-fix.css" />
 </head>
 <body>
 <header class="site-header">
@@ -185,20 +186,22 @@
             <label><span>Preferred Service</span><select name="service"><option>Complete external property service</option><option>Mechanical sweeping</option><option>Grounds maintenance</option><option>Exterior cleaning</option><option>Fleet &amp; vehicle washing</option></select></label>
             <label><span>Service Frequency</span><select name="frequency"><option>One-off quote</option><option>Every 4 weeks</option><option>Every 6 weeks</option><option>Every 8 weeks</option><option>Other recurring schedule</option></select></label>
             <label><span>Best Time to Contact</span><select name="contactTime"><option>Any time</option><option>Morning</option><option>Afternoon</option></select></label>
-            <label class="full"><span>What would you like us to look at?</span><textarea name="message" rows="5" placeholder="Tell us what needs sweeping, mowing, cleaning or washing..."></textarea></label>
+            <label class="full"><span>Tell us about the site</span><textarea name="message" rows="4" placeholder="What needs attention? Approximate size, problem areas, access or timing details..."></textarea></label>
           </div>
           <div class="quote-nav"><button class="quote-back" type="button" data-prev-step="1">BACK</button><button class="quote-next" type="button" data-next-step="3">REVIEW &nbsp; →</button></div>
         </div>
 
         <div class="form-stage" data-form-stage="3">
-          <div class="review-box" id="quoteReview"><strong>Your quote request</strong><span>Review your details before sending.</span></div>
+          <div class="review-box" id="quoteReview"></div>
           <div class="quote-nav"><button class="quote-back" type="button" data-prev-step="2">BACK</button><button class="quote-submit" type="submit">SUBMIT QUOTE REQUEST &nbsp; →</button></div>
-          <p class="form-note" id="formNote">Your information is only used to prepare and respond to your quote request.</p>
+          <p class="form-note" id="formNote"></p>
         </div>
       </form>
       <p class="secure-note">🔒 Your information is secure and will only be used to provide a quote.</p>
     </div>
   </section>
 </div>
+
 <script src="/script.js"></script>
-</body></html>
+</body>
+</html>
