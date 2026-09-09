@@ -106,20 +106,19 @@ if (showcase) {
   document.head.appendChild(style);
 }
 
-// Dynamic scrolling: reveal content as it enters the viewport, with small
-// staggered delays for cards. This runs once per element so it feels polished,
-// not busy.
+// Soft scroll reveals: longer easing, smaller movement and tighter staggering so
+// sections feel like they glide into place instead of popping on screen.
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 if (!reduceMotion && 'IntersectionObserver' in window) {
   const revealGroups = [
     ['.section-heading', 0],
-    ['.service-card', 70],
-    ['.why-left > *', 60],
+    ['.service-card', 42],
+    ['.why-left > *', 36],
     ['.why-image', 0],
-    ['.capability-tile', 65],
-    ['.cta-inner > *', 70],
-    ['.footer-inner > *', 55]
+    ['.capability-tile', 38],
+    ['.cta-inner > *', 40],
+    ['.footer-inner > *', 34]
   ];
 
   const revealObserver = new IntersectionObserver((entries, observer) => {
@@ -128,12 +127,12 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
       entry.target.classList.add('scroll-in');
       observer.unobserve(entry.target);
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+  }, { threshold: 0.06, rootMargin: '0px 0px -2% 0px' });
 
   revealGroups.forEach(([selector, stagger]) => {
     document.querySelectorAll(selector).forEach((element, index) => {
       element.classList.add('scroll-reveal');
-      element.style.setProperty('--reveal-delay', `${Math.min(index * stagger, 280)}ms`);
+      element.style.setProperty('--reveal-delay', `${Math.min(index * stagger, 150)}ms`);
       revealObserver.observe(element);
     });
   });
@@ -150,7 +149,7 @@ function updateParallax() {
     if (parallaxImage) parallaxImage.style.removeProperty('--scroll-shift');
     return;
   }
-  const shift = Math.max(-18, Math.min(18, window.scrollY * 0.035));
+  const shift = Math.max(-10, Math.min(10, window.scrollY * 0.018));
   parallaxImage.style.setProperty('--scroll-shift', `${shift}px`);
 }
 
@@ -166,8 +165,6 @@ if (parallaxImage && !reduceMotion) {
 }
 
 // Nudge the visible primary quote CTA once after the visitor starts scrolling.
-// Desktop uses the header CTA; mobile/tablet uses the hero CTA because the
-// header quote button is hidden there.
 let quoteNudgePlayed = false;
 
 function getVisibleQuoteNudgeTarget() {
