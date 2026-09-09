@@ -1,4 +1,4 @@
-name: Storeman SEO technical pass
+name: Storeman service focus cleanup
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  optimise:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,71 +20,175 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Strengthen Phase 2 local pages
+      - name: Remove pressure washing and fleet washing from public site
         run: |
-          cat > /tmp/storeman_local_depth.py <<'PY'
+          cat > /tmp/storeman_focus.py <<'PY'
           from pathlib import Path
+          import re
 
-          pages = {
-            'stapylton': ('STAPYLTON COMMERCIAL MAINTENANCE', 'Stapylton is a strong fit for Storeman because warehouse, logistics and industrial properties often combine large hardstands with landscaped edges, access roads and fleet areas. Regular mechanical sweeping can help keep loose debris under control, while grounds maintenance and pressure washing support overall presentation.', 'For property and facility managers, Storeman can combine commercial sweeping, grounds maintenance, pressure washing and fleet washing into one practical exterior maintenance arrangement rather than coordinating several separate contractors.', [('How often should a Stapylton industrial site be swept?', 'The right frequency depends on traffic, surrounding vegetation, debris levels and presentation standards. We can assess the site and discuss weekly, fortnightly, monthly or periodic sweeping.'), ('Can Storeman maintain warehouse yards as well as landscaped areas?', 'Yes. Where the site suits our services, hardstand sweeping can be combined with grounds and lawn maintenance under one schedule.'), ('Do you provide one-off industrial clean-ups in Stapylton?', 'Yes. One-off work can be quoted as well as recurring maintenance.')]),
-            'ormeau': ('ORMEAU COMMERCIAL PROPERTY MAINTENANCE', 'Ormeau has a mix of growing commercial, light-industrial and managed properties where presentation can involve both paved exterior areas and landscaped frontage. Storeman can support sites that need routine grounds care, sweeping and periodic exterior cleaning.', 'A combined service is particularly useful for businesses that want one point of contact for carparks, external grounds, paths and other visible exterior areas.', [('Do you service commercial estates around Ormeau?', 'Yes. Send us the site location and required services and we can confirm coverage during the quote process.'), ('Can grounds maintenance and sweeping be done on the same visit?', 'Depending on the property and scope, we can combine services or coordinate them under one recurring schedule.'), ('Can I request a one-off pressure clean in Ormeau?', 'Yes. Pressure washing can be quoted as a one-off service where the surface and access are suitable.')]),
-            'coomera': ('COOMERA COMMERCIAL & STRATA EXTERIORS', 'Coomera includes retail, strata, education, community and growing commercial properties where customer-facing presentation matters. Storeman can help keep entrances, paved external areas, landscaped zones and carparks looking consistently maintained.', 'For managed properties, recurring exterior work can reduce the need to organise separate contractors every time lawns, debris or hard surfaces need attention.', [('Do you work with strata and body corporate properties in Coomera?', 'Yes. Storeman can quote suitable exterior maintenance for strata and body corporate common areas.'), ('What commercial services are available in Coomera?', 'Depending on the site, services can include grounds maintenance, lawn and garden work, sweeping and commercial exterior cleaning.'), ('Do you offer recurring maintenance?', 'Yes. Recurring schedules can be discussed after we assess the property and scope.')]),
-            'molendinar': ('MOLENDINAR INDUSTRIAL SITE MAINTENANCE', 'Molendinar is one of the Gold Coast’s key industrial areas, with warehouses, workshops, trade businesses, yards and fleet-heavy properties. Those sites often benefit from mechanical sweeping and exterior cleaning in addition to routine grounds maintenance.', 'Storeman’s one-contractor model is designed for this type of property: larger hard surfaces, access areas, landscaping and vehicles can be managed through a coordinated exterior service plan.', [('Is mechanical sweeping suitable for Molendinar industrial sites?', 'It can be a strong fit for carparks, hardstands, access roads and larger paved areas where manual sweeping would be inefficient.'), ('Can you wash commercial fleets in Molendinar?', 'Yes, fleet washing can be assessed for suitable sites with appropriate access and working conditions.'), ('Can services be combined?', 'Yes. Sweeping, grounds, exterior cleaning and fleet washing can be combined where appropriate.')]),
-            'arundel': ('ARUNDEL COMMERCIAL EXTERIOR MAINTENANCE', 'Arundel has industrial, automotive, medical, retail and managed commercial properties with a wide range of exterior maintenance needs. Storeman can help with recurring grounds, paved-area presentation and exterior cleaning around customer and staff access areas.', 'Where a property includes both landscaped frontage and larger hard surfaces, combining services can simplify contractor management and keep presentation more consistent.', [('Do you service industrial properties in Arundel?', 'Yes. We can assess suitable industrial, commercial and managed sites in Arundel.'), ('Can you maintain landscaped frontage and carparks?', 'Depending on the scope, Storeman can combine grounds maintenance with mechanical sweeping or exterior cleaning.'), ('How do I get a quote?', 'Send us the property location and services required. We will contact you to arrange the free site assessment.')]),
-            'burleigh-heads': ('BURLEIGH HEADS COMMERCIAL PRESENTATION', 'Burleigh Heads combines busy commercial areas with industrial estates, retail, hospitality-facing properties and strata. For many of these sites, exterior presentation is visible to customers every day, making regular lawn, garden, sweeping and hard-surface cleaning valuable.', 'Storeman can support both recurring maintenance and one-off exterior resets, with services selected around the actual property rather than a fixed package.', [('Do you service Burleigh industrial areas as well as retail sites?', 'Yes. We can assess suitable industrial, retail, strata and other commercial properties in Burleigh Heads.'), ('Can Storeman pressure clean customer-facing entrances?', 'Yes, where the surface, access and working conditions are suitable.'), ('Can I combine grounds maintenance and exterior cleaning?', 'Yes. Combined service arrangements are part of the Storeman one-contractor model.')]),
-            'nerang': ('NERANG COMMERCIAL & MANAGED PROPERTY CARE', 'Nerang includes commercial centres, industrial sites, strata and community facilities with a broad mix of paved and landscaped external areas. Storeman can help property managers keep those areas under control with recurring grounds work, sweeping and periodic exterior cleaning.', 'For larger sites, coordinating several exterior services through Storeman can make scheduling simpler and create a more consistent presentation standard.', [('Do you provide recurring grounds maintenance in Nerang?', 'Yes. We can discuss weekly, fortnightly, monthly or another schedule suited to the site.'), ('Can sweeping be added to a grounds contract?', 'Yes, where mechanical sweeping is suitable for the paved areas on the property.'), ('Do you service community facilities?', 'We can assess suitable community and managed facilities as part of the quoting process.')]),
-            'beenleigh': ('BEENLEIGH COMMERCIAL SITE MAINTENANCE', 'Beenleigh sits within a busy commercial and industrial corridor with warehouses, trade businesses, retail sites and managed properties. Storeman can help maintain carparks, hard surfaces, grounds and external presentation for sites that need reliable ongoing attention.', 'Recurring services can be particularly useful where vehicle traffic and regular site use quickly bring back debris, dirt or overgrown exterior areas.', [('Do you offer commercial sweeping in Beenleigh?', 'Yes. Suitable carparks, hardstands and paved commercial areas can be assessed for mechanical sweeping.'), ('Can you quote recurring maintenance?', 'Yes. We can build a recurring schedule after reviewing the property and required services.'), ('Do you service trade and warehouse sites?', 'Yes. Beenleigh trade, warehouse and commercial properties are a good fit for Storeman’s combined exterior services.')]),
-            'loganholme': ('LOGANHOLME COMMERCIAL EXTERIOR SERVICES', 'Loganholme includes retail, automotive, warehouse, office and trade properties where carparks, frontage and customer-facing external areas form a major part of the site. Storeman can combine sweeping, grounds and exterior cleaning to keep those areas consistently maintained.', 'For businesses with fleets or service vehicles, fleet washing can also be assessed as part of a broader exterior maintenance arrangement.', [('Can Storeman service large commercial carparks in Loganholme?', 'Mechanical sweeping can be assessed for suitable large paved and carpark areas.'), ('Do you provide fleet washing?', 'Yes. We can assess on-site fleet washing where access and working conditions are suitable.'), ('Can I use Storeman for several services?', 'Yes. The business is designed around combining exterior property services under one contractor.')]),
-            'slacks-creek': ('SLACKS CREEK INDUSTRIAL & TRADE SITES', 'Slacks Creek has a strong concentration of workshops, trade businesses, warehouses and automotive properties. These sites commonly have paved yards, carparks, loading areas and vehicle traffic that can benefit from regular sweeping and periodic exterior washing.', 'Storeman can also maintain landscaped areas and frontage, giving property managers a single contact for more of the external site.', [('Is sweeping suitable for workshop and trade sites?', 'Yes, where the site has adequate paved space and access for the equipment.'), ('Can pressure washing be scheduled periodically?', 'Yes. Periodic exterior cleaning can be combined with more frequent grounds or sweeping visits.'), ('Do you offer one-off work?', 'Yes. Both one-off and recurring commercial work can be quoted.')]),
-            'acacia-ridge': ('ACACIA RIDGE INDUSTRIAL PROPERTY SERVICES', 'Acacia Ridge is one of Brisbane’s major industrial and logistics precincts, with warehouses, freight operations, distribution facilities and large paved sites. Mechanical sweeping is particularly relevant where hardstands, access roads and carparks need efficient recurring debris control.', 'Grounds maintenance, exterior cleaning and fleet washing can be added where needed so more of the property is managed under one Storeman arrangement.', [('Do you service warehouse hardstands in Acacia Ridge?', 'Yes. Suitable hardstands, yards and access areas can be assessed for commercial mechanical sweeping.'), ('Can you work around operating businesses?', 'Scheduling and access requirements are discussed during quoting so we can determine what is practical for the site.'), ('Can fleet washing be combined with site maintenance?', 'Yes, where the site and fleet setup are suitable.')]),
-            'rocklea': ('ROCKLEA INDUSTRIAL & DISTRIBUTION SITES', 'Rocklea has a dense mix of industrial, wholesale, distribution and warehouse properties, many with substantial paved yards, loading areas and vehicle movements. Storeman can provide mechanical sweeping and exterior cleaning to help keep those high-use areas presentable.', 'Where sites also have landscaped boundaries or fleet vehicles, grounds maintenance and fleet washing can be incorporated into a broader recurring service plan.', [('Do you sweep large warehouse yards in Rocklea?', 'Yes. Mechanical sweeping is intended for suitable larger paved commercial areas such as yards, carparks and access roads.'), ('Can Storeman clean loading and external paved areas?', 'Pressure and exterior washing can be assessed based on surface type, drainage, access and the required outcome.'), ('Do you offer regular contracts?', 'Yes. Recurring commercial service schedules are a core part of Storeman’s model.')]),
-            'eagle-farm': ('EAGLE FARM LOGISTICS & FLEET PROPERTY CARE', 'Eagle Farm contains logistics, transport, warehouse and fleet-oriented businesses where exterior areas work hard every day. Sweeping can help manage loose debris across yards and access areas, while fleet washing and exterior cleaning support a professional customer-facing operation.', 'For larger facilities with frontage or landscaped areas, Storeman can coordinate grounds maintenance alongside the hard-surface and vehicle services.', [('Do you provide fleet washing in Eagle Farm?', 'Yes. We can assess suitable commercial fleets and on-site washing conditions.'), ('Can you mechanically sweep logistics yards?', 'Yes, where the yard is paved and has suitable access for the equipment.'), ('Can the services be scheduled together?', 'Depending on the property, multiple services can be coordinated under one Storeman arrangement.')]),
-            'hemmant': ('HEMMANT INDUSTRIAL EXTERIOR MAINTENANCE', 'Hemmant is a major industrial and transport area with warehouses, yards, logistics operations and heavy vehicle activity. Those conditions can make regular hard-surface maintenance and debris control especially important for presentation and general site upkeep.', 'Storeman can combine commercial sweeping with grounds, exterior pressure washing and fleet washing for properties that want fewer separate contractors to manage.', [('Do you service industrial yards in Hemmant?', 'Yes. Suitable paved yards and hardstands can be assessed for mechanical sweeping.'), ('Can pressure washing be added periodically?', 'Yes. Exterior cleaning can be scheduled separately or alongside recurring property maintenance.'), ('Do you service transport businesses?', 'Yes. Transport and fleet-oriented properties are among the commercial site types Storeman is designed to serve.')]),
-            'murarrie': ('MURARRIE COMMERCIAL & INDUSTRIAL MAINTENANCE', 'Murarrie has warehouses, office-industrial properties, distribution businesses and commercial facilities close to major transport corridors. Storeman can help keep external hard surfaces, frontage, grounds and carparks consistently maintained.', 'The one-contractor approach is useful for managed properties that need frequent grounds attention plus less frequent sweeping or exterior cleaning throughout the year.', [('Can you provide recurring grounds maintenance in Murarrie?', 'Yes. We can discuss an appropriate recurring schedule after assessing the property.'), ('Is mechanical sweeping available for commercial carparks?', 'Yes, for suitable paved areas with adequate access.'), ('Can Storeman combine recurring and periodic services?', 'Yes. For example, grounds maintenance can run regularly while sweeping or pressure washing is scheduled less frequently.')]),
-          }
+          root = Path('.')
+          removed_pages = [
+            'pressure-washing.html','fleet-washing.html',
+            'commercial-pressure-washing-gold-coast.html','commercial-pressure-washing-brisbane.html','commercial-pressure-washing-logan.html','commercial-pressure-washing-yatala.html',
+            'fleet-washing-gold-coast.html','fleet-washing-brisbane.html','fleet-washing-logan.html','fleet-washing-yatala.html'
+          ]
+          for name in removed_pages:
+              p=root/name
+              if p.exists(): p.unlink()
+          for name in ['assets/pressure washing.jpg','assets/fleetwash.jpg']:
+              p=root/name
+              if p.exists(): p.unlink()
 
-          for slug, (kicker, p1, p2, faqs) in pages.items():
-              path = Path(f'commercial-property-services-{slug}.html')
-              if not path.exists():
-                  continue
-              text = path.read_text(encoding='utf-8')
-              if 'data-local-seo-depth' in text:
-                  continue
-              faq_html = ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in faqs)
-              block = f'<section class="loc-section loc-faq" data-local-seo-depth><div class="loc-container"><p class="loc-kicker">{kicker}</p><h2>LOCAL COMMERCIAL PROPERTY QUESTIONS.</h2><div class="loc-copy"><p>{p1}</p><p>{p2}</p><p>Explore our <a href="/sweeping.html"><strong>commercial sweeping</strong></a>, <a href="/grounds.html"><strong>grounds maintenance</strong></a>, <a href="/pressure-washing.html"><strong>commercial exterior cleaning</strong></a> and <a href="/fleet-washing.html"><strong>fleet washing</strong></a> services, or request a free site assessment for this location.</p></div>{faq_html}</div></section>'
-              marker = '<section class="loc-cta">'
-              if marker in text:
-                  text = text.replace(marker, block + marker, 1)
-                  path.write_text(text, encoding='utf-8')
+          def write(path, text):
+              path.write_text(text, encoding='utf-8')
+
+          def clean_common(text):
+              replacements = [
+                ('Commercial mechanical sweeping, grounds maintenance, lawn and garden, exterior cleaning and fleet washing across South East Queensland.', 'Commercial mechanical sweeping, grounds maintenance and lawn & garden maintenance across South East Queensland.'),
+                ('commercial mechanical sweeping, grounds maintenance, lawn and garden, exterior cleaning and fleet washing across South East Queensland.', 'commercial mechanical sweeping, grounds maintenance and lawn & garden maintenance across South East Queensland.'),
+                ('commercial sweeping, grounds, lawn and garden, pressure washing and fleet washing', 'commercial sweeping, grounds maintenance and lawn & garden care'),
+                ('commercial sweeping, grounds maintenance, lawn and garden, pressure washing and fleet washing', 'commercial sweeping, grounds maintenance and lawn & garden care'),
+                ('sweeping, grounds maintenance, lawn and garden, pressure washing and fleet washing', 'sweeping, grounds maintenance and lawn & garden care'),
+                ('sweeping, grounds maintenance, lawn and garden care, exterior cleaning and fleet washing', 'sweeping, grounds maintenance and lawn and garden care'),
+                ('sweeping, grounds maintenance, lawn and garden, exterior cleaning and fleet washing', 'sweeping, grounds maintenance and lawn and garden care'),
+                ('sweeping, grounds, pressure washing and fleet washing', 'sweeping, grounds maintenance and lawn & garden care'),
+                ('sweeping, grounds, exterior cleaning and fleet washing', 'sweeping, grounds maintenance and lawn & garden care'),
+                ('sweeping, grounds and exterior cleaning', 'sweeping, grounds and lawn & garden maintenance'),
+                ('pressure washing and fleet washing', 'grounds and lawn maintenance'),
+                ('exterior cleaning and fleet washing', 'grounds and lawn maintenance'),
+                ('fleet, transport & trade businesses', 'transport & trade businesses'),
+                ('FLEET, TRANSPORT &amp;<br>TRADE BUSINESSES', 'TRANSPORT &amp;<br>TRADE BUSINESSES'),
+                ('Vehicle washing, yards, hardstands and exterior site maintenance.', 'Sweeping, yards, hardstands and recurring grounds maintenance.'),
+                ('Selected lawn, garden and exterior cleaning work for larger residential properties.', 'Selected lawn and garden maintenance for larger residential properties.'),
+                ('business, strata, industrial &amp; fleet sites', 'business, strata and industrial sites'),
+                ('Business, strata, industrial &amp; fleet sites', 'Business, strata and industrial sites'),
+                ('warehouses, industrial yards, hardstands, fleet facilities and commercial sites', 'warehouses, industrial yards, hardstands and commercial sites'),
+                ('warehouses, industrial yards, hardstands, fleet operations and commercial sites', 'warehouses, industrial yards, hardstands and commercial sites'),
+                ('warehouses, industrial yards, hardstands, fleet facilities', 'warehouses, industrial yards and hardstands'),
+                ('fleet facilities', 'trade facilities'),
+                ('Fleet facilities', 'Trade facilities'),
+                ('fleet operations', 'trade operations'),
+                ('Fleet operations', 'Trade operations'),
+              ]
+              for a,b in replacements: text=text.replace(a,b)
+              return text
+
+          # Homepage
+          p=root/'index.html'; text=p.read_text(encoding='utf-8')
+          text=clean_common(text)
+          text=re.sub(r'\s*<article class="service-card service-pressure">.*?</article>', '', text, flags=re.S)
+          text=re.sub(r'\s*<article class="service-card service-fleet">.*?</article>', '', text, flags=re.S)
+          text=text.replace('service-grid service-grid-five','service-grid service-grid-three')
+          text=re.sub(r'<figure><img src="/assets/pressure%20washing\.jpg".*?</figure>', '', text, flags=re.S)
+          text=re.sub(r'<figure><img src="/assets/fleetwash\.jpg".*?</figure>', '', text, flags=re.S)
+          text=text.replace('Yes. You can combine sweeping, grounds maintenance, lawn and garden, pressure washing and fleet washing so more of the exterior is handled by one contractor.','Yes. You can combine mechanical sweeping, grounds maintenance and lawn & garden care so more of the property is handled by one contractor.')
+          write(p,text)
+
+          # Quote page
+          p=root/'quote.html'; text=p.read_text(encoding='utf-8'); text=clean_common(text)
+          text=re.sub(r'<label class="service-check"><input type="checkbox" name="services" value="pressure">.*?</label>', '', text, flags=re.S)
+          text=re.sub(r'<label class="service-check"><input type="checkbox" name="services" value="fleet">.*?</label>', '', text, flags=re.S)
+          write(p,text)
+
+          # Contact
+          p=root/'contact.html'; text=p.read_text(encoding='utf-8'); text=clean_common(text)
+          text=text.replace('Need sweeping, grounds maintenance, lawn and garden work, exterior cleaning or fleet washing?', 'Need mechanical sweeping, grounds maintenance or lawn and garden work?')
+          write(p,text)
+
+          # Areas hub
+          p=root/'areas.html'; text=p.read_text(encoding='utf-8'); text=clean_common(text)
+          text=re.sub(r'<a href="/commercial-pressure-washing-[^"]+\.html">.*?</a>', '', text, flags=re.S)
+          text=re.sub(r'<a href="/fleet-washing-[^"]+\.html">.*?</a>', '', text, flags=re.S)
+          write(p,text)
+
+          # Phase 2 suburb pages: remove banned service references and strengthen the three-service focus.
+          for p in root.glob('commercial-property-services-*.html'):
+              text=p.read_text(encoding='utf-8'); text=clean_common(text)
+              text=re.sub(r'<a[^>]+href="/[^"]*(?:pressure-washing|fleet-washing)[^"]*"[^>]*>.*?</a>', '', text, flags=re.S|re.I)
+              text=re.sub(r'<details>.*?(?:pressure washing|pressure clean|exterior cleaning|exterior washing|fleet washing|commercial fleets).*?</details>', '', text, flags=re.S|re.I)
+              text=re.sub(r'<div class="loc-benefit">.*?(?:PRESSURE|FLEET).*?</div>', '', text, flags=re.S|re.I)
+              text=re.sub(r'<div class="loc-site">.*?FLEET.*?</div>', '', text, flags=re.S|re.I)
+              text=re.sub(r'<p>Explore our .*?request a free site assessment for this location\.</p>', '<p>Explore our <a href="/sweeping.html"><strong>commercial sweeping</strong></a>, <a href="/grounds.html"><strong>grounds maintenance</strong></a> and <a href="/lawn-garden.html"><strong>lawn &amp; garden maintenance</strong></a> services, or request a free site assessment for this location.</p>', text, flags=re.S|re.I)
+              # Remove remaining paragraphs that explicitly sell either removed service.
+              text=re.sub(r'<p>[^<]*(?:pressure washing|pressure clean|exterior cleaning|exterior washing|fleet washing)[^<]*</p>', '', text, flags=re.I)
+              text=re.sub(r'\b[Ff]leet[- ](?:oriented|heavy)\b', 'transport', text)
+              text=re.sub(r'\b[Ff]leet\b', 'commercial vehicle', text)
+              write(p,text)
+
+          # Remaining core HTML pages: remove links/cards to removed services and scrub marketing references.
+          for p in root.glob('*.html'):
+              if p.name in removed_pages: continue
+              text=p.read_text(encoding='utf-8'); text=clean_common(text)
+              text=re.sub(r'<a[^>]+href="/[^"]*(?:pressure-washing|fleet-washing)[^"]*"[^>]*>.*?</a>', '', text, flags=re.S|re.I)
+              text=re.sub(r'<article[^>]*>.*?href="/[^"]*(?:pressure-washing|fleet-washing)[^"]*".*?</article>', '', text, flags=re.S|re.I)
+              text=re.sub(r'<div class="related-card"[^>]*>.*?(?:PRESSURE|FLEET).*?</div>', '', text, flags=re.S|re.I)
+              write(p,text)
+
+          # Homepage behavior and capability strip.
+          p=root/'script.js'; text=p.read_text(encoding='utf-8')
+          text=re.sub(r"\n\s*'\.service-pressure': '/pressure-washing\.html',?", '', text)
+          text=re.sub(r"\n\s*'\.service-fleet': '/fleet-washing\.html',?", '', text)
+          text=text.replace("'.service-lawn': '/lawn-garden.html',\n};", "'.service-lawn': '/lawn-garden.html'\n};")
+          text=text.replace('FIVE CORE SERVICES. ONE STOREMAN TEAM.','THREE CORE SERVICES. ONE STOREMAN TEAM.')
+          text=re.sub(r'grid\.innerHTML = `.*?`;', 'grid.innerHTML = `<a class="capability-tile" href="/sweeping.html"><img src="/assets/sweeping.jpg" alt="Storeman sweeping service" loading="lazy"><span>SWEEPING</span></a><a class="capability-tile" href="/grounds.html"><img src="/assets/grounds.jpg" alt="Storeman grounds service" loading="lazy"><span>GROUNDS</span></a><a class="capability-tile" href="/lawn-garden.html"><img src="/assets/mowing.jpg" alt="Storeman lawn and garden service" loading="lazy"><span>LAWN &amp; GARDEN</span></a>`;', text, count=1, flags=re.S)
+          text=text.replace('grid-template-columns:repeat(5,1fr)','grid-template-columns:repeat(3,1fr)')
+          text=text.replace('We bring sweeping, grounds maintenance, lawn and garden care, exterior cleaning and fleet washing together under one service.', 'We bring mechanical sweeping, grounds maintenance and lawn and garden care together under one service.')
+          write(p,text)
+
+          # Quote JS labels and three-column service cards.
+          p=root/'quote.js'; text=p.read_text(encoding='utf-8')
+          text=text.replace('.service-grid-five','.service-grid-three')
+          text=text.replace('repeat(5,minmax(0,1fr))','repeat(3,minmax(0,1fr))')
+          text=re.sub(r"const serviceLabels = \{[^}]+\};", "const serviceLabels = { sweeping:'Mechanical Sweeping', grounds:'Grounds Maintenance', lawn:'Lawn & Garden' };", text)
+          write(p,text)
+
+          # Schema reflects only current services.
+          p=root/'seo.js'; text=p.read_text(encoding='utf-8')
+          text=text.replace('Commercial exterior property services including mechanical sweeping, grounds maintenance, lawn and garden maintenance, exterior cleaning and fleet washing across South East Queensland.', 'Commercial property maintenance including mechanical sweeping, grounds maintenance and lawn and garden maintenance across South East Queensland.')
+          text=re.sub(r"\n\s*\['commercial-pressure-washing'.*?\],", '', text)
+          text=re.sub(r"\n\s*\['pressure-washing\.html'.*?\],", '', text)
+          text=re.sub(r"\n\s*\['fleet-washing'.*?\]", '', text)
+          text=text.replace("['lawn-garden.html', 'Lawn & Garden Maintenance'],\n  ];", "['lawn-garden.html', 'Lawn & Garden Maintenance']\n  ];")
+          write(p,text)
+
+          # Sitemap: remove retired service URLs.
+          p=root/'sitemap.xml'; text=p.read_text(encoding='utf-8')
+          text=re.sub(r'<url><loc>https://storeman\.com\.au/(?:commercial-pressure-washing-[^<]+|fleet-washing[^<]*)</loc>.*?</url>\s*', '', text, flags=re.S)
+          text=re.sub(r'<url><loc>https://storeman\.com\.au/(?:pressure-washing|fleet-washing)\.html</loc>.*?</url>\s*', '', text, flags=re.S)
+          write(p,text)
+
+          # Ensure the homepage three-card layout stays balanced.
+          p=root/'layout-polish.css'; text=p.read_text(encoding='utf-8')
+          if '.service-grid-three{' not in text:
+              text += '\n.service-grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}\n@media(max-width:980px){.service-grid-three{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:680px){.service-grid-three{grid-template-columns:1fr}}\n'
+          write(p,text)
           PY
-          python /tmp/storeman_local_depth.py
-      - name: Validate SEO markup
+          python /tmp/storeman_focus.py
+      - name: Validate removed services are gone
         run: |
           python - <<'PY'
           from pathlib import Path
+          banned_pages = list(Path('.').glob('*pressure-washing*.html')) + list(Path('.').glob('fleet-washing*.html'))
+          if banned_pages:
+              raise SystemExit('Retired service pages still exist: ' + ', '.join(str(p) for p in banned_pages))
+          checks = ['index.html','quote.html','contact.html','areas.html','script.js','quote.js','seo.js','sitemap.xml']
           bad=[]
-          for p in Path('.').glob('*.html'):
-              if p.name == 'estimate.html':
-                  continue
-              t=p.read_text(encoding='utf-8')
-              if '</head>' not in t.lower() or '/seo.js' not in t or '\x01' in t:
-                  bad.append(p.name)
+          for name in checks:
+              t=Path(name).read_text(encoding='utf-8').lower()
+              if 'pressure washing' in t or 'fleet washing' in t or '/pressure-washing' in t or '/fleet-washing' in t:
+                  bad.append(name)
           if bad:
-              raise SystemExit('SEO validation failed: ' + ', '.join(bad))
-          phase2=list(Path('.').glob('commercial-property-services-*.html'))
-          missing=[p.name for p in phase2 if 'data-local-seo-depth' not in p.read_text(encoding='utf-8')]
-          if missing:
-              raise SystemExit('Phase 2 content validation failed: ' + ', '.join(missing))
-          print('Validated technical SEO and Phase 2 local content.')
+              raise SystemExit('Removed services still referenced in: ' + ', '.join(bad))
+          print('Validated three-service focus: sweeping, grounds, lawn & garden.')
           PY
-      - name: Commit local SEO improvements
+      - name: Commit cleanup
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add 'commercial-property-services-*.html'
+          git add -A
           if git diff --cached --quiet; then
-            echo 'No local SEO changes needed.'
+            echo 'No changes needed.'
           else
-            git commit -m 'Strengthen Phase 2 local SEO content and internal links'
+            git commit -m 'Focus Storeman on sweeping grounds and lawn services'
             git push origin main
           fi
