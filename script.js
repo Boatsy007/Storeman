@@ -106,6 +106,30 @@ if (showcase) {
   document.head.appendChild(style);
 }
 
+// Give the sticky header quote CTA one restrained attention nudge after the
+// visitor has moved through roughly the first quarter of the page. It runs once
+// only and respects reduced-motion preferences.
+const headerQuoteButton = document.querySelector('.header-cta.quote-trigger');
+let quoteNudgePlayed = false;
+
+function maybeNudgeQuoteButton() {
+  if (!headerQuoteButton || quoteNudgePlayed || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  if (scrollable <= 0) return;
+  const progress = window.scrollY / scrollable;
+  if (progress >= 0.25) {
+    quoteNudgePlayed = true;
+    headerQuoteButton.classList.add('quote-scroll-nudge');
+    window.setTimeout(() => headerQuoteButton.classList.remove('quote-scroll-nudge'), 1200);
+    window.removeEventListener('scroll', maybeNudgeQuoteButton);
+  }
+}
+
+if (headerQuoteButton) {
+  window.addEventListener('scroll', maybeNudgeQuoteButton, { passive: true });
+  maybeNudgeQuoteButton();
+}
+
 const params = new URLSearchParams(window.location.search);
 if (params.get('quote') === '1' || params.get('estimate') === '1') {
   setTimeout(() => openModal(), 250);
