@@ -40,8 +40,6 @@
   }
 
   function calculateEstimate(services, frequency) {
-    // Rank selected services by midpoint so the largest likely scope carries the
-    // full visit cost and additional services receive the bundle efficiencies.
     const selected = services
       .map((service) => ({ service, ...SERVICE_BANDS[service] }))
       .filter((item) => Number.isFinite(item.min) && Number.isFinite(item.max))
@@ -60,8 +58,6 @@
     min = roundTo50(min * factor);
     max = roundTo50(max * factor);
 
-    // Keep a genuinely useful gap. Exterior/fleet work carries more uncertainty
-    // because building area, height, condition and fleet size are unknown online.
     const hasHighUncertaintyService = services.includes('pressure') || services.includes('fleet');
     const minimumSpread = hasHighUncertaintyService ? 2.0 : 1.65;
     max = Math.max(max, roundTo50(min * minimumSpread));
@@ -101,8 +97,19 @@
     const status = estimator.querySelector('[data-estimate-status]');
     const resultPrice = estimator.querySelector('[data-estimate-price]');
     const resultSummary = estimator.querySelector('[data-estimate-summary]');
+    const finalStage = estimator.querySelector('[data-estimate-stage="3"]');
+    const finalActions = finalStage?.querySelector('.estimate-actions');
+    const success = estimator.querySelector('[data-estimate-success]');
     let step = 1;
     let leadId = '';
+
+    // The estimate is now the final step. Storeman follows up automatically to
+    // arrange the site visit, so there is no second confirmation button.
+    if (finalActions) finalActions.remove();
+    if (success) {
+      success.hidden = true;
+      success.textContent = 'Storeman will be in contact to arrange your site visit. A copy of your estimate and enquiry details will also be emailed to you.';
+    }
 
     function setStep(nextStep) {
       step = nextStep;
@@ -171,11 +178,16 @@
           return;
         }
 
+        estimateButton.disabled = true;
+        estimateButton.textContent = 'CALCULATING…';
+        if (status) status.textContent = '';
+
         const data = new FormData(form);
         const frequency = safe(data.get('frequency')) || 'Not sure';
         const estimate = calculateEstimate(services, frequency);
+        const estimateText = `${money.format(estimate.min)} – ${money.format(estimate.max)} + GST`;
 
-        if (resultPrice) resultPrice.textContent = `${money.format(estimate.min)} – ${money.format(estimate.max)} + GST`;
+        if (resultPrice) resultPrice.textContent = estimateText;
         if (resultSummary) {
           resultSummary.textContent = `Based on ${services.length} selected service${services.length > 1 ? 's' : ''} and a ${frequency.toLowerCase()} service preference.`;
         }
@@ -193,13 +205,31 @@
           services,
           frequency,
           estimateMin: estimate.min,
-          estimateMax: estimate.max
+          estimateMax: estimate.max,
+          estimate: estimateText,
+          siteVisitFollowUp: true
         };
 
         persistLocalLead(updatedLead);
-        postLead(updatedLead);
-        if (status) status.textContent = '';
         setStep(3);
+        if (success) {
+          success.hidden = false;
+          success.textContent = 'Storeman will be in contact to arrange your site visit. We’re also emailing a copy of this estimate and your enquiry details to you.';
+        }
+
+        const result = await postLead(updatedLead);
+        if (status) {
+          if (result.ok === false && result.offline) {
+            status.textContent = 'Your estimate is shown above. Storeman has your saved enquiry details and will follow up.';
+          } else if (result.customerNotified === false && result.configured) {
+            status.textContent = 'Your estimate is complete. Storeman will be in contact to arrange your site visit.';
+          } else {
+            status.textContent = 'Estimate complete — Storeman will contact you to arrange your site visit.';
+          }
+        }
+
+        estimateButton.disabled = false;
+        estimateButton.innerHTML = 'GET MY ESTIMATE <span>→</span>';
         return;
       }
 
@@ -210,42 +240,7 @@
       }
     });
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const data = new FormData(form);
-      const services = selectedServices(form);
-      const frequency = safe(data.get('frequency')) || 'Not sure';
-      const estimateText = resultPrice?.textContent || '';
-
-      const payload = {
-        id: leadId || `stm_${Date.now().toString(36)}`,
-        stage: 'site_visit_requested',
-        modelVersion: MODEL_VERSION,
-        updatedAt: new Date().toISOString(),
-        name: safe(data.get('name')),
-        business: safe(data.get('business')),
-        email: safe(data.get('email')),
-        phone: safe(data.get('phone')),
-        address: safe(data.get('address')),
-        services,
-        frequency,
-        estimate: estimateText,
-        siteVisitRequested: true
-      };
-
-      persistLocalLead(payload);
-      await postLead(payload);
-
-      const success = estimator.querySelector('[data-estimate-success]');
-      if (success) {
-        success.hidden = false;
-        success.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      }
-      const submit = form.querySelector('[data-site-visit]');
-      if (submit) {
-        submit.disabled = true;
-        submit.textContent = 'SITE VISIT REQUESTED ✓';
-      }
-    });
+    // Prevent accidental form submission: the flow completes when GET MY ESTIMATE is clicked.
+    form.addEventListener('submit', (event) => event.preventDefault());
   });
 })();
