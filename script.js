@@ -73,6 +73,7 @@ function updateReview() {
 }
 
 function openModal({ auto = false } = {}) {
+  if (window.innerWidth <= 620) return;
   if (!modal || modal.classList.contains('is-open')) return;
   if (autoPopupTimer) {
     clearTimeout(autoPopupTimer);
@@ -145,6 +146,29 @@ if (form) {
   });
 }
 
+// Make the main service cards behave as clear links to dedicated service pages.
+const servicePages = {
+  '.service-sweeping': '/sweeping.html',
+  '.service-grounds': '/grounds.html',
+  '.service-pressure': '/pressure-washing.html',
+  '.service-fleet': '/fleet-washing.html'
+};
+
+Object.entries(servicePages).forEach(([selector, href]) => {
+  const card = document.querySelector(selector);
+  if (!card) return;
+  card.setAttribute('role', 'link');
+  card.setAttribute('tabindex', '0');
+  card.style.cursor = 'pointer';
+  card.addEventListener('click', () => window.location.href = href);
+  card.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      window.location.href = href;
+    }
+  });
+});
+
 // Replace the former industries strip with a second, highly visual services showcase.
 const showcase = document.querySelector('.industries');
 if (showcase) {
@@ -159,11 +183,11 @@ if (showcase) {
   if (grid) {
     grid.className = 'capability-grid';
     grid.innerHTML = `
-      <figure><img src="/assets/sweeping.jpg" alt="Storeman sweeping service" loading="lazy"><figcaption>SWEEPING</figcaption></figure>
-      <figure><img src="/assets/grounds.jpg" alt="Storeman grounds service" loading="lazy"><figcaption>GROUNDS</figcaption></figure>
-      <figure><img src="/assets/mowing.jpg" alt="Storeman lawn and garden service" loading="lazy"><figcaption>LAWN &amp; GARDEN</figcaption></figure>
-      <figure><img src="/assets/pressure%20washing.jpg" alt="Storeman pressure washing service" loading="lazy"><figcaption>PRESSURE WASHING</figcaption></figure>
-      <figure><img src="/assets/fleetwash.jpg" alt="Storeman fleet washing service" loading="lazy"><figcaption>FLEET WASHING</figcaption></figure>`;
+      <a class="capability-tile" href="/sweeping.html"><img src="/assets/sweeping.jpg" alt="Storeman sweeping service" loading="lazy"><span>SWEEPING</span></a>
+      <a class="capability-tile" href="/grounds.html"><img src="/assets/grounds.jpg" alt="Storeman grounds service" loading="lazy"><span>GROUNDS</span></a>
+      <a class="capability-tile" href="/lawn-garden.html"><img src="/assets/mowing.jpg" alt="Storeman lawn and garden service" loading="lazy"><span>LAWN &amp; GARDEN</span></a>
+      <a class="capability-tile" href="/pressure-washing.html"><img src="/assets/pressure%20washing.jpg" alt="Storeman pressure washing service" loading="lazy"><span>PRESSURE WASHING</span></a>
+      <a class="capability-tile" href="/fleet-washing.html"><img src="/assets/fleetwash.jpg" alt="Storeman fleet washing service" loading="lazy"><span>FLEET WASHING</span></a>`;
   }
 
   document.querySelectorAll('a[href="#industries"]').forEach((link) => {
@@ -172,8 +196,7 @@ if (showcase) {
   });
 }
 
-// Ecommerce-style behaviour: automatically present the quote offer shortly after the page loads.
-// All existing GET A QUOTE buttons still open it immediately.
-if (modal) {
+// Ecommerce-style behaviour on desktop/tablet only. Mobile intentionally has no popup.
+if (modal && window.innerWidth > 620) {
   autoPopupTimer = window.setTimeout(() => openModal({ auto: true }), 1600);
 }
