@@ -13,6 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/layout-polish.css" />
+  <link rel="stylesheet" href="/quote-popup.css" />
 </head>
 <body>
 <header class="site-header">
@@ -127,6 +128,77 @@
   </div>
 </footer>
 
-<div class="modal" id="quoteModal" aria-hidden="true"><div class="modal-backdrop" data-close-modal></div><section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="quoteTitle"><button class="modal-close" data-close-modal>×</button><p class="label">GET A QUOTE</p><h2 id="quoteTitle">TELL US ABOUT YOUR SITE.</h2><form class="quote-form" id="quoteForm"><label><span>Name</span><input name="name" required></label><label><span>Business</span><input name="business"></label><label><span>Email</span><input type="email" name="email" required></label><label><span>Phone</span><input name="phone"></label><label class="full"><span>What does your site need?</span><textarea name="message" rows="5"></textarea></label><button class="button button-yellow full" type="submit">PREPARE MY ENQUIRY →</button><p class="form-note full" id="formNote">Your email app will open with the enquiry ready to send.</p></form></section></div>
+<div class="modal" id="quoteModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close-modal></div>
+  <section class="quote-shell" role="dialog" aria-modal="true" aria-labelledby="quoteTitle">
+    <button class="quote-close" type="button" data-close-modal aria-label="Close quote form">×</button>
+
+    <aside class="quote-visual">
+      <img src="/assets/mowing.jpg" alt="Storeman grounds maintenance service">
+      <div class="quote-visual-content">
+        <img class="quote-brand" src="/assets/storemanlogo.jpg" alt="Storeman External Property Solutions">
+        <h3 class="quote-kicker">GET A<br>FAST QUOTE<br><span>TODAY</span></h3>
+        <div class="quote-offer"><b>FREE</b> external<br>vehicle wash*</div>
+        <div class="quote-perks">
+          <div class="quote-perk"><span class="quote-perk-icon">⚡</span><div><strong>Quick &amp; easy</strong><span>Submit in minutes</span></div></div>
+          <div class="quote-perk"><span class="quote-perk-icon">▣</span><div><strong>Tailored pricing</strong><span>For your property</span></div></div>
+          <div class="quote-perk"><span class="quote-perk-icon">◷</span><div><strong>Reliable service</strong><span>Professional &amp; responsive</span></div></div>
+        </div>
+        <div class="quote-tagline">SWEEP &nbsp; · &nbsp; MAINTAIN &nbsp; · &nbsp; CLEAN &nbsp; · &nbsp; PRESENT</div>
+      </div>
+      <small class="quote-terms">*Conditions apply</small>
+    </aside>
+
+    <div class="quote-form-panel">
+      <p class="label">GET STARTED</p>
+      <h2 id="quoteTitle">Request a Quote</h2>
+      <p class="quote-lead">Tell us a bit about your property and we’ll get back to you with a tailored quote, usually within 24 hours.</p>
+
+      <div class="quote-steps" aria-label="Quote form progress">
+        <div class="quote-step active" data-step-indicator="1"><span>1</span>Your Details</div>
+        <div class="quote-step" data-step-indicator="2"><span>2</span>Property Info</div>
+        <div class="quote-step" data-step-indicator="3"><span>3</span>Review &amp; Submit</div>
+      </div>
+
+      <form class="quote-form" id="quoteForm">
+        <div class="form-stage active" data-form-stage="1">
+          <div class="quote-fields">
+            <label><span>Full Name *</span><input name="name" autocomplete="name" required placeholder="John Smith"></label>
+            <label><span>Business / Organisation</span><input name="business" autocomplete="organization" placeholder="ABC Pty Ltd"></label>
+            <label><span>Phone Number *</span><input name="phone" autocomplete="tel" required placeholder="0400 123 456"></label>
+            <label><span>Email Address *</span><input type="email" name="email" autocomplete="email" required placeholder="you@company.com"></label>
+          </div>
+          <div class="file-drop">
+            <strong>Upload Photos <span style="font-weight:500;color:#777">(optional)</span></strong>
+            <small>Add photos of the area for a more accurate quote</small>
+            <label class="file-button" for="quoteFiles">CHOOSE FILES</label>
+            <input id="quoteFiles" type="file" name="photos" accept="image/jpeg,image/png,application/pdf" multiple>
+            <small id="fileSummary">JPG, PNG or PDF (Max 10MB each)</small>
+          </div>
+          <div class="quote-nav"><button class="quote-next" type="button" data-next-step="2">NEXT &nbsp; →</button></div>
+        </div>
+
+        <div class="form-stage" data-form-stage="2">
+          <div class="quote-fields">
+            <label class="full"><span>Property Address *</span><input name="address" required placeholder="Street address, suburb"></label>
+            <label><span>Property Type *</span><select name="propertyType" required><option value="">Select one</option><option>Commercial</option><option>Industrial</option><option>Strata</option><option>Retail</option><option>Education</option><option>Carpark / Large Site</option><option>Other</option></select></label>
+            <label><span>Preferred Service</span><select name="service"><option>Complete external property service</option><option>Mechanical sweeping</option><option>Grounds maintenance</option><option>Exterior cleaning</option><option>Fleet &amp; vehicle washing</option></select></label>
+            <label><span>Service Frequency</span><select name="frequency"><option>One-off quote</option><option>Every 4 weeks</option><option>Every 6 weeks</option><option>Every 8 weeks</option><option>Other recurring schedule</option></select></label>
+            <label><span>Best Time to Contact</span><select name="contactTime"><option>Any time</option><option>Morning</option><option>Afternoon</option></select></label>
+            <label class="full"><span>What would you like us to look at?</span><textarea name="message" rows="5" placeholder="Tell us what needs sweeping, mowing, cleaning or washing..."></textarea></label>
+          </div>
+          <div class="quote-nav"><button class="quote-back" type="button" data-prev-step="1">BACK</button><button class="quote-next" type="button" data-next-step="3">REVIEW &nbsp; →</button></div>
+        </div>
+
+        <div class="form-stage" data-form-stage="3">
+          <div class="review-box" id="quoteReview"><strong>Your quote request</strong><span>Review your details before sending.</span></div>
+          <div class="quote-nav"><button class="quote-back" type="button" data-prev-step="2">BACK</button><button class="quote-submit" type="submit">SUBMIT QUOTE REQUEST &nbsp; →</button></div>
+          <p class="form-note" id="formNote">Your information is only used to prepare and respond to your quote request.</p>
+        </div>
+      </form>
+      <p class="secure-note">🔒 Your information is secure and will only be used to provide a quote.</p>
+    </div>
+  </section>
+</div>
 <script src="/script.js"></script>
 </body></html>
