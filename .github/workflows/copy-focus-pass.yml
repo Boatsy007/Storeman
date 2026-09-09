@@ -1,0 +1,90 @@
+name: Storeman copy focus pass
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/copy-focus-pass.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refine-copy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tighten copy around three core services
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+            'One team. Every exterior.': 'One team. Smarter site maintenance.',
+            'Commercial exterior services that keep your site clean, safe and looking its best.<br>Across South East Queensland.': 'Commercial sweeping, grounds maintenance and lawn & garden care for well-maintained sites across South East Queensland.',
+            'COMPLETE EXTERNAL PROPERTY SOLUTIONS': 'CORE OUTDOOR PROPERTY SERVICES',
+            'One contractor for recurring exterior maintenance across managed sites.': 'One contractor for recurring sweeping, grounds and lawn maintenance across managed sites.',
+            'Sweeping, grounds and exterior cleaning for warehouses, yards and hardstands.': 'Sweeping and grounds maintenance for warehouses, yards, hardstands and landscaped areas.',
+            'Reliable presentation and upkeep of shared exterior areas and common property.': 'Reliable sweeping, grounds and lawn care for shared outdoor areas and common property.',
+            'Clean, presentable entrances, carparks, grounds and exterior areas.': 'Clean carparks, maintained grounds and tidy landscaped areas around busy commercial sites.',
+            'Scheduled exterior maintenance planned around access and operating requirements.': 'Scheduled sweeping, grounds and lawn maintenance planned around access and operating requirements.',
+            'All exterior needs, one trusted partner.': 'Core outdoor maintenance, one trusted partner.',
+            'Commercial exterior property services across the Gold Coast, Yatala, Logan, Brisbane and surrounding South East Queensland areas.': 'Commercial sweeping, grounds maintenance and lawn & garden care across the Gold Coast, Yatala, Logan, Brisbane and surrounding South East Queensland areas.',
+            'Yes. You can combine sweeping, grounds maintenance and lawn & garden care so more of the exterior is handled by one contractor.': 'Yes. Sweeping, grounds maintenance and lawn & garden care can be combined under one contractor and one recurring service plan.',
+            'ONE TEAM.<br><span>EVERY EXTERIOR.</span>': 'ONE TEAM.<br><span>SMARTER SITE MAINTENANCE.</span>',
+            'Storeman was built around a simple idea: property managers and business owners should not need a different contractor for every part of a site’s exterior.': 'Storeman was built to make commercial property maintenance simpler. Property managers and business owners should not need separate contractors for sweeping, grounds and lawn care.',
+            'We bring mechanical sweeping, grounds maintenance and lawn and garden care together under one service. That means fewer suppliers to manage, clearer communication and a more consistent standard across the property.': 'We bring mechanical sweeping, grounds maintenance and lawn & garden care together under one service. That means fewer suppliers to manage, clearer communication and a more consistent standard across the site.',
+            'Less contractor juggling. One team responsible for the exterior.': 'Less contractor juggling. One team coordinating the core outdoor maintenance.',
+            'Services can be combined around what the property actually needs.': 'Sweeping, grounds and lawn care can be combined around what the property actually needs.',
+            'Recurring maintenance keeps the whole exterior working to one standard.': 'Recurring maintenance keeps carparks, grounds and landscaped areas working to one standard.',
+            'A CLEANER AUSTRALIA<br>BUILDS BRIGHTER COMMUNITIES.': 'CLEANER SITES.<br>STRONGER BUSINESSES.',
+            'SWEEP &nbsp; · &nbsp; MAINTAIN &nbsp; · &nbsp; CLEAN &nbsp; · &nbsp; PRESENT': 'SWEEP &nbsp; · &nbsp; MAINTAIN &nbsp; · &nbsp; MOW &nbsp; · &nbsp; PRESENT',
+          }
+
+          for path in list(Path('.').glob('*.html')) + [Path('script.js')]:
+              if not path.exists():
+                  continue
+              text = path.read_text(encoding='utf-8')
+              original = text
+              for old, new in replacements.items():
+                  text = text.replace(old, new)
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+
+          # Ensure homepage metadata and schema-supporting copy stay aligned with the three-service offer.
+          for name in ['contact.html','areas.html']:
+              p=Path(name)
+              if p.exists():
+                  text=p.read_text(encoding='utf-8')
+                  text=text.replace('commercial exterior property services','commercial sweeping, grounds maintenance and lawn & garden services')
+                  text=text.replace('commercial exterior services','commercial sweeping, grounds maintenance and lawn & garden services')
+                  p.write_text(text,encoding='utf-8')
+          PY
+      - name: Validate focused positioning
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          checks=['index.html','script.js']
+          banned=['One team. Every exterior.','COMPLETE EXTERNAL PROPERTY SOLUTIONS','EVERY EXTERIOR.</span>','All exterior needs, one trusted partner.']
+          bad=[]
+          for name in checks:
+              text=Path(name).read_text(encoding='utf-8')
+              for phrase in banned:
+                  if phrase in text:
+                      bad.append(f'{name}: {phrase}')
+          if bad:
+              raise SystemExit('Old broad copy remains: '+', '.join(bad))
+          print('Storeman copy now matches the three-service launch offer.')
+          PY
+      - name: Commit focused copy
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --quiet || (git commit -m 'Refine Storeman copy for three-service focus' && git push origin main)
