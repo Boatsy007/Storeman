@@ -24,7 +24,7 @@ let autoPopupTimer = null;
 
 function openModal({ auto = false } = {}) {
   if (window.innerWidth <= 620) {
-    if (!auto) window.location.href = '/estimate.html';
+    if (!auto) window.location.href = '/quote.html';
     return;
   }
   if (!modal || modal.classList.contains('is-open')) return;
@@ -107,7 +107,7 @@ if (showcase) {
 }
 
 const params = new URLSearchParams(window.location.search);
-if (params.get('estimate') === '1') {
+if (params.get('quote') === '1' || params.get('estimate') === '1') {
   setTimeout(() => openModal(), 250);
 } else if (modal && window.innerWidth > 620) {
   autoPopupTimer = window.setTimeout(() => openModal({ auto: true }), 1600);
