@@ -15,3 +15,8 @@ if (serviceMenu && serviceNav) {
     });
   });
 }
+
+document.querySelectorAll('.service-quote, .service-actions .service-btn-yellow, .service-cta .service-btn').forEach((link) => {
+  link.href = '/estimate.html';
+  link.textContent = 'GET AN INSTANT ESTIMATE →';
+});
