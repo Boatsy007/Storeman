@@ -12,10 +12,20 @@
   .header-cta{min-width:175px;min-height:56px;font-size:13px}
 
   .hero-inner{width:min(var(--wide),100%);min-height:690px}
-  .hero-copy{width:44%;min-height:690px;padding:60px 28px 44px 36px}
-  .hero-image{width:69%}
-  .hero-copy h1{font-size:clamp(72px,5.75vw,104px);letter-spacing:-4.2px}
-  .hero-copy h2{font-size:27px;margin-top:25px}
+  .hero-copy{width:46%;min-height:690px;padding:60px 28px 44px 36px}
+  .hero-image{width:68%}
+  .hero-copy h1{
+    font-size:clamp(68px,5.2vw,94px);
+    line-height:1;
+    letter-spacing:-3.8px;
+    max-width:780px;
+  }
+  .hero-copy h1 span{
+    display:inline-block;
+    padding:2px 8px 7px;
+    line-height:.96;
+  }
+  .hero-copy h2{font-size:27px;margin-top:28px}
   .hero-copy>p:not(.eyebrow){font-size:16px;max-width:540px}
   .eyebrow{font-size:11px;letter-spacing:3.4px}
   .hero-actions{margin-top:30px}
