@@ -90,3 +90,6 @@ footer{background:#090909!important;color:#fff;border-top:1px solid #202020}
 .footer-brand>*{display:none!important}
 .footer-brand:before,.footer-brand:after{content:none!important;display:none!important}
 @media(max-width:680px){.footer-brand{width:250px!important;height:62px!important}}
+
+/* Keep FAQ accent on the exact Storeman brand yellow. */
+.faq-heading h2 span{color:var(--yellow)!important}
