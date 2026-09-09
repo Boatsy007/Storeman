@@ -1,0 +1,16 @@
+@media (max-width:980px){
+  .site-header{position:sticky;top:0;z-index:120;overflow:visible}
+  .header-inner{position:relative}
+  .menu-button{display:grid;place-items:center;position:relative;z-index:122;width:46px;height:46px;margin-left:auto;padding:0;border:1px solid rgba(255,255,255,.18);border-radius:4px;background:#111;color:#fff;font-size:26px;line-height:1}
+  .desktop-nav{display:none!important;position:absolute;left:-18px;right:-18px;top:100%;z-index:121;margin:0;padding:16px 18px 20px;background:#090909;border-top:1px solid #222;border-bottom:3px solid var(--yellow);box-shadow:0 18px 34px rgba(0,0,0,.28);flex-direction:column;align-items:stretch;gap:0}
+  .desktop-nav.mobile-open{display:flex!important}
+  .desktop-nav a{display:flex;align-items:center;min-height:52px;padding:0 8px;border-bottom:1px solid #242424;color:#fff;font-size:13px;font-weight:900;letter-spacing:.3px}
+  .desktop-nav a:last-child{border-bottom:0}
+  .desktop-nav a:after{display:none}
+  .desktop-nav a:hover,.desktop-nav a:focus{color:var(--yellow)}
+}
+
+@media (max-width:680px){
+  .desktop-nav{left:-14px;right:-14px;padding-left:14px;padding-right:14px}
+  .menu-button{width:42px;height:42px;font-size:24px}
+}
