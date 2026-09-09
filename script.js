@@ -26,6 +26,7 @@ const fileInput = document.getElementById('quoteFiles');
 const fileSummary = document.getElementById('fileSummary');
 let lastFocused = null;
 let currentStep = 1;
+let autoPopupTimer = null;
 
 function setStep(step) {
   currentStep = step;
@@ -71,14 +72,18 @@ function updateReview() {
   review.innerHTML = `<strong>Your quote request</strong>${lines.map(([label, value]) => `<div><b>${label}:</b> ${String(value).replace(/[<>]/g, '')}</div>`).join('')}`;
 }
 
-function openModal() {
-  if (!modal) return;
-  lastFocused = document.activeElement;
+function openModal({ auto = false } = {}) {
+  if (!modal || modal.classList.contains('is-open')) return;
+  if (autoPopupTimer) {
+    clearTimeout(autoPopupTimer);
+    autoPopupTimer = null;
+  }
+  lastFocused = auto ? null : document.activeElement;
   setStep(1);
   modal.classList.add('is-open');
   modal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
-  setTimeout(() => modal.querySelector('input')?.focus(), 40);
+  setTimeout(() => modal.querySelector('input')?.focus(), 80);
 }
 
 function closeModal() {
@@ -89,7 +94,7 @@ function closeModal() {
   lastFocused?.focus?.();
 }
 
-quoteTriggers.forEach((button) => button.addEventListener('click', openModal));
+quoteTriggers.forEach((button) => button.addEventListener('click', () => openModal()));
 closeTargets.forEach((target) => target.addEventListener('click', closeModal));
 
 document.querySelectorAll('[data-next-step]').forEach((button) => {
@@ -138,4 +143,10 @@ if (form) {
     if (note) note.textContent = 'Opening your email app with the quote request ready to send…';
     window.location.href = `mailto:hello@storeman.com.au?subject=${subject}&body=${body}`;
   });
+}
+
+// Ecommerce-style behaviour: automatically present the quote offer shortly after the page loads.
+// All existing GET A QUOTE buttons still open it immediately.
+if (modal) {
+  autoPopupTimer = window.setTimeout(() => openModal({ auto: true }), 1600);
 }
