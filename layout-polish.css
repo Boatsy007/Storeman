@@ -84,3 +84,13 @@
   .capability-grid figure{height:220px}
   .capability-grid figcaption{font-size:17px}
 }
+
+/* One-time attention nudge for the sticky free-quote CTA. */
+@keyframes storemanQuoteNudge{
+  0%,100%{transform:translateY(0);box-shadow:none}
+  22%{transform:translateY(-5px);box-shadow:0 8px 18px rgba(255,224,0,.18)}
+  44%{transform:translateY(0);box-shadow:none}
+  66%{transform:translateY(-3px);box-shadow:0 6px 14px rgba(255,224,0,.14)}
+}
+.header-cta.quote-scroll-nudge{animation:storemanQuoteNudge 1.05s ease-out both}
+@media(prefers-reduced-motion:reduce){.header-cta.quote-scroll-nudge{animation:none}}
