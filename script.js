@@ -29,17 +29,6 @@ quoteTriggers.forEach((button) => button.addEventListener('click', () => openMod
 closeTargets.forEach((target) => target.addEventListener('click', closeModal));
 document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal?.classList.contains('is-open')) closeModal(); });
 
-const servicePages = {
-  '.service-sweeping': '/sweeping.html',
-  '.service-grounds': '/grounds.html',
-  '.service-lawn': '/lawn-garden.html'
-};
-Object.entries(servicePages).forEach(([selector, href]) => {
-  const card = document.querySelector(selector); if (!card) return;
-  card.setAttribute('role', 'link'); card.setAttribute('tabindex', '0'); card.style.cursor = 'pointer';
-  card.addEventListener('click', () => window.location.href = href);
-  card.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.location.href = href; } });
-});
 
 const showcase = document.querySelector('.industries');
 if (showcase) {
