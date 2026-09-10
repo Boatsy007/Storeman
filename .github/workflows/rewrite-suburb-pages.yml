@@ -1,0 +1,174 @@
+name: Rewrite Storeman suburb pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/rewrite-suburb-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rewrite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rewrite 15 suburb landing pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from html import escape
+
+          pages = {
+            'stapylton': {
+              'name':'Stapylton','focus':'industrial and warehouse properties','image':'sweeping.jpg',
+              'hero':'Commercial sweeping, grounds maintenance and lawn & garden care for Stapylton warehouses, hardstands, yards and managed commercial sites.',
+              'intro1':'Stapylton commercial properties often combine large paved areas with landscaped edges, access zones and customer-facing frontage. Storeman brings the core outdoor maintenance together so property managers can deal with fewer contractors.',
+              'intro2':'Mechanical sweeping can handle carparks, yards and hardstands, while recurring grounds and lawn care keeps the softer areas presentable. The service schedule can be built around the size, access and presentation needs of the site.',
+              'sites':['WAREHOUSES & YARDS','HARDSTANDS','COMMERCIAL CARPARKS','LANDSCAPED EDGES'],
+              'faq':('Can sweeping and grounds maintenance be completed on the same visit?','Yes. Where the site and schedule suit, Storeman can coordinate sweeping, grounds maintenance and lawn & garden care as one recurring service visit.')},
+            'ormeau': {
+              'name':'Ormeau','focus':'commercial and industrial properties','image':'sweeping.jpg',
+              'hero':'Commercial outdoor property maintenance in Ormeau, combining mechanical sweeping, grounds maintenance and lawn & garden care.',
+              'intro1':'Ormeau has a mix of commercial premises, industrial properties and larger managed sites where outdoor presentation can quickly become another contractor-management task. Storeman is designed to simplify that work.',
+              'intro2':'We can combine mechanical sweeping for paved areas with recurring mowing, edging, trimming and general grounds presentation, giving businesses one practical maintenance arrangement for the areas outside the building.',
+              'sites':['COMMERCIAL SITES','INDUSTRIAL PROPERTY','CARPARKS & ACCESS AREAS','LAWNS & GARDENS'],
+              'faq':('Do you offer recurring commercial maintenance in Ormeau?','Yes. Weekly, fortnightly, monthly and site-specific schedules can be discussed after a free site assessment.')},
+            'coomera': {
+              'name':'Coomera','focus':'commercial, retail and managed properties','image':'grounds.jpg',
+              'hero':'Commercial sweeping, grounds maintenance and lawn & garden care for Coomera businesses, managed properties and larger sites.',
+              'intro1':'Coomera commercial properties can have a mix of carparks, landscaped entries, grassed areas and shared outdoor spaces. Storeman focuses on keeping those areas consistently maintained rather than treating each task as a separate job.',
+              'intro2':'A recurring plan can combine sweeping with grounds and lawn care so carparks stay tidy, edges stay sharp and landscaped areas continue to look looked after between visits.',
+              'sites':['RETAIL & COMMERCIAL','MANAGED PROPERTIES','CARPARKS','LANDSCAPED AREAS'],
+              'faq':('Can Storeman look after both paved and landscaped areas?','Yes. Suitable sites can combine mechanical sweeping with grounds maintenance and lawn & garden care under one schedule.')},
+            'molendinar': {
+              'name':'Molendinar','focus':'industrial and commercial properties','image':'sweeping.jpg',
+              'hero':'Commercial property maintenance in Molendinar for industrial sites, warehouses, yards, carparks and landscaped areas.',
+              'intro1':'Molendinar is a strong fit for Storeman’s commercial model because many properties need both hard-surface cleaning and regular grounds care. Keeping those services coordinated can make recurring maintenance easier to manage.',
+              'intro2':'Mechanical sweeping is suited to paved yards, carparks and access areas, while mowing, edging and garden presentation can be scheduled around the same property requirements.',
+              'sites':['INDUSTRIAL SITES','WAREHOUSE YARDS','CARPARKS','GROUNDS & GARDENS'],
+              'faq':('Is Storeman suited to industrial sites in Molendinar?','Yes. Where access and surface conditions suit the equipment, Storeman can provide recurring sweeping and outdoor grounds maintenance for industrial properties.')},
+            'arundel': {
+              'name':'Arundel','focus':'commercial, industrial and strata properties','image':'grounds.jpg',
+              'hero':'Recurring commercial sweeping, grounds maintenance and lawn & garden care for Arundel properties.',
+              'intro1':'Arundel commercial and managed properties often need regular attention across carparks, common areas, lawns and garden edges. Storeman provides a straightforward way to keep the site presentation consistent.',
+              'intro2':'The service can be built around recurring mowing and grounds care, with mechanical sweeping added where paved areas, carparks or hardstands need regular debris control.',
+              'sites':['COMMERCIAL PROPERTY','STRATA & COMMON AREAS','CARPARKS','LAWNS & GARDENS'],
+              'faq':('Can you service strata and managed properties in Arundel?','Yes. Storeman can quote suitable strata, body corporate and managed commercial properties for recurring outdoor maintenance.')},
+            'burleigh-heads': {
+              'name':'Burleigh Heads','focus':'commercial, retail and industrial properties','image':'grounds.jpg',
+              'hero':'Commercial sweeping and outdoor grounds maintenance for Burleigh Heads businesses, retail sites and managed properties.',
+              'intro1':'Burleigh Heads includes busy commercial areas where first impressions matter, as well as larger properties with carparks, paved access and landscaped frontage. Storeman keeps the core outdoor maintenance under one service arrangement.',
+              'intro2':'Sweeping can help manage loose debris across hard surfaces, while lawn and garden work keeps edges, grassed areas and landscaped sections presentable on a recurring schedule.',
+              'sites':['RETAIL & COMMERCIAL','CARPARKS','BUSINESS PREMISES','LANDSCAPED FRONTAGE'],
+              'faq':('Can Storeman work around busy trading periods?','Where access and scheduling allow, we can discuss service times that reduce disruption to customers, staff and normal site operations.')},
+            'nerang': {
+              'name':'Nerang','focus':'commercial and managed properties','image':'grounds.jpg',
+              'hero':'Commercial grounds maintenance, lawn & garden care and mechanical sweeping for Nerang properties.',
+              'intro1':'Nerang businesses and managed properties can include large outdoor areas, carparks and landscaped boundaries that need regular upkeep. Storeman combines the practical outdoor services that keep those areas under control.',
+              'intro2':'Recurring service can cover mowing, edging, trimming and general presentation, with mechanical sweeping available for suitable carparks, access areas and other paved sections.',
+              'sites':['COMMERCIAL SITES','MANAGED PROPERTIES','CARPARKS','LARGE GROUNDS'],
+              'faq':('Do you provide one-off work as well as recurring service in Nerang?','Yes. Storeman can quote one-off work, although the business is particularly suited to recurring commercial maintenance schedules.')},
+            'beenleigh': {
+              'name':'Beenleigh','focus':'commercial, industrial and strata properties','image':'sweeping.jpg',
+              'hero':'Commercial sweeping, grounds maintenance and lawn & garden care for Beenleigh businesses and managed sites.',
+              'intro1':'Beenleigh commercial sites can combine customer-facing areas, carparks, service access and landscaped grounds. Storeman gives property managers a simple way to coordinate those core outdoor maintenance requirements.',
+              'intro2':'Depending on the property, a recurring visit can include mechanical sweeping, mowing, edging, trimming and general grounds presentation without needing separate contractors for each task.',
+              'sites':['COMMERCIAL PREMISES','INDUSTRIAL PROPERTY','STRATA & COMMON AREAS','CARPARKS & GROUNDS'],
+              'faq':('Can multiple Storeman services be combined in Beenleigh?','Yes. Sweeping, grounds maintenance and lawn & garden care can be combined where that suits the property and service schedule.')},
+            'loganholme': {
+              'name':'Loganholme','focus':'commercial, retail and industrial properties','image':'sweeping.jpg',
+              'hero':'Recurring commercial property maintenance in Loganholme for carparks, hard surfaces, grounds and landscaped areas.',
+              'intro1':'Loganholme businesses and larger managed properties often have several outdoor maintenance needs happening at once. Storeman is built around consolidating the core work rather than adding another layer of contractor coordination.',
+              'intro2':'Mechanical sweeping keeps suitable paved areas and carparks under control, while grounds maintenance and lawn & garden care maintain grassed areas, edges and landscaped presentation.',
+              'sites':['COMMERCIAL SITES','RETAIL PROPERTY','INDUSTRIAL AREAS','CARPARKS & LANDSCAPING'],
+              'faq':('How often should a Loganholme commercial property be serviced?','It depends on traffic, vegetation, site size and presentation standards. We can recommend a practical frequency after assessing the property.')},
+            'slacks-creek': {
+              'name':'Slacks Creek','focus':'commercial and industrial properties','image':'sweeping.jpg',
+              'hero':'Commercial sweeping and recurring grounds maintenance for Slacks Creek businesses, yards and managed properties.',
+              'intro1':'Slacks Creek commercial properties can include paved service areas, carparks, yards and landscaped frontage. Those areas benefit from a maintenance plan that addresses both hard surfaces and grounds presentation.',
+              'intro2':'Storeman can combine mechanical sweeping with mowing, edging, trimming and general grounds care, giving the property one recurring outdoor maintenance schedule where appropriate.',
+              'sites':['COMMERCIAL YARDS','CARPARKS','INDUSTRIAL PROPERTY','LAWNS & GARDENS'],
+              'faq':('Do you mechanically sweep commercial yards in Slacks Creek?','Yes, where the yard is paved and provides suitable access for the sweeping equipment. We confirm suitability during the site assessment.')},
+            'acacia-ridge': {
+              'name':'Acacia Ridge','focus':'industrial, warehouse and logistics properties','image':'sweeping.jpg',
+              'hero':'Commercial sweeping and grounds maintenance for Acacia Ridge warehouses, industrial properties, yards and hardstands.',
+              'intro1':'Acacia Ridge properties can involve large paved areas, warehouse access, hardstands and practical landscaped zones. Storeman’s combination of sweeping and recurring grounds work is designed for exactly that type of mixed commercial site.',
+              'intro2':'A service plan can focus heavily on mechanical sweeping while still taking care of mowing, edges and landscaped presentation where the property needs both.',
+              'sites':['WAREHOUSES','HARDSTANDS & YARDS','INDUSTRIAL CARPARKS','LANDSCAPED EDGES'],
+              'faq':('Can Storeman focus mainly on sweeping at an Acacia Ridge site?','Yes. Services are quoted around the actual property. Sweeping can be the primary service, with grounds or lawn care added only where needed.')},
+            'rocklea': {
+              'name':'Rocklea','focus':'industrial, warehouse and commercial properties','image':'sweeping.jpg',
+              'hero':'Mechanical sweeping and commercial grounds maintenance for Rocklea yards, warehouses, hardstands and business properties.',
+              'intro1':'Rocklea is well suited to a maintenance model centred on paved commercial areas, yards and industrial property. Loose debris and general site presentation can become a recurring issue where vehicle movements and outdoor work are constant.',
+              'intro2':'Storeman can provide scheduled mechanical sweeping and, where required, combine it with grounds maintenance and lawn & garden care around the property perimeter and landscaped areas.',
+              'sites':['WAREHOUSE YARDS','HARDSTANDS','COMMERCIAL CARPARKS','PROPERTY GROUNDS'],
+              'faq':('Can sweeping be scheduled regularly for Rocklea industrial sites?','Yes. Recurring sweeping can be discussed weekly, fortnightly, monthly or on another practical schedule based on the site.')},
+            'eagle-farm': {
+              'name':'Eagle Farm','focus':'industrial, warehouse and logistics properties','image':'sweeping.jpg',
+              'hero':'Commercial mechanical sweeping and grounds maintenance for Eagle Farm warehouses, logistics properties and industrial sites.',
+              'intro1':'Eagle Farm commercial properties can have extensive paved areas, vehicle access, warehouse frontage and landscaped boundaries. Storeman focuses on the outdoor maintenance tasks that keep those sites tidy and consistently presented.',
+              'intro2':'Mechanical sweeping can form the core service for paved yards and carparks, with grounds maintenance and lawn & garden care added where grassed or landscaped areas also need recurring attention.',
+              'sites':['LOGISTICS SITES','WAREHOUSES','PAVED YARDS & CARPARKS','LANDSCAPED BOUNDARIES'],
+              'faq':('Is mechanical sweeping suitable for logistics and warehouse sites?','Yes, where surfaces are paved and access is suitable. A site assessment lets us confirm the machine access, scope and practical service frequency.')},
+            'hemmant': {
+              'name':'Hemmant','focus':'industrial and commercial properties','image':'sweeping.jpg',
+              'hero':'Commercial sweeping, grounds maintenance and lawn & garden care for Hemmant industrial and managed properties.',
+              'intro1':'Hemmant commercial sites can require regular attention across yards, access areas, carparks and property boundaries. Storeman combines the core outdoor maintenance so the site can be managed more simply.',
+              'intro2':'Sweeping is suited to larger paved surfaces and recurring debris control, while grounds and lawn care maintain the grassed, edged and landscaped areas around the same property.',
+              'sites':['INDUSTRIAL PROPERTY','COMMERCIAL YARDS','CARPARKS & ACCESS','GROUNDS & EDGES'],
+              'faq':('Can Storeman combine hard-surface and grounds work in Hemmant?','Yes. Where practical, mechanical sweeping and grounds maintenance can be coordinated under one recurring service arrangement.')},
+            'murarrie': {
+              'name':'Murarrie','focus':'commercial, industrial and warehouse properties','image':'sweeping.jpg',
+              'hero':'Commercial outdoor property maintenance in Murarrie, combining mechanical sweeping, grounds maintenance and lawn & garden care.',
+              'intro1':'Murarrie commercial and industrial properties can include warehouse frontage, carparks, access areas and landscaped grounds. Keeping all of those areas presentable is easier when the recurring work is coordinated.',
+              'intro2':'Storeman can combine sweeping for suitable paved areas with mowing, edging, trimming and garden presentation, creating one practical service plan around the property.',
+              'sites':['WAREHOUSES','COMMERCIAL PROPERTY','CARPARKS & ACCESS AREAS','LANDSCAPED GROUNDS'],
+              'faq':('Do you offer free site assessments in Murarrie?','Yes. Send through the property details and services you are considering, and Storeman can arrange a free site assessment before preparing the quote.')},
+          }
+
+          template = '''<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Commercial Property Services {name} | Storeman</title><meta name="description" content="{meta}"><link rel="canonical" href="https://storeman.com.au/commercial-property-services-{slug}.html"><link rel="icon" href="/assets/storemanfavicon.jpg"><link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="/location-service.css"><meta property="og:type" content="website"><meta property="og:site_name" content="Storeman"><meta property="og:title" content="Commercial Property Services {name} | Storeman"><meta property="og:description" content="{meta}"><meta property="og:url" content="https://storeman.com.au/commercial-property-services-{slug}.html"><meta property="og:image" content="https://storeman.com.au/assets/{image}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Commercial Property Services {name} | Storeman"><meta name="twitter:description" content="{meta}"><meta name="twitter:image" content="https://storeman.com.au/assets/{image}"><script src="/seo.js" defer></script></head><body><header class="loc-header"><div class="loc-header-inner"><a href="/"><img class="loc-logo" src="/assets/storemanlogo.jpg" alt="Storeman"></a><nav class="loc-nav"><a href="/#services">Services</a><a href="/areas.html">Areas</a><a href="/contact.html">Contact</a><a class="loc-quote" href="/quote.html">GET YOUR FREE QUOTE →</a></nav></div></header><main><section class="loc-hero"><div class="loc-hero-copy"><p class="loc-kicker">{upper} / COMMERCIAL PROPERTY SERVICES</p><h1>COMMERCIAL<br><span>PROPERTY.</span><br>{upper}</h1><p>{hero}</p><div class="loc-actions"><a class="loc-btn primary" href="/quote.html">GET YOUR FREE QUOTE →</a><a class="loc-btn" href="/areas.html">VIEW ALL AREAS</a></div></div><div class="loc-hero-image"><img src="/assets/{image}" alt="Storeman commercial property services {name}"></div></section><section class="loc-section"><div class="loc-container loc-intro"><div><p class="loc-kicker">{upper} SITE MAINTENANCE</p><h2>ONE TEAM FOR THE CORE OUTDOOR WORK.</h2></div><div class="loc-copy"><p>{intro1}</p><p>{intro2}</p></div></div></section><section class="loc-benefits"><div class="loc-container loc-benefit-grid"><div class="loc-benefit"><b>01</b><strong>MECHANICAL SWEEPING</strong><span>Purpose-built sweeping for suitable carparks, paved areas and hardstands.</span></div><div class="loc-benefit"><b>02</b><strong>GROUNDS MAINTENANCE</strong><span>Recurring site presentation built around the property.</span></div><div class="loc-benefit"><b>03</b><strong>LAWN &amp; GARDEN</strong><span>Mowing, edging, trimming and general garden presentation.</span></div><div class="loc-benefit"><b>04</b><strong>FREE SITE ASSESSMENT</strong><span>We confirm the scope before preparing your quote.</span></div></div></section><section class="loc-section loc-sites"><div class="loc-container loc-sites-grid"><div><p class="loc-kicker">WHERE IT FITS</p><h2>COMMERCIAL MAINTENANCE IN {upper}.</h2><div class="loc-area-links"><a href="/sweeping.html">MECHANICAL SWEEPING</a><a href="/grounds.html">GROUNDS MAINTENANCE</a><a href="/lawn-garden.html">LAWN &amp; GARDEN</a></div></div><div class="loc-site-cards">{site_cards}</div></div></section><section class="loc-section loc-faq"><div class="loc-container"><p class="loc-kicker">{upper} COMMERCIAL MAINTENANCE</p><h2>LOCAL SERVICE QUESTIONS.</h2><details><summary>{faq_q}</summary><p>{faq_a}</p></details><details><summary>How do I get a quote for a property in {name}?</summary><p>Send us the site location and the services you need. We’ll contact you to arrange a free site assessment, confirm the scope and prepare your quote.</p></details><details><summary>Can I use Storeman for recurring maintenance?</summary><p>Yes. Storeman is built around recurring commercial servicing, with weekly, fortnightly, monthly or site-specific schedules available to discuss.</p></details></div></section><section class="loc-cta"><div class="loc-container loc-cta-inner"><h2>NEED COMMERCIAL PROPERTY MAINTENANCE<br>IN {upper}?</h2><a class="loc-btn" href="/quote.html">GET YOUR FREE QUOTE →</a></div></section></main><footer class="loc-footer"><div class="loc-footer-inner"><img src="/assets/storemanlogo.jpg" alt="Storeman"><span>External Property Solutions · South East Queensland</span><div class="loc-footer-links"><a href="/contact.html">Contact</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div></div></footer></body></html>'''
+
+          for slug, d in pages.items():
+              meta = f"Commercial sweeping, grounds maintenance and lawn & garden care in {d['name']} for {d['focus']}. Free Storeman site assessments."
+              site_cards = ''.join(f'<div class="loc-site"><b>0{i}</b><strong>{escape(label)}</strong></div>' for i,label in enumerate(d['sites'],1))
+              html = template.format(slug=slug,name=d['name'],upper=d['name'].upper(),meta=meta,image=d['image'],hero=d['hero'],intro1=d['intro1'],intro2=d['intro2'],site_cards=site_cards,faq_q=d['faq'][0],faq_a=d['faq'][1])
+              Path(f'commercial-property-services-{slug}.html').write_text(html,encoding='utf-8')
+
+          print(f'Rewrote {len(pages)} suburb pages')
+          PY
+      - name: Validate suburb pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          files=sorted(Path('.').glob('commercial-property-services-*.html'))
+          if len(files) != 15:
+              raise SystemExit(f'Expected 15 suburb pages, found {len(files)}')
+          banned=['pressure washing','fleet washing','exterior cleaning','fleetwash.jpg','pressure washing.jpg','grounds maintenance, grounds maintenance','grounds maintenance and grounds maintenance','and  services','ONE TEAM. EVERY EXTERIOR']
+          errors=[]
+          for p in files:
+              text=p.read_text(encoding='utf-8')
+              low=text.lower()
+              for phrase in banned:
+                  if phrase.lower() in low:
+                      errors.append(f'{p.name}: {phrase}')
+              for required in ['<title>','meta name="description"','rel="canonical"','<h1>','/sweeping.html','/grounds.html','/lawn-garden.html','/quote.html']:
+                  if required not in text:
+                      errors.append(f'{p.name}: missing {required}')
+          if errors:
+              raise SystemExit('\n'.join(errors))
+          print('All 15 suburb pages validated cleanly.')
+          PY
+      - name: Commit rewritten suburb pages
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add commercial-property-services-*.html
+          git diff --cached --quiet || (git commit -m 'Rewrite suburb landing pages with clean local copy' && git push origin main)
