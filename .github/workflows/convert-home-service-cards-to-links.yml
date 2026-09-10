@@ -1,0 +1,86 @@
+name: Convert homepage service cards to links
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/convert-home-service-cards-to-links.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Convert cards and remove JS navigation shim
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          index = Path('index.html')
+          text = index.read_text(encoding='utf-8')
+
+          replacements = {
+            '<article class="service-card service-sweeping"><div class="service-image"><img src="/assets/sweeping.jpg" alt="Storeman mechanical sweeping" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">01</span><h3>MECHANICAL<br>SWEEPING</h3></div><p>Cleaner, safer and more presentable sites.</p><span class="arrow">→</span></div></article>':
+            '<a class="service-card service-sweeping" href="/sweeping.html" aria-label="View Mechanical Sweeping service"><div class="service-image"><img src="/assets/sweeping.jpg" alt="Storeman mechanical sweeping" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">01</span><h3>MECHANICAL<br>SWEEPING</h3></div><p>Cleaner, safer and more presentable sites.</p><span class="arrow" aria-hidden="true">→</span></div></a>',
+            '<article class="service-card service-grounds"><div class="service-image"><img src="/assets/grounds.jpg" alt="Storeman grounds maintenance" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">02</span><h3>GROUNDS<br>MAINTENANCE</h3></div><p>Recurring commercial site maintenance, coordinated around your property.</p><span class="arrow">→</span></div></article>':
+            '<a class="service-card service-grounds" href="/grounds.html" aria-label="View Grounds Maintenance service"><div class="service-image"><img src="/assets/grounds.jpg" alt="Storeman grounds maintenance" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">02</span><h3>GROUNDS<br>MAINTENANCE</h3></div><p>Recurring commercial site maintenance, coordinated around your property.</p><span class="arrow" aria-hidden="true">→</span></div></a>',
+            '<article class="service-card service-lawn"><div class="service-image"><img src="/assets/mowing.jpg" alt="Storeman lawn and garden maintenance" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">03</span><h3>LAWN &amp;<br>GARDEN</h3></div><p>Commercial mowing, edging, trimming and garden presentation.</p><span class="arrow">→</span></div></article>':
+            '<a class="service-card service-lawn" href="/lawn-garden.html" aria-label="View Lawn and Garden service"><div class="service-image"><img src="/assets/mowing.jpg" alt="Storeman lawn and garden maintenance" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">03</span><h3>LAWN &amp;<br>GARDEN</h3></div><p>Commercial mowing, edging, trimming and garden presentation.</p><span class="arrow" aria-hidden="true">→</span></div></a>'
+          }
+
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit('Expected service card markup not found; aborting to avoid unintended edits.')
+              text = text.replace(old, new, 1)
+
+          index.write_text(text, encoding='utf-8')
+
+          script = Path('script.js')
+          js = script.read_text(encoding='utf-8')
+          js, count = re.subn(
+              r"\nconst servicePages = \{.*?\n\}\);\n",
+              '\n',
+              js,
+              count=1,
+              flags=re.S
+          )
+          if count != 1:
+              raise SystemExit('Expected servicePages JS navigation block not found; aborting.')
+          script.write_text(js, encoding='utf-8')
+          PY
+
+      - name: Validate real links
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html = Path('index.html').read_text(encoding='utf-8')
+          js = Path('script.js').read_text(encoding='utf-8')
+          required = [
+            'class="service-card service-sweeping" href="/sweeping.html"',
+            'class="service-card service-grounds" href="/grounds.html"',
+            'class="service-card service-lawn" href="/lawn-garden.html"'
+          ]
+          missing = [x for x in required if x not in html]
+          if missing:
+              raise SystemExit('Missing homepage service links: ' + ', '.join(missing))
+          if 'const servicePages' in js:
+              raise SystemExit('Old JS card navigation still present')
+          print('Homepage service cards are now native HTML links.')
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html script.js
+          git diff --cached --quiet || (git commit -m 'Use native links for homepage service cards' && git push origin main)
