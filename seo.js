@@ -78,10 +78,10 @@
   const serviceMap = [
     ['commercial-sweeping', 'Mechanical Sweeping'],
     ['sweeping.html', 'Mechanical Sweeping'],
-    ['grounds-maintenance', 'Grounds Maintenance'],
-    ['grounds.html', 'Grounds Maintenance'],
-    ['lawn-garden-maintenance', 'Lawn & Garden Maintenance'],
-    ['lawn-garden.html', 'Lawn & Garden Maintenance']
+    ['grounds-maintenance', 'Commercial Grounds Maintenance'],
+    ['grounds.html', 'Commercial Grounds Maintenance'],
+    ['lawn-garden-maintenance', 'Commercial Lawn Mowing & Garden Maintenance'],
+    ['lawn-garden.html', 'Commercial Lawn Mowing & Garden Maintenance']
   ];
   const match = serviceMap.find(([needle]) => path.includes(needle));
   if (match) {
