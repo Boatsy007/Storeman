@@ -1,0 +1,152 @@
+name: Separate grounds and lawn search intent
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/separate-grounds-lawn-intent.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  separate-intent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Separate grounds maintenance and lawn garden intent
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_once(text, old, new, file):
+              if old not in text:
+                  raise SystemExit(f'Missing expected copy in {file}: {old[:80]}')
+              return text.replace(old, new, 1)
+
+          # Core Grounds page: target recurring commercial property/contract management intent.
+          p = Path('grounds.html')
+          t = p.read_text(encoding='utf-8')
+          t = t.replace('<title>Grounds Maintenance | Storeman</title>', '<title>Commercial Grounds Maintenance SEQ | Storeman</title>')
+          t = t.replace('content="Commercial grounds maintenance for business, strata and large sites across South East Queensland."', 'content="Recurring commercial grounds maintenance for managed properties, strata, retail and industrial sites across South East Queensland."')
+          t = t.replace('content="Commercial grounds maintenance for business, strata and large sites across South East Queensland.">', 'content="Recurring commercial grounds maintenance for managed properties, strata, retail and industrial sites across South East Queensland.">')
+          t = t.replace('content="Commercial grounds maintenance for business, strata and large sites across South East Queensland.">', 'content="Recurring commercial grounds maintenance for managed properties, strata, retail and industrial sites across South East Queensland.">')
+          t = replace_once(t, 'Commercial grounds care built around presentation, consistency and reliable recurring service — keeping grassed areas, edges, gardens and common areas looking maintained.', 'Recurring commercial grounds maintenance for properties that need a reliable contractor, a clear service schedule and consistent presentation across outdoor common areas.', p.name)
+          t = replace_once(t, 'A BETTER FIRST IMPRESSION', 'RECURRING COMMERCIAL PROPERTY CARE', p.name)
+          t = replace_once(t, 'KEEP THE WHOLE PROPERTY PRESENTABLE.', 'ONE MAINTENANCE PLAN. CONSISTENT SITE PRESENTATION.', p.name)
+          t = replace_once(t, 'Grounds maintenance is about more than cutting grass. It is the regular work that keeps a commercial property from looking neglected — mowing, edging, blowing, garden presentation and general exterior tidy-up.', 'Grounds maintenance is the recurring management of a property’s outdoor areas. Storeman builds a practical service schedule around the site so common areas, landscaped zones, verges and presentation work are maintained consistently rather than handled as disconnected jobs.', p.name)
+          t = replace_once(t, 'Storeman can combine grounds work with sweeping and cleaning so the property is managed under one practical maintenance plan rather than a collection of separate jobs.', 'Where required, grounds maintenance can be coordinated with mechanical sweeping and specialist lawn & garden work under one recurring Storeman arrangement.', p.name)
+          t = t.replace('<strong>COMMERCIAL EQUIPMENT</strong><span>Built for larger grounds and faster site coverage.</span>', '<strong>SITE-WIDE SCHEDULING</strong><span>Maintenance planned around the property, access and presentation standard.</span>')
+          t = t.replace('<strong>RECURRING SERVICE</strong><span>Simple ongoing maintenance based on your property needs.</span>', '<strong>RECURRING CONTRACTS</strong><span>Weekly, fortnightly, monthly or site-specific service schedules.</span>')
+          t = t.replace('<strong>ONE TEAM</strong><span>Combine grounds, sweeping and lawn & garden care.</span>', '<strong>ONE POINT OF CONTACT</strong><span>Coordinate grounds, sweeping and lawn & garden services through one contractor.</span>')
+          t = replace_once(t, 'ROUTINE GROUNDS CARE, DONE PROPERLY.', 'WHAT A GROUNDS MAINTENANCE PLAN CAN COVER.', p.name)
+          t = t.replace('<div><span>✓</span>Commercial mowing</div><div><span>✓</span>Edging and trimming</div><div><span>✓</span>Blowing and tidy-up</div><div><span>✓</span>Garden presentation</div><div><span>✓</span>Common-area maintenance</div><div><span>✓</span>Recurring service schedules</div>', '<div><span>✓</span>Scheduled site inspections and service visits</div><div><span>✓</span>Common-area and verge presentation</div><div><span>✓</span>Blowing and general outdoor tidy-up</div><div><span>✓</span>Coordination of lawn & garden tasks</div><div><span>✓</span>Mechanical sweeping where selected</div><div><span>✓</span>Recurring commercial maintenance schedules</div>')
+          p.write_text(t, encoding='utf-8')
+
+          # Core Lawn & Garden page: target the actual mowing/horticultural task intent.
+          p = Path('lawn-garden.html')
+          t = p.read_text(encoding='utf-8')
+          t = t.replace('<title>Lawn & Garden | Storeman</title>', '<title>Commercial Lawn Mowing & Garden Maintenance SEQ | Storeman</title>')
+          t = t.replace('content="Commercial lawn and garden maintenance across South East Queensland."', 'content="Commercial lawn mowing, edging, trimming, hedge care and garden maintenance across South East Queensland."')
+          t = replace_once(t, 'Routine commercial mowing, edging, trimming and garden presentation for properties that need a sharp, cared-for exterior without the hassle of managing multiple contractors.', 'Commercial lawn mowing and garden maintenance focused on the hands-on work that keeps grass, edges, hedges and landscaped areas neat and presentation-ready.', p.name)
+          t = replace_once(t, 'ROUTINE CARE THAT SHOWS', 'COMMERCIAL MOWING & GARDEN CARE', p.name)
+          t = replace_once(t, 'Lawns and garden edges are often the first thing people notice. Storeman focuses on the simple, repeatable work that makes a property feel looked after — mowing, trimming, edging, blowing and general garden presentation.', 'This service is specifically for the lawn and garden work itself: commercial mowing, edging, line trimming, hedge presentation, garden tidy-ups and blowing down the surrounding areas when the job is complete.', p.name)
+          t = replace_once(t, 'For suitable sites, lawn and garden care can be bundled with sweeping or lawn & garden care to reduce the number of contractors you need to coordinate.', 'It can be booked as a dedicated lawn & garden service or included within a broader Storeman grounds maintenance schedule for properties that want one recurring contractor.', p.name)
+          t = t.replace('<strong>RELIABLE ROUTINES</strong><span>Consistent service designed around the property.</span>', '<strong>COMMERCIAL MOWING</strong><span>Routine mowing for business, strata and larger managed properties.</span>')
+          t = t.replace('<strong>SHARP PRESENTATION</strong><span>Clean edges, tidy surfaces and maintained garden areas.</span>', '<strong>EDGING & TRIMMING</strong><span>Clean edges and line trimming around paths, kerbs and landscaped areas.</span>')
+          t = t.replace('<strong>COMMERCIAL FOCUS</strong><span>Suited to workplaces, common areas and larger sites.</span>', '<strong>HEDGES & GARDENS</strong><span>Routine hedge, garden and landscaped-area presentation.</span>')
+          t = t.replace('<strong>COMBINED SERVICE</strong><span>Add sweeping, grounds care or lawn & garden care.</span>', '<strong>CLEAN FINISH</strong><span>Blowing and tidy-up after mowing and trimming work is complete.</span>')
+          t = t.replace('<div><span>✓</span>Lawn mowing</div><div><span>✓</span>Edging and line trimming</div><div><span>✓</span>Blowing and tidy-up</div><div><span>✓</span>Hedge and garden presentation</div><div><span>✓</span>General exterior tidy</div><div><span>✓</span>Recurring maintenance</div>', '<div><span>✓</span>Commercial lawn mowing</div><div><span>✓</span>Edging and line trimming</div><div><span>✓</span>Hedge trimming and presentation</div><div><span>✓</span>Garden and landscaped-area tidy-up</div><div><span>✓</span>Blowing paths and surrounding surfaces</div><div><span>✓</span>Recurring lawn & garden visits</div>')
+          p.write_text(t, encoding='utf-8')
+
+          locations = {
+              'gold-coast': 'Gold Coast',
+              'brisbane': 'Brisbane',
+              'logan': 'Logan',
+              'yatala': 'Yatala',
+          }
+
+          # Location-specific Grounds pages: recurring contract/site-maintenance intent.
+          for slug, place in locations.items():
+              p = Path(f'grounds-maintenance-{slug}.html')
+              t = p.read_text(encoding='utf-8')
+              desc = f'Recurring commercial grounds maintenance in {place} for managed properties, strata, retail and industrial sites. Free Storeman site assessments.'
+              t = re.sub(r'<title>.*?</title>', f'<title>Commercial Grounds Maintenance {place} | Storeman</title>', t, count=1)
+              t = re.sub(r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{desc}">', t, count=1)
+              t = re.sub(r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="Commercial Grounds Maintenance {place} | Storeman">', t, count=1)
+              t = re.sub(r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{desc}">', t, count=1)
+              t = re.sub(r'<meta name="twitter:title" content="[^"]*">', f'<meta name="twitter:title" content="Commercial Grounds Maintenance {place} | Storeman">', t, count=1)
+              t = re.sub(r'<meta name="twitter:description" content="[^"]*">', f'<meta name="twitter:description" content="{desc}">', t, count=1)
+              # Replace hero and first intro paragraphs while retaining page structure.
+              t = re.sub(r'(<h1>GROUNDS<br><span>MAINTENANCE\.</span><br>'+re.escape(place.upper())+r'</h1>)<p>.*?</p>', r'\1<p>Recurring commercial grounds maintenance in '+place+r' for properties that need a clear service schedule, reliable attendance and consistent presentation across outdoor areas.</p>', t, count=1)
+              t = re.sub(r'<p>Storeman provides grounds maintenance.*?</p><p>.*?</p>', '<p>Storeman provides recurring grounds maintenance for commercial and managed properties across '+place+'. The service is structured around the site as a whole, with scheduled visits, common-area presentation and coordination of the outdoor maintenance tasks the property requires.</p><p>Where useful, grounds maintenance can be combined with mechanical sweeping and dedicated lawn & garden work under one recurring Storeman service plan.</p>', t, count=1, flags=re.S)
+              t = t.replace('<strong>COMMERCIAL FOCUS</strong><span>Built around managed and business properties.</span>', '<strong>MANAGED PROPERTY FOCUS</strong><span>Built around commercial, strata and professionally managed sites.</span>')
+              t = t.replace('<strong>ONE CONTRACTOR</strong><span>Combine grounds with sweeping and lawn & garden care.</span>', '<strong>ONE SERVICE PLAN</strong><span>Coordinate grounds, sweeping and lawn & garden work under one contractor.</span>')
+              p.write_text(t, encoding='utf-8')
+
+          # Location-specific Lawn pages: mowing/garden task intent.
+          for slug, place in locations.items():
+              p = Path(f'lawn-garden-maintenance-{slug}.html')
+              t = p.read_text(encoding='utf-8')
+              desc = f'Commercial lawn mowing, edging, trimming and garden maintenance in {place} for business, strata and managed properties. Free Storeman site assessments.'
+              title = f'Commercial Lawn Mowing & Garden Maintenance {place} | Storeman'
+              t = re.sub(r'<title>.*?</title>', f'<title>{title}</title>', t, count=1)
+              t = re.sub(r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{desc}">', t, count=1)
+              t = re.sub(r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{title.replace("&", "&amp;")}">', t, count=1)
+              t = re.sub(r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{desc}">', t, count=1)
+              t = re.sub(r'<meta name="twitter:title" content="[^"]*">', f'<meta name="twitter:title" content="{title.replace("&", "&amp;")}">', t, count=1)
+              t = re.sub(r'<meta name="twitter:description" content="[^"]*">', f'<meta name="twitter:description" content="{desc}">', t, count=1)
+              t = re.sub(r'(<h1>LAWN & GARDEN<br><span>MAINTENANCE\.</span><br>'+re.escape(place.upper())+r'</h1>)<p>.*?</p>', r'\1<p>Commercial lawn mowing, edging, line trimming and garden presentation in '+place+r' for properties that need grass and landscaped areas kept neat and consistent.</p>', t, count=1)
+              t = re.sub(r'<p>Storeman provides lawn and garden maintenance.*?</p><p>.*?</p>', '<p>Storeman provides the hands-on lawn and garden work for commercial, strata, retail and managed properties across '+place+'. That includes routine mowing, edging, line trimming, hedge and garden presentation, plus blowing down surrounding surfaces after the work is complete.</p><p>Lawn & garden visits can stand alone or form the mowing and horticultural component of a broader recurring grounds maintenance plan.</p>', t, count=1, flags=re.S)
+              t = t.replace('<strong>GARDEN UPKEEP</strong><span>Maintain tidy, presentable external areas.</span>', '<strong>TRIMMING & GARDENS</strong><span>Hedges, garden edges and landscaped areas kept presentable.</span>')
+              t = t.replace('<strong>RECURRING VISITS</strong><span>Schedules matched to the property.</span>', '<strong>ROUTINE LAWN CARE</strong><span>Service frequency matched to growth and presentation requirements.</span>')
+              p.write_text(t, encoding='utf-8')
+
+          # Align schema service names with the distinct search intents.
+          p = Path('seo.js')
+          t = p.read_text(encoding='utf-8')
+          t = t.replace("['grounds-maintenance', 'Grounds Maintenance']", "['grounds-maintenance', 'Commercial Grounds Maintenance']")
+          t = t.replace("['grounds.html', 'Grounds Maintenance']", "['grounds.html', 'Commercial Grounds Maintenance']")
+          t = t.replace("['lawn-garden-maintenance', 'Lawn & Garden Maintenance']", "['lawn-garden-maintenance', 'Commercial Lawn Mowing & Garden Maintenance']")
+          t = t.replace("['lawn-garden.html', 'Lawn & Garden Maintenance']", "['lawn-garden.html', 'Commercial Lawn Mowing & Garden Maintenance']")
+          p.write_text(t, encoding='utf-8')
+
+          # Make the homepage service-card descriptions distinct too.
+          p = Path('index.html')
+          t = p.read_text(encoding='utf-8')
+          t = t.replace('Well maintained grounds all year round.', 'Recurring commercial site maintenance, coordinated around your property.')
+          t = t.replace('Commercial mowing, edging and garden presentation.', 'Commercial mowing, edging, trimming and garden presentation.')
+          p.write_text(t, encoding='utf-8')
+          PY
+
+      - name: Validate intent separation
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          grounds = Path('grounds.html').read_text(encoding='utf-8').lower()
+          lawn = Path('lawn-garden.html').read_text(encoding='utf-8').lower()
+          assert 'recurring commercial grounds maintenance' in grounds
+          assert 'site-wide scheduling' in grounds
+          assert 'commercial lawn mowing' in lawn
+          assert 'hedge trimming' in lawn
+          assert 'bundled with sweeping or lawn & garden care' not in lawn
+          for slug in ['gold-coast','brisbane','logan','yatala']:
+              g = Path(f'grounds-maintenance-{slug}.html').read_text(encoding='utf-8').lower()
+              l = Path(f'lawn-garden-maintenance-{slug}.html').read_text(encoding='utf-8').lower()
+              assert 'recurring commercial grounds maintenance' in g
+              assert 'commercial lawn mowing' in l
+          print('Grounds Maintenance now targets recurring property/site maintenance intent.')
+          print('Lawn & Garden now targets mowing, trimming and garden-care intent.')
+          PY
+
+      - name: Commit intent separation
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add grounds.html lawn-garden.html grounds-maintenance-*.html lawn-garden-maintenance-*.html seo.js index.html
+          git diff --cached --quiet || (git commit -m 'Separate grounds and lawn search intent' && git push origin main)
