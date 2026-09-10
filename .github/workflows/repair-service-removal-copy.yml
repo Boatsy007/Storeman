@@ -1,0 +1,171 @@
+name: Repair retired service copy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/repair-service-removal-copy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Repair public HTML copy and retired asset references
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          html_files = list(Path('.').glob('*.html'))
+
+          replacements = [
+              ('/assets/fleetwash.jpg', '/assets/sweeping.jpg'),
+              ('/assets/pressure washing.jpg', '/assets/grounds.jpg'),
+              ('pressure washing', 'grounds maintenance'),
+              ('Pressure washing', 'Grounds maintenance'),
+              ('Pressure Washing', 'Grounds Maintenance'),
+              ('fleet washing', 'commercial site maintenance'),
+              ('Fleet washing', 'Commercial site maintenance'),
+              ('Fleet Washing', 'Commercial Site Maintenance'),
+              ('grounds maintenance, grounds maintenance and lawn & garden maintenance', 'grounds maintenance and lawn & garden care'),
+              ('grounds maintenance, grounds maintenance and lawn &amp; garden maintenance', 'grounds maintenance and lawn &amp; garden care'),
+              ('commercial sweeping, grounds maintenance, grounds maintenance and lawn & garden maintenance', 'commercial sweeping, grounds maintenance and lawn & garden care'),
+              ('commercial sweeping, grounds maintenance, grounds maintenance and lawn &amp; garden maintenance', 'commercial sweeping, grounds maintenance and lawn &amp; garden care'),
+              ('sweeping, grounds maintenance, grounds maintenance and lawn & garden maintenance', 'sweeping, grounds maintenance and lawn & garden care'),
+              ('sweeping, grounds maintenance, grounds maintenance and lawn &amp; garden maintenance', 'sweeping, grounds maintenance and lawn &amp; garden care'),
+              ('grounds, lawn and garden, grounds maintenance and lawn & garden maintenance', 'grounds maintenance and lawn & garden care'),
+              ('grounds, lawn and garden, grounds maintenance and lawn &amp; garden maintenance', 'grounds maintenance and lawn &amp; garden care'),
+              ('grounds maintenance and grounds maintenance support', 'grounds maintenance and lawn & garden care support'),
+              ('grounds maintenance and grounds maintenance', 'grounds maintenance and lawn & garden care'),
+              ('grounds maintenance and lawn & garden maintenance', 'grounds maintenance and lawn & garden care'),
+              ('grounds maintenance and lawn &amp; garden maintenance', 'grounds maintenance and lawn &amp; garden care'),
+              ('exterior cleaning or lawn & garden maintenance', 'lawn & garden care'),
+              ('exterior cleaning or lawn &amp; garden maintenance', 'lawn & garden care'),
+              ('exterior cleaning', 'lawn & garden care'),
+              ('Exterior cleaning', 'Lawn & garden care'),
+              ('Exterior Cleaning', 'Lawn & Garden Care'),
+              ('commercial cleaning support', 'commercial maintenance'),
+              ('Commercial cleaning support', 'Commercial maintenance'),
+              ('cleaning support', 'maintenance support'),
+              ('ONE TEAM. EVERY EXTERIOR.', 'ONE TEAM. SMARTER SITE MAINTENANCE.'),
+              ('One team. Every exterior.', 'One team. Smarter site maintenance.'),
+              ('All exterior needs, one trusted partner.', 'Core outdoor maintenance, one trusted partner.'),
+              ('Combine sweeping with other Storeman exterior services.', 'Combine sweeping with Storeman grounds and lawn care.'),
+              ('Combined exterior maintenance', 'Combined outdoor maintenance'),
+              ('managed as one exterior rather than a collection of separate jobs', 'managed under one practical maintenance plan rather than a collection of separate jobs'),
+              ('one reliable exterior contractor', 'one reliable outdoor maintenance contractor'),
+              ('one exterior maintenance arrangement', 'one outdoor maintenance arrangement'),
+              ('one exterior service plan', 'one outdoor maintenance plan'),
+              ('one exterior contractor', 'one outdoor maintenance contractor'),
+          ]
+
+          changed = []
+          for path in html_files:
+              text = path.read_text(encoding='utf-8')
+              original = text
+              for old, new in replacements:
+                  text = text.replace(old, new)
+
+              # Clean common punctuation/grammar artefacts caused by earlier automated removals.
+              text = re.sub(r',\s*and\s+services([,.])', r' and lawn & garden services\1', text, flags=re.I)
+              text = re.sub(r'and\s+and\s+', 'and ', text, flags=re.I)
+              text = re.sub(r',\s*,', ',', text)
+              text = re.sub(r'\s+,', ',', text)
+              text = re.sub(r'\band lawn & garden care and lawn & garden care\b', 'and lawn & garden care', text, flags=re.I)
+              text = re.sub(r'\bgrounds maintenance and lawn & garden care and lawn & garden care\b', 'grounds maintenance and lawn & garden care', text, flags=re.I)
+
+              # Fix known affected page-specific sentences cleanly.
+              if path.name == 'contact.html':
+                  text = re.sub(
+                      r'Need sweeping, grounds maintenance, lawn and garden work,.*?Tell us what you need and we’ll help work out the right next step\.',
+                      'Need commercial sweeping, grounds maintenance or lawn and garden care? Tell us what you need and we’ll help work out the right next step.',
+                      text,
+                      flags=re.S
+                  )
+              if path.name == 'quote.html':
+                  text = re.sub(
+                      r'<meta name="description" content="[^"]*">',
+                      '<meta name="description" content="Request a free Storeman site assessment for commercial sweeping, grounds maintenance and lawn & garden services across South East Queensland.">',
+                      text,
+                      count=1
+                  )
+                  text = re.sub(
+                      r'<meta property="og:description" content="[^"]*">',
+                      '<meta property="og:description" content="Request a free Storeman site assessment for commercial sweeping, grounds maintenance and lawn & garden services across South East Queensland.">',
+                      text,
+                      count=1
+                  )
+                  text = re.sub(
+                      r'<meta name="twitter:description" content="[^"]*">',
+                      '<meta name="twitter:description" content="Request a free Storeman site assessment for commercial sweeping, grounds maintenance and lawn & garden services across South East Queensland.">',
+                      text,
+                      count=1
+                  )
+              if path.name == 'areas.html':
+                  text = text.replace(
+                      'Start with your major area below to view Storeman’s core service pages for sweeping, grounds, lawn and garden, grounds maintenance and lawn & garden maintenance.',
+                      'Start with your major area below to view Storeman’s core service pages for commercial sweeping, grounds maintenance and lawn & garden care.'
+                  )
+                  text = text.replace(
+                      'Recurring exterior maintenance and commercial maintenance throughout the Logan region.',
+                      'Recurring sweeping, grounds maintenance and lawn & garden care throughout the Logan region.'
+                  )
+
+              # Clean suburb-page descriptions and content patterns.
+              if path.name.startswith('commercial-property-services-'):
+                  text = text.replace(
+                      'including sweeping, grounds maintenance and lawn & garden care and lawn & garden care',
+                      'including sweeping, grounds maintenance and lawn & garden care'
+                  )
+                  text = text.replace(
+                      'commercial sweeping, grounds maintenance and lawn & garden care into one practical exterior maintenance arrangement',
+                      'commercial sweeping, grounds maintenance and lawn & garden care into one practical recurring maintenance arrangement'
+                  )
+                  text = text.replace(
+                      'Explore our <a href="/sweeping.html"><strong>commercial sweeping</strong></a>, <a href="/grounds.html"><strong>grounds maintenance</strong></a>,  and lawn & garden services, or request a free site assessment for this location.',
+                      'Explore our <a href="/sweeping.html"><strong>commercial sweeping</strong></a>, <a href="/grounds.html"><strong>grounds maintenance</strong></a> and <a href="/lawn-garden.html"><strong>lawn & garden care</strong></a>, or request a free site assessment for this location.'
+                  )
+
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+                  changed.append(path.name)
+
+          print('Changed files:')
+          for name in changed:
+              print(' -', name)
+          PY
+
+      - name: Validate retired service cleanup
+        run: |
+          set -e
+          echo 'Checking for removed asset references...'
+          ! grep -Rni --include='*.html' '/assets/fleetwash.jpg\|/assets/pressure washing.jpg' .
+
+          echo 'Checking for retired service phrases...'
+          ! grep -Rni --include='*.html' -E 'pressure washing|fleet washing|exterior cleaning' .
+
+          echo 'Checking for duplicated grounds-maintenance artefacts...'
+          ! grep -Rni --include='*.html' -E 'grounds maintenance[, ]+grounds maintenance|grounds maintenance and grounds maintenance|grounds, lawn and garden, grounds maintenance' .
+
+          echo 'Checking for old positioning...'
+          ! grep -Rni --include='*.html' -E 'ONE TEAM\. EVERY EXTERIOR\.|One team\. Every exterior\.' .
+
+      - name: Commit repaired site copy
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add '*.html'
+          if git diff --cached --quiet; then
+            echo 'No repairs required.'
+          else
+            git commit -m 'Repair copy after retired service removal'
+            git push origin main
+          fi
