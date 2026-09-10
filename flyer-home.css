@@ -146,3 +146,9 @@ footer{border-top:0!important}
   .capability-tile,.capability-tile img{height:240px;min-height:240px}
   .capability-tile span{font-size:17px;left:14px;bottom:14px}
 }
+
+
+/* Flyer headline match */
+.hero-copy h1 .hero-headline-white{background:none!important;color:#fff!important;padding:0!important;box-shadow:none!important;display:inline!important}
+.hero-copy h1 .hero-headline-yellow{background:none!important;color:#ffe000!important;padding:0!important;box-shadow:none!important;display:inline!important}
+@media(max-width:680px){.hero-copy h1{font-size:46px;line-height:.9;letter-spacing:-2px}.hero-copy h1 .hero-headline-yellow,.hero-copy h1 .hero-headline-white{white-space:nowrap}}
