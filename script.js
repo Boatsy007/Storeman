@@ -32,17 +32,6 @@ document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && 
 
 const showcase = document.querySelector('.industries');
 if (showcase) {
-  showcase.id = 'capabilities';
-  const label = showcase.querySelector('.section-heading .label');
-  const heading = showcase.querySelector('.section-heading h2');
-  const grid = showcase.querySelector('.industry-grid');
-  if (label) label.textContent = 'MORE OF WHAT WE DO';
-  if (heading) heading.textContent = 'THREE CORE SERVICES. ONE STOREMAN TEAM.';
-  if (grid) {
-    grid.className = 'capability-grid';
-    grid.innerHTML = `<a class="capability-tile" href="/sweeping.html"><img src="/assets/sweeping.jpg" alt="Storeman sweeping service" loading="lazy"><span>SWEEPING</span></a><a class="capability-tile" href="/grounds.html"><img src="/assets/grounds.jpg" alt="Storeman grounds service" loading="lazy"><span>GROUNDS</span></a><a class="capability-tile" href="/lawn-garden.html"><img src="/assets/mowing.jpg" alt="Storeman lawn and garden service" loading="lazy"><span>LAWN &amp; GARDEN</span></a>`;
-  }
-  document.querySelectorAll('a[href="#industries"]').forEach((link) => { link.href = '#capabilities'; link.textContent = 'Capabilities'; });
   const style = document.createElement('style');
   style.textContent = `.capability-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.capability-tile{position:relative;height:180px;overflow:hidden;background:#ddd;display:block}.capability-tile img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}.capability-tile:after{content:"";position:absolute;inset:38% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.84))}.capability-tile span{position:absolute;z-index:2;left:14px;bottom:12px;color:#fff;font-family:"Archivo Black",sans-serif;font-size:15px;line-height:1}.capability-tile:hover img{transform:scale(1.035)}@media(max-width:980px){.capability-grid{grid-template-columns:repeat(2,1fr)}.capability-tile{height:180px}}@media(max-width:620px){.capability-grid{grid-template-columns:1fr}.capability-tile{height:220px}}`;
   document.head.appendChild(style);
@@ -57,30 +46,10 @@ if (footerBrand) {
   document.head.appendChild(footerLogoStyle);
 }
 
-// Short company context: explain what Storeman is and the one-contractor idea without a corporate-style biography.
-const whoSection = document.querySelector('.who-we-serve');
-if (whoSection) {
-  const aboutSection = document.createElement('section');
-  aboutSection.className = 'about-storeman';
-  aboutSection.id = 'about';
-  aboutSection.innerHTML = `<div class="container about-storeman-inner"><div class="about-storeman-copy"><p class="label">ABOUT STOREMAN</p><h2>ONE TEAM.<br><span>SMARTER SITE MAINTENANCE.</span></h2><p>Storeman was built to make commercial property maintenance simpler. Property managers and business owners should not need separate contractors for sweeping, grounds and lawn care.</p><p>We bring mechanical sweeping, grounds maintenance and lawn & garden care together under one service. That means fewer suppliers to manage, clearer communication and a more consistent standard across the site.</p><button class="button button-yellow quote-trigger about-quote-trigger" type="button">GET YOUR FREE QUOTE <span>→</span></button></div><div class="about-storeman-panel"><div><b>01</b><strong>ONE POINT OF CONTACT</strong><span>Less contractor juggling. One team coordinating the core outdoor maintenance.</span></div><div><b>02</b><strong>BUILT AROUND THE SITE</strong><span>Sweeping, grounds and lawn care can be combined around what the property actually needs.</span></div><div><b>03</b><strong>CONSISTENT PRESENTATION</strong><span>Recurring maintenance keeps carparks, grounds and landscaped areas working to one standard.</span></div><div><b>04</b><strong>LOCAL SEQ SERVICE</strong><span>Focused across the Gold Coast, Yatala, Logan, Brisbane and surrounding areas.</span></div></div></div>`;
-  whoSection.insertAdjacentElement('afterend', aboutSection);
-
-  aboutSection.querySelector('.about-quote-trigger')?.addEventListener('click', () => openModal());
-
-  const headerWho = document.querySelector('.desktop-nav a[href="#who"]');
-  if (headerWho && !document.querySelector('.desktop-nav a[href="#about"]')) {
-    headerWho.insertAdjacentHTML('afterend', '<a href="#about">About</a>');
-  }
-  const footerWho = document.querySelector('.footer-nav a[href="#who"]');
-  if (footerWho && !document.querySelector('.footer-nav a[href="#about"]')) {
-    footerWho.insertAdjacentHTML('afterend', '<a href="#about">About</a>');
-  }
-
-  const aboutStyle = document.createElement('style');
-  aboutStyle.textContent = `.about-storeman{padding:64px 0;background:#fff}.about-storeman-inner{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:center}.about-storeman-copy h2{margin:0 0 24px;font-family:"Archivo Black",sans-serif;font-size:52px;line-height:.92;letter-spacing:-2.4px}.about-storeman-copy h2 span{color:#ffe000}.about-storeman-copy>p:not(.label){max-width:610px;margin:0 0 16px;color:#555;font-size:15px;line-height:1.65}.about-storeman-copy .button{margin-top:10px}.about-storeman-panel{display:grid;grid-template-columns:1fr 1fr;border:1px solid #dedede;background:#111}.about-storeman-panel>div{min-height:185px;padding:24px;border-right:1px solid #333;border-bottom:1px solid #333;display:flex;flex-direction:column}.about-storeman-panel>div:nth-child(2n){border-right:0}.about-storeman-panel>div:nth-last-child(-n+2){border-bottom:0}.about-storeman-panel b{color:#ffe000;font-family:"Archivo Black",sans-serif;font-size:10px;letter-spacing:1.4px}.about-storeman-panel strong{margin:30px 0 10px;color:#fff;font-family:"Archivo Black",sans-serif;font-size:17px;line-height:1.05}.about-storeman-panel span{color:#c8c8c8;font-size:12px;line-height:1.5}@media(max-width:980px){.about-storeman-inner{grid-template-columns:1fr;gap:34px}.about-storeman-copy h2{font-size:46px}}@media(max-width:680px){.about-storeman{padding:46px 0}.about-storeman-inner{gap:26px}.about-storeman-copy h2{font-size:39px;letter-spacing:-1.8px}.about-storeman-copy>p:not(.label){font-size:14px}.about-storeman-panel{grid-template-columns:1fr}.about-storeman-panel>div{min-height:145px;border-right:0;border-bottom:1px solid #333}.about-storeman-panel>div:nth-last-child(-n+2){border-bottom:1px solid #333}.about-storeman-panel>div:last-child{border-bottom:0}.about-storeman-panel strong{margin-top:22px}.about-storeman-copy .button{width:100%}}`;
-  document.head.appendChild(aboutStyle);
-}
+// About content now lives in index.html; retain its presentation styles here.
+const aboutStyle = document.createElement('style');
+aboutStyle.textContent = `.about-storeman{padding:64px 0;background:#fff}.about-storeman-inner{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:center}.about-storeman-copy h2{margin:0 0 24px;font-family:"Archivo Black",sans-serif;font-size:52px;line-height:.92;letter-spacing:-2.4px}.about-storeman-copy h2 span{color:#ffe000}.about-storeman-copy>p:not(.label){max-width:610px;margin:0 0 16px;color:#555;font-size:15px;line-height:1.65}.about-storeman-copy .button{margin-top:10px}.about-storeman-panel{display:grid;grid-template-columns:1fr 1fr;border:1px solid #dedede;background:#111}.about-storeman-panel>div{min-height:185px;padding:24px;border-right:1px solid #333;border-bottom:1px solid #333;display:flex;flex-direction:column}.about-storeman-panel>div:nth-child(2n){border-right:0}.about-storeman-panel>div:nth-last-child(-n+2){border-bottom:0}.about-storeman-panel b{color:#ffe000;font-family:"Archivo Black",sans-serif;font-size:10px;letter-spacing:1.4px}.about-storeman-panel strong{margin:30px 0 10px;color:#fff;font-family:"Archivo Black",sans-serif;font-size:17px;line-height:1.05}.about-storeman-panel span{color:#c8c8c8;font-size:12px;line-height:1.5}@media(max-width:980px){.about-storeman-inner{grid-template-columns:1fr;gap:34px}.about-storeman-copy h2{font-size:46px}}@media(max-width:680px){.about-storeman{padding:46px 0}.about-storeman-inner{gap:26px}.about-storeman-copy h2{font-size:39px;letter-spacing:-1.8px}.about-storeman-copy>p:not(.label){font-size:14px}.about-storeman-panel{grid-template-columns:1fr}.about-storeman-panel>div{min-height:145px;border-right:0;border-bottom:1px solid #333}.about-storeman-panel>div:nth-last-child(-n+2){border-bottom:1px solid #333}.about-storeman-panel>div:last-child{border-bottom:0}.about-storeman-panel strong{margin-top:22px}.about-storeman-copy .button{width:100%}}`;
+document.head.appendChild(aboutStyle);
 
 const whySection = document.querySelector('.why');
 if (whySection) {
