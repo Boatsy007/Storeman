@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/estimate.html",
+      "destination": "/quote.html",
+      "permanent": true
+    },
+    {
+      "source": "/estimate",
+      "destination": "/quote.html",
+      "permanent": true
+    }
+  ]
+}
