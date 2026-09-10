@@ -1,0 +1,148 @@
+/* Storeman homepage — flyer-inspired visual layer.
+   Presentation only: keeps existing HTML, links, schema, quote flow and SEO structure intact. */
+
+body{background:#0a0a0a}
+main{overflow:hidden}
+
+/* Header */
+.site-header{background:#070707;border-bottom:3px solid #ffe000;box-shadow:0 6px 24px rgba(0,0,0,.2)}
+.header-cta{background:#ffe000;border:2px solid #ffe000;color:#070707;font-family:"Archivo Black",sans-serif;letter-spacing:-.2px}
+
+/* Hero: black/yellow flyer energy, same H1/content and image */
+.hero{background:#080808;color:#fff;border-bottom:8px solid #ffe000}
+.hero-inner{background:#080808;min-height:720px}
+.hero-copy{background:linear-gradient(90deg,#080808 0%,#080808 80%,rgba(8,8,8,.88) 92%,rgba(8,8,8,0) 100%);color:#fff;padding-left:max(28px,calc((100vw - 1840px)/2 + 24px));width:49%}
+.hero-copy .eyebrow{color:#ffe000;font-size:12px;letter-spacing:4px}
+.hero-copy h1{color:#fff;text-transform:uppercase;text-shadow:0 3px 18px rgba(0,0,0,.34)}
+.hero-copy h1 span{background:#ffe000;color:#090909;padding:0 9px 5px;box-shadow:10px 0 0 #ffe000,-4px 0 0 #ffe000}
+.hero-copy h2{font-family:"Archivo Black",sans-serif;color:#fff;text-transform:uppercase;font-size:clamp(22px,1.8vw,31px);line-height:1.02}
+.hero-copy>p:not(.eyebrow){color:#dedede;font-size:16px;max-width:560px}
+.hero-image{width:61%}
+.hero-image:before{background:linear-gradient(90deg,#080808 0%,rgba(8,8,8,.9) 13%,rgba(8,8,8,.28) 31%,rgba(8,8,8,0) 47%)}
+.hero-image:after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(255,224,0,.12);pointer-events:none}
+.hero-actions .button-yellow{border:2px solid #ffe000;box-shadow:8px 8px 0 #fff;font-family:"Archivo Black",sans-serif}
+.hero-actions .button-white{background:#111;color:#fff;border:2px solid #fff;font-family:"Archivo Black",sans-serif}
+.hero-proof{margin-top:30px;padding-top:20px;border-top:1px solid #454545}
+.hero-proof>div{color:#fff;text-transform:uppercase;font-size:10px;letter-spacing:.45px}
+.hero-proof-icon{background:#ffe000;color:#090909;border-color:#ffe000}
+
+/* Shared section language */
+.services,.industries{background:#0b0b0b;color:#fff}
+.services{padding-top:52px;padding-bottom:64px}
+.services .label,.industries .label{color:#ffe000}
+.services .section-heading h2,.industries .section-heading h2{font-size:clamp(34px,3vw,52px);text-transform:uppercase}
+.services .section-heading h2:after,.industries .section-heading h2:after{background:#ffe000;height:4px}
+.services .link-btn,.industries .link-btn{color:#ffe000;font-family:"Archivo Black",sans-serif}
+
+/* Service cards become strong flyer panels */
+.service-grid-three{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.service-card{background:#111;color:#fff;border:1px solid #303030;border-bottom:6px solid #ffe000;box-shadow:0 18px 34px rgba(0,0,0,.24)}
+.service-card:hover{border-color:#ffe000;box-shadow:0 22px 44px rgba(0,0,0,.38)}
+.service-image{height:290px;background:#222}
+.service-image img{filter:saturate(.94) contrast(1.08)}
+.service-copy{min-height:176px;padding:0 22px 22px}
+.icon-box{background:#ffe000;color:#090909;font-family:"Archivo Black",sans-serif;box-shadow:7px 7px 0 #050505}
+.service-title h3{color:#fff;font-size:26px;text-transform:uppercase}
+.service-copy p{color:#cfcfcf;font-size:14px}
+.service-card .arrow{color:#ffe000;font-size:30px}
+
+/* Commercial audience section: crisp white break like the flyer image strip */
+.who-we-serve{background:#f1f1ed;color:#111;border:0;padding:68px 0}
+.who-heading .label{color:#111}
+.who-heading h2{font-size:clamp(42px,4vw,64px);text-transform:uppercase}
+.who-heading h2 span{color:#111;background:#ffe000;padding:0 7px}
+.who-card{border:2px solid #111;border-top:8px solid #ffe000;box-shadow:7px 7px 0 #111;min-height:220px}
+.who-card:hover{border-top-color:#111;box-shadow:10px 10px 0 #ffe000}
+.who-card-residential{background:#111;color:#fff;border-color:#111;border-top-color:#ffe000;box-shadow:7px 7px 0 #ffe000}
+
+/* About */
+.about-storeman{background:#ffe000!important;color:#090909!important;border:0!important;padding:68px 0!important}
+.about-storeman .label{color:#090909!important}
+.about-storeman h2{font-size:clamp(44px,4.2vw,68px)!important;line-height:.9!important;text-transform:uppercase}
+.about-storeman h2 span{color:#090909!important}
+.about-storeman-copy>p{color:#242424!important}
+.about-storeman-panel{background:#0a0a0a!important;color:#fff!important;border:0!important;box-shadow:12px 12px 0 rgba(0,0,0,.2)}
+.about-storeman-panel>div{border-color:#343434!important}
+.about-storeman-panel b{color:#ffe000!important}
+.about-storeman-panel span{color:#cfcfcf!important}
+.about-storeman .button-yellow{background:#0a0a0a;color:#fff!important;border-color:#0a0a0a;box-shadow:7px 7px 0 #fff}
+
+/* Why section — make the existing image/message feel like the flyer closing panel */
+.why{min-height:520px;border-top:0;border-bottom:8px solid #ffe000}
+.why-left{background:#080808}
+.why-left .label{color:#ffe000}
+.why-left h2{font-size:clamp(54px,5vw,78px);text-transform:uppercase}
+.why-left h2 span{display:inline-block;color:#090909;background:#ffe000;padding:0 8px 5px}
+.benefit-icon{background:#ffe000;box-shadow:4px 4px 0 #fff}
+.why-image:after{background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(0,0,0,.02))}
+.why-overlay-text{left:38px;right:auto;top:auto;bottom:40px;font-size:clamp(26px,2.6vw,44px);line-height:.94;color:#fff;text-transform:uppercase;text-shadow:0 4px 18px rgba(0,0,0,.65)}
+.why-overlay-text span{background:#ffe000;width:88px;height:7px}
+
+/* Capabilities as a horizontal image strip */
+.industries{padding:54px 0 62px}
+.capability-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.capability-tile{position:relative;min-height:300px;overflow:hidden;border:2px solid #2b2b2b;background:#111}
+.capability-tile img{width:100%;height:300px;object-fit:cover;filter:saturate(.93) contrast(1.09);transition:transform .28s ease}
+.capability-tile:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.9))}
+.capability-tile span{position:absolute;z-index:2;left:20px;bottom:18px;color:#090909;background:#ffe000;padding:8px 12px;font-family:"Archivo Black",sans-serif;font-size:20px;line-height:1;text-transform:uppercase;box-shadow:6px 6px 0 #0a0a0a}
+.capability-tile:hover img{transform:scale(1.035)}
+
+/* Areas / FAQ / CTA */
+.service-areas{background:#0a0a0a;border-top:0;padding:70px 0}
+.service-areas-copy h2{font-size:clamp(48px,4vw,70px);text-transform:uppercase}
+.service-areas-grid a{border:2px solid #333;border-top:7px solid #ffe000;background:#111;box-shadow:7px 7px 0 #000}
+.service-areas-grid strong{font-size:26px}
+
+.faq{background:#f3f3ef!important;color:#111!important;padding:68px 0!important}
+.faq .label{color:#111!important}
+.faq-heading h2{font-size:clamp(48px,4vw,68px)!important;text-transform:uppercase}
+.faq-heading h2 span{color:#111!important;background:#ffe000;padding:0 6px}
+.faq-list details{border-color:#111!important}
+
+.cta{background:#ffe000;border:0;border-top:8px solid #0a0a0a}
+.cta h2{font-size:clamp(38px,3.4vw,58px);text-transform:uppercase}
+.cta .button-black{font-family:"Archivo Black",sans-serif;border:2px solid #111;box-shadow:7px 7px 0 #fff}
+
+footer{border-top:0!important}
+
+@media(max-width:1180px){
+  .hero-copy{width:52%;padding-left:28px}
+  .hero-image{width:58%}
+  .service-image{height:240px}
+  .service-title h3{font-size:22px}
+}
+
+@media(max-width:980px){
+  .hero-inner{display:block}
+  .hero-copy{width:100%;background:#080808;padding:52px 28px 38px}
+  .hero-image{width:100%;height:500px}
+  .hero-image:before{background:linear-gradient(180deg,#080808 0%,rgba(8,8,8,.2) 22%,rgba(8,8,8,0) 45%)}
+  .service-grid-three{grid-template-columns:1fr 1fr}
+  .service-card:last-child{grid-column:1/-1}
+  .capability-tile,.capability-tile img{min-height:230px;height:230px}
+}
+
+@media(max-width:680px){
+  .site-header{border-bottom-width:2px}
+  .hero{border-bottom-width:6px}
+  .hero-copy{padding:38px 14px 30px}
+  .hero-copy h1{font-size:50px;line-height:.9}
+  .hero-copy h2{font-size:22px}
+  .hero-copy .eyebrow{font-size:9px;letter-spacing:2.6px}
+  .hero-actions .button-yellow{box-shadow:5px 5px 0 #fff}
+  .hero-proof{grid-template-columns:1fr}
+  .hero-proof>div:last-child{grid-column:auto}
+  .hero-image{height:360px}
+  .service-grid-three{grid-template-columns:1fr}
+  .service-card:last-child{grid-column:auto}
+  .service-image{height:240px}
+  .service-title h3{font-size:24px}
+  .who-we-serve,.about-storeman,.service-areas,.faq{padding-top:52px!important;padding-bottom:54px!important}
+  .who-heading h2,.about-storeman h2,.service-areas-copy h2,.faq-heading h2{font-size:43px!important}
+  .who-card{box-shadow:5px 5px 0 #111}
+  .why{border-bottom-width:6px}
+  .why-overlay-text{left:18px;bottom:24px;font-size:26px}
+  .capability-grid{grid-template-columns:1fr!important}
+  .capability-tile,.capability-tile img{height:240px;min-height:240px}
+  .capability-tile span{font-size:17px;left:14px;bottom:14px}
+}
