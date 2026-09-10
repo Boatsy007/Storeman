@@ -1,0 +1,45 @@
+name: Match homepage headline to flyer
+on:
+  push:
+    paths:
+      - '.github/workflows/update-homepage-headline.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update hero headline
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text()
+          old = '<h1>EXTERNAL<br><span>PROPERTY</span><br>SOLUTIONS</h1>'
+          new = '<h1><span class="hero-headline-white">COMPLETE</span><br><span class="hero-headline-yellow">COMMERCIAL</span><br><span class="hero-headline-yellow">EXTERIOR CARE</span></h1>'
+          if old not in s:
+              raise SystemExit('Expected homepage headline not found')
+          p.write_text(s.replace(old, new, 1))
+
+          css = Path('flyer-home.css')
+          c = css.read_text()
+          marker = '/* Flyer headline match */'
+          if marker not in c:
+              c += '''\n\n/* Flyer headline match */\n.hero-copy h1 .hero-headline-white{background:none!important;color:#fff!important;padding:0!important;box-shadow:none!important;display:inline!important}\n.hero-copy h1 .hero-headline-yellow{background:none!important;color:#ffe000!important;padding:0!important;box-shadow:none!important;display:inline!important}\n@media(max-width:680px){.hero-copy h1{font-size:46px;line-height:.9;letter-spacing:-2px}.hero-copy h1 .hero-headline-yellow,.hero-copy h1 .hero-headline-white{white-space:nowrap}}\n'''
+              css.write_text(c)
+          PY
+      - name: Validate
+        run: |
+          grep -q 'COMPLETE' index.html
+          grep -q 'COMMERCIAL' index.html
+          grep -q 'EXTERIOR CARE' index.html
+          grep -q 'hero-headline-yellow' flyer-home.css
+      - name: Commit changes
+        run: |
+          git config user.name "Storeman Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html flyer-home.css
+          git diff --cached --quiet || git commit -m "Match homepage headline to flyer"
+          git push
