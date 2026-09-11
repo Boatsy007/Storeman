@@ -1,0 +1,122 @@
+/* STOREMAN homepage mobile optimisation layer.
+   Mobile-only presentation overrides. Keeps homepage HTML, SEO, forms and functionality intact. */
+
+@media (max-width:680px){
+  html,body{max-width:100%;overflow-x:hidden}
+  body{background:#070707}
+  .container,.header-inner{width:calc(100% - 28px)!important}
+
+  /* Compact premium header */
+  .site-header{height:72px!important}
+  .header-inner{gap:12px!important}
+  .header-brand{width:200px!important;max-width:64vw!important}
+  .header-logo{height:auto!important;max-height:48px!important;object-fit:contain!important;object-position:left center!important}
+  .menu-button{width:50px;height:50px;padding:0!important;border:1px solid #3a3a3a!important;display:grid!important;place-items:center!important;font-size:26px!important;line-height:1!important}
+
+  /* Hero — prevent clipping and get the full proposition into the first screen cleanly */
+  .hero-inner{display:block!important;min-height:auto!important;overflow:hidden!important}
+  .hero-copy{width:100%!important;min-width:0!important;min-height:auto!important;padding:34px 18px 30px!important;background:#070707!important}
+  .hero-copy .eyebrow{font-size:9px!important;letter-spacing:3.1px!important;margin:0 0 16px!important;white-space:normal!important}
+  .hero-copy h1{width:100%!important;max-width:100%!important;margin:0!important;font-size:clamp(42px,12.2vw,51px)!important;line-height:.87!important;letter-spacing:-2.1px!important;overflow:visible!important}
+  .hero-copy h1 .hero-headline-white,
+  .hero-copy h1 .hero-headline-yellow{display:block!important;width:100%!important;max-width:100%!important;padding:0!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important}
+  .hero-copy h1 .hero-headline-yellow:last-child{font-size:.78em!important;letter-spacing:-1.5px!important;line-height:1.02!important;margin-top:3px!important}
+  .hero-copy h2{font-size:21px!important;line-height:1.02!important;letter-spacing:-.7px!important;margin:24px 0 10px!important}
+  .hero-copy>p:not(.eyebrow){font-size:14px!important;line-height:1.5!important;max-width:100%!important;margin:0!important;color:#d6d6d6!important}
+  .hero-actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:24px!important}
+  .hero-actions .button{width:100%!important;min-height:54px!important;padding:0 16px!important;font-size:11px!important}
+  .hero-proof{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:24px!important;padding-top:18px!important}
+  .hero-proof>div,.hero-proof>div:last-child{grid-column:auto!important;font-size:9px!important;gap:10px!important}
+  .hero-proof-icon{width:30px!important;height:30px!important;flex-basis:30px!important}
+  .hero-image{position:relative!important;width:100%!important;height:260px!important;margin:0!important}
+  .hero-image img{object-position:58% center!important}
+  .hero-image:before{background:linear-gradient(180deg,#070707 0%,rgba(7,7,7,.08) 22%,rgba(7,7,7,0) 50%)!important}
+
+  /* Six-step package — clear sequence without tiny cramped cards */
+  .complete-visit{padding:48px 0 52px!important}
+  .complete-visit-head{display:block!important;margin-bottom:22px!important}
+  .complete-visit h2{font-size:39px!important;line-height:.9!important;letter-spacing:-1.8px!important}
+  .complete-visit-intro{font-size:14px!important;line-height:1.55!important;margin-top:18px!important}
+  .visit-sequence{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+  .visit-step{display:grid!important;grid-template-columns:42% 58%!important;min-height:148px!important}
+  .visit-step-media{height:100%!important;min-height:148px!important}
+  .visit-step-body{min-height:148px!important;padding:15px 14px 14px!important;border-top:0!important;border-left:5px solid #ffe000!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+  .visit-step-no{margin:0 0 7px!important;font-size:9px!important}
+  .visit-step h3{font-size:17px!important;line-height:1!important;margin:0 0 7px!important}
+  .visit-step p{font-size:11px!important;line-height:1.4!important}
+  .visit-step:not(:last-child):after{display:none!important}
+  .complete-visit-note{margin-top:16px!important;padding:14px!important;gap:9px!important}
+  .complete-visit-note strong{font-size:10px!important;line-height:1.5!important}
+  .complete-visit-note span{font-size:10px!important;line-height:1.4!important;white-space:normal!important}
+
+  /* Existing linked service cards remain touch-friendly */
+  .services{padding:48px 0 52px!important}
+  .services .section-heading{gap:16px!important;margin-bottom:20px!important}
+  .services .section-heading h2{font-size:32px!important;line-height:.94!important}
+  .service-grid-three{grid-template-columns:1fr!important;gap:12px!important}
+  .service-card:last-child{grid-column:auto!important}
+  .service-image{height:205px!important}
+  .service-copy{min-height:142px!important}
+  .service-title h3{font-size:22px!important}
+
+  /* Commercial customer types — denser but still readable */
+  .who-we-serve{padding:50px 0!important}
+  .who-heading{display:block!important;margin-bottom:22px!important}
+  .who-heading h2{font-size:39px!important;letter-spacing:-1.8px!important}
+  .who-heading>p{font-size:14px!important;margin-top:18px!important}
+  .who-grid{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .who-card{min-height:160px!important;padding:17px 14px!important}
+  .who-card h3{font-size:15px!important;margin:25px 0 7px!important}
+  .who-card p{font-size:10.5px!important;line-height:1.4!important}
+
+  /* Differentiator — headline first, sweeper image immediately after */
+  .why{display:block!important;min-height:0!important}
+  .why-left{padding:48px 18px 42px!important}
+  .why-left h2{font-size:43px!important;line-height:.87!important;letter-spacing:-2px!important;margin-bottom:20px!important}
+  .sweeper-difference-copy{font-size:14px!important;line-height:1.52!important;margin-bottom:24px!important}
+  .why .benefits{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .why .benefits>div{padding:13px!important;min-height:128px!important}
+  .why .benefits strong{font-size:11px!important}
+  .why .benefits p{font-size:10px!important;line-height:1.35!important}
+  .why-image{min-height:300px!important;background-position:58% center!important}
+  .why-overlay-text{left:18px!important;right:18px!important;bottom:20px!important;font-size:22px!important;line-height:.96!important}
+
+  /* Trust strip — three compact rows instead of six tiny columns */
+  .storeman-trust{padding:20px 0!important}
+  .storeman-trust-grid{grid-template-columns:1fr 1fr!important}
+  .storeman-trust-item{min-height:92px!important;padding:14px 12px!important;border-bottom:1px solid rgba(0,0,0,.3)!important}
+  .storeman-trust-item:nth-child(2n){border-right:0!important}
+  .storeman-trust-item:nth-last-child(-n+2){border-bottom:0!important}
+  .storeman-trust-item b{font-size:8px!important;margin-bottom:7px!important}
+  .storeman-trust-item strong{font-size:11px!important;line-height:1.1!important}
+
+  /* Lower sections */
+  .about-storeman,.industries,.service-areas,.faq{padding-top:50px!important;padding-bottom:52px!important}
+  .capability-grid{grid-template-columns:1fr!important}
+  .capability-tile,.capability-tile img{height:210px!important;min-height:210px!important}
+  .service-areas-inner{grid-template-columns:1fr!important;gap:28px!important}
+  .service-areas-grid{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .service-areas-grid a{min-height:122px!important;padding:14px!important}
+  .service-areas-grid strong{font-size:18px!important}
+  .faq-inner{grid-template-columns:1fr!important;gap:24px!important}
+
+  /* Final CTA */
+  .cta{padding:48px 0 92px!important}
+  .cta-inner{display:grid!important;grid-template-columns:1fr!important;gap:20px!important}
+  .cta h2{font-size:39px!important;line-height:.91!important;letter-spacing:-1.8px!important}
+  .cta .button-black{width:100%!important;min-height:56px!important}
+  .cta-phone,.cta-mail{grid-column:auto!important}
+
+  /* Ensure the sticky mobile quote bar never hides content */
+  .sticky-mobile-quote{left:10px!important;right:10px!important;min-height:54px!important;font-size:11px!important}
+}
+
+@media (max-width:390px){
+  .header-brand{width:184px!important}
+  .hero-copy{padding-left:14px!important;padding-right:14px!important}
+  .hero-copy h1{font-size:42px!important;letter-spacing:-1.8px!important}
+  .hero-copy h1 .hero-headline-yellow:last-child{font-size:.76em!important}
+  .who-grid{grid-template-columns:1fr!important}
+  .who-card{min-height:145px!important}
+  .service-areas-grid{grid-template-columns:1fr!important}
+}
