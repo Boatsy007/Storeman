@@ -103,7 +103,7 @@ if (heroQuoteButton) {
 
   let heroQuoteVisible = true;
   function syncStickyQuote() {
-    const shouldShow = window.innerWidth <= 680 && !heroQuoteVisible && window.scrollY > 80;
+    const shouldShow = window.innerWidth <= 680 && !heroQuoteVisible && window.scrollY > 850;
     stickyQuote.classList.toggle('is-visible', shouldShow);
   }
   if ('IntersectionObserver' in window) {
