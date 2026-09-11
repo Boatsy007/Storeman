@@ -1,0 +1,49 @@
+name: Add mobile homepage stylesheet
+
+on:
+  push:
+    paths:
+      - '.github/workflows/add-mobile-home-css.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  add-mobile-css:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Insert mobile homepage stylesheet
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          needle = '  <link rel="stylesheet" href="/mobile-menu-fix.css" />\n'
+          link = '  <link rel="stylesheet" href="/mobile-home.css" />\n'
+          if link not in s:
+              if needle not in s:
+                  raise SystemExit('mobile-menu-fix.css link not found')
+              s = s.replace(needle, needle + link, 1)
+          if '<title>Commercial Property Maintenance South East Queensland | Storeman</title>' not in s:
+              raise SystemExit('Homepage title unexpectedly changed')
+          if '<link rel="canonical" href="https://storeman.com.au/">' not in s:
+              raise SystemExit('Homepage canonical unexpectedly changed')
+          if '<script src="/seo.js" defer></script>' not in s:
+              raise SystemExit('SEO script missing')
+          if 'id="quoteModal"' not in s or 'data-quote-form' not in s:
+              raise SystemExit('Quote functionality missing')
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No changes required"
+            exit 0
+          fi
+          git config user.name "Storeman Website Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html
+          git commit -m "Optimise homepage for mobile"
+          git push
