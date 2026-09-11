@@ -1,0 +1,69 @@
+name: Apply mobile polish
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-mobile-polish.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mobile-polish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply safe mobile polish hooks
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          index = Path('index.html')
+          html = index.read_text(encoding='utf-8')
+          marker = '  <link rel="stylesheet" href="/mobile-home.css" />\n'
+          polish = '  <link rel="stylesheet" href="/mobile-polish.css" />\n'
+          if polish not in html:
+              if marker not in html:
+                  raise SystemExit('mobile-home.css link not found')
+              html = html.replace(marker, marker + polish, 1)
+          index.write_text(html, encoding='utf-8')
+
+          script = Path('script.js')
+          js = script.read_text(encoding='utf-8')
+          old = "const shouldShow = window.innerWidth <= 680 && !heroQuoteVisible && window.scrollY > 80;"
+          new = "const shouldShow = window.innerWidth <= 680 && !heroQuoteVisible && window.scrollY > 850;"
+          if old in js:
+              js = js.replace(old, new, 1)
+          elif new not in js:
+              raise SystemExit('Sticky CTA threshold line not found')
+          script.write_text(js, encoding='utf-8')
+          PY
+
+      - name: Verify foundation untouched
+        shell: bash
+        run: |
+          grep -q '<title>Commercial Property Maintenance South East Queensland | Storeman</title>' index.html
+          grep -q 'rel="canonical" href="https://storeman.com.au/"' index.html
+          grep -q 'src="/seo.js" defer' index.html
+          grep -q 'src="/quote.js"' index.html
+          grep -q 'src="/script.js"' index.html
+          grep -q '/mobile-polish.css' index.html
+          grep -q 'window.scrollY > 850' script.js
+
+      - name: Commit polish
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html script.js; then
+            echo "No changes required"
+            exit 0
+          fi
+          git config user.name "Storeman Website Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html script.js
+          git commit -m "Polish mobile homepage experience"
+          git push
