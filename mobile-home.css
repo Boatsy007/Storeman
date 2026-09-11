@@ -13,19 +13,20 @@
   .header-logo{height:auto!important;max-height:48px!important;object-fit:contain!important;object-position:left center!important}
   .menu-button{width:50px;height:50px;padding:0!important;border:1px solid #3a3a3a!important;display:grid!important;place-items:center!important;font-size:26px!important;line-height:1!important}
 
-  /* Hero — prevent clipping and get the full proposition into the first screen cleanly */
+  /* Hero — compact stacked headline with no artificial line gaps */
   .hero-inner{display:block!important;min-height:auto!important;overflow:hidden!important}
-  .hero-copy{width:100%!important;min-width:0!important;min-height:auto!important;padding:34px 18px 30px!important;background:#070707!important}
-  .hero-copy .eyebrow{font-size:9px!important;letter-spacing:3.1px!important;margin:0 0 16px!important;white-space:normal!important}
-  .hero-copy h1{width:100%!important;max-width:100%!important;margin:0!important;font-size:clamp(42px,12.2vw,51px)!important;line-height:.87!important;letter-spacing:-2.1px!important;overflow:visible!important}
+  .hero-copy{width:100%!important;min-width:0!important;min-height:auto!important;padding:30px 18px 26px!important;background:#070707!important}
+  .hero-copy .eyebrow{font-size:9px!important;letter-spacing:3.1px!important;margin:0 0 14px!important;white-space:normal!important}
+  .hero-copy h1{width:100%!important;max-width:100%!important;margin:0!important;font-size:clamp(42px,12.2vw,51px)!important;line-height:.84!important;letter-spacing:-2.1px!important;overflow:visible!important}
+  .hero-copy h1 br{display:none!important}
   .hero-copy h1 .hero-headline-white,
-  .hero-copy h1 .hero-headline-yellow{display:block!important;width:100%!important;max-width:100%!important;padding:0!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important}
-  .hero-copy h1 .hero-headline-yellow:last-child{font-size:.78em!important;letter-spacing:-1.5px!important;line-height:1.02!important;margin-top:3px!important}
-  .hero-copy h2{font-size:21px!important;line-height:1.02!important;letter-spacing:-.7px!important;margin:24px 0 10px!important}
+  .hero-copy h1 .hero-headline-yellow{display:block!important;width:100%!important;max-width:100%!important;padding:0!important;margin:0!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;line-height:.84!important}
+  .hero-copy h1 .hero-headline-yellow:last-child{font-size:.78em!important;letter-spacing:-1.5px!important;line-height:.9!important;margin-top:2px!important}
+  .hero-copy h2{font-size:21px!important;line-height:1.02!important;letter-spacing:-.7px!important;margin:18px 0 9px!important}
   .hero-copy>p:not(.eyebrow){font-size:14px!important;line-height:1.5!important;max-width:100%!important;margin:0!important;color:#d6d6d6!important}
-  .hero-actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:24px!important}
+  .hero-actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:20px!important}
   .hero-actions .button{width:100%!important;min-height:54px!important;padding:0 16px!important;font-size:11px!important}
-  .hero-proof{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:24px!important;padding-top:18px!important}
+  .hero-proof{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:20px!important;padding-top:16px!important}
   .hero-proof>div,.hero-proof>div:last-child{grid-column:auto!important;font-size:9px!important;gap:10px!important}
   .hero-proof-icon{width:30px!important;height:30px!important;flex-basis:30px!important}
   .hero-image{position:relative!important;width:100%!important;height:260px!important;margin:0!important}
