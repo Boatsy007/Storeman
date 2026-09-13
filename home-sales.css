@@ -58,6 +58,14 @@
 .visit-step-greenup .visit-step-no,.visit-step-greenup h3,.visit-step-greenup p{color:#111!important}
 .included-pill{background:#111!important;color:#ffe000!important;border-radius:0!important}
 
+/* Fix Storeman Finish service card: the old dynamic badge was colliding with the title. */
+.signature-service-card{outline:4px solid #ffe000!important;outline-offset:-4px!important;position:relative!important}
+.signature-service-card .service-copy{background:#fff!important;color:#111!important;padding-top:0!important}
+.signature-service-card .service-copy p,.signature-service-card h3{color:#111!important}
+.signature-service-card .service-free-badge{display:none!important}
+.signature-service-card .arrow{color:#111!important}
+.signature-service-card .service-title{margin-top:-18px!important}
+
 @media(max-width:980px){
   .commercial-plan-head,.commercial-plan-grid{grid-template-columns:1fr;gap:24px}
   .visit-flow{grid-template-columns:repeat(5,1fr)}
@@ -96,4 +104,5 @@
   .storeman-finish-band .storeman-finish-copy h2{font-size:20px!important;letter-spacing:-.4px!important}
   .storeman-finish-band .storeman-finish-copy p{font-size:11.5px!important;line-height:1.35!important}
   .storeman-finish-band .storeman-finish-flow{display:none!important}
+  .signature-service-card .service-title h3{font-size:22px!important;line-height:.95!important}
 }
