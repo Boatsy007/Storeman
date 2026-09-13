@@ -3,6 +3,9 @@ export const CONFIG = {
   membershipVisits: 19,
   membershipDiscount: 0.10,
   baseService: { id:'mow_snip_edge_blow', label:'Mow + Snip + Edge + Blow & Tidy', price:100, recurring:true },
+  includedServices: [
+    { id:'lawn_green_up_included', label:'Storeman Lawn Green-Up', price:0, recurring:true, included:true }
+  ],
   adjustments: {
     cornerBlock: { label:'Corner block', price:20, recurring:true },
     difficultAccess: { label:'Restricted access', price:20, recurring:true },
@@ -13,9 +16,6 @@ export const CONFIG = {
     hedgeSmall: { label:'Small hedge trim — up to 2m long × 1m wide', price:40 },
     hedgeMedium: { label:'Medium hedge trim — up to 4m long × 2m wide', price:60 },
     hedgeLarge: { label:'Large hedge trim', manualReview:true, reason:'Large hedge requires a site quote' },
-    colourGuardSmall: { label:'Lawn Green-Up — small lawn', price:25 },
-    colourGuardMedium: { label:'Lawn Green-Up — medium lawn', price:50 },
-    colourGuardLarge: { label:'Lawn Green-Up — large lawn', price:75, fromPrice:true },
     weedSmall: { label:'Weed treatment — small', price:5 },
     weedMedium: { label:'Weed treatment — medium', price:15 },
     weedLarge: { label:'Weed treatment — large', price:30, fromPrice:true },
@@ -45,7 +45,7 @@ export function calculateQuote(input = {}) {
     else reviewReasons.push('Access requires review');
   });
 
-  const items = [{ ...CONFIG.baseService }];
+  const items = [{ ...CONFIG.baseService }, ...CONFIG.includedServices.map((item) => ({ ...item }))];
 
   Object.entries(CONFIG.adjustments).forEach(([id, adjustment]) => {
     if (flags.includes(id)) items.push({ id, ...adjustment, recurring:Boolean(adjustment.recurring) });
