@@ -33,8 +33,7 @@
     const fd = new FormData(form);
     const flags = fd.getAll('flag').map(safe);
     const type = safe(fd.get('propertyType'));
-    if (type === 'cornerBlock') flags.push('cornerBlock');
-    if (type === 'acreage') flags.push('acreage');
+    if (['cornerBlock','largeProperty','acreage'].includes(type)) flags.push(type);
     return {
       id: leadId,
       name: safe(fd.get('name')),
@@ -42,7 +41,6 @@
       email: safe(fd.get('email')),
       business: safe(fd.get('business')),
       address: safe(fd.get('address')),
-      lawnAreaM2: Number(fd.get('lawnAreaM2') || 0),
       propertyType: type,
       flags,
       addons: fd.getAll('addon').map(safe)
@@ -73,12 +71,17 @@
     return Promise.all([...photoInput.files].slice(0,3).map(compressPhoto));
   }
 
+  function linePrice(item) {
+    if (item.price === 0) return 'FREE';
+    return `${item.fromPrice ? 'FROM ' : ''}${money(item.price)}`;
+  }
+
   function renderQuote(q) {
     if (q.manualReview) {
       result.innerHTML = `<div class="review-box"><p class="eyebrow">PROPERTY REVIEW</p><h3>WE JUST NEED TO CHECK THIS ONE.</h3><p>Your property has one or more details that fall outside our automatic quote rules. Your information is saved and Storeman can confirm the price without you needing to start again.</p><p><strong>Reason:</strong> ${q.reviewReasons.join(', ')}</p></div>`;
       return;
     }
-    const lines = q.items.map((item) => `<div class="quote-line"><span>${item.label}</span><strong>${money(item.price)}</strong></div>`).join('');
+    const lines = q.items.map((item) => `<div class="quote-line"><span>${item.label}</span><strong>${linePrice(item)}</strong></div>`).join('');
     result.innerHTML = `<div class="quote-card"><div class="small">YOUR STOREMAN PRICE</div><div class="price">${q.formattedTotal}</div><div class="sub">per visit · based on the property details supplied</div><div class="quote-lines">${lines}</div></div><div class="membership-offer"><h3>SAVE 10% AS A MEMBER</h3><p><strong>${q.membership.visits} scheduled visits</strong> across the year.</p><p>${money(q.membership.annual)} / year · ${money(q.membership.weekly)} / week · ${money(q.membership.fortnightly)} / fortnight · ${money(q.membership.monthly)} / month</p></div><div class="accept-row"><button type="button" class="oneoff" data-accept="oneoff">BOOK ONE-OFF</button><button type="button" class="member" data-accept="membership">BECOME A MEMBER</button></div><p class="fine">Final service is subject to the property reasonably matching the details and current photos supplied. Materially different site conditions may require confirmation before work starts.</p>`;
   }
 
@@ -89,14 +92,7 @@
     currentQuote = window.StoremanQuoteEngine.calculate(snapshot);
     let photos = [];
     try { photos = await preparePhotos(); } catch (_) {}
-    await postLead({
-      ...snapshot,
-      stage: currentQuote.manualReview ? 'instant_quote_review' : 'instant_quote_generated',
-      services:['lawn'],
-      photos,
-      quote: currentQuote,
-      source:'instant_quote'
-    });
+    await postLead({ ...snapshot, stage:currentQuote.manualReview ? 'instant_quote_review' : 'instant_quote_generated', services:['lawn'], photos, quote:currentQuote, source:'instant_quote' });
     renderQuote(currentQuote);
     setStage(5);
   }
