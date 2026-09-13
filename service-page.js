@@ -26,6 +26,18 @@ document.querySelectorAll('.service-quote, .service-actions .service-btn-yellow,
   }
 });
 
+const serviceHeroCopy = document.querySelector('.service-hero-copy');
+if (serviceHeroCopy && !serviceHeroCopy.querySelector('.service-insurance-badge')) {
+  const badge = document.createElement('div');
+  badge.className = 'service-insurance-badge';
+  badge.textContent = '$20M PUBLIC LIABILITY INSURED';
+  const actions = serviceHeroCopy.querySelector('.service-actions');
+  actions?.insertAdjacentElement('afterend', badge);
+  const insuranceStyle = document.createElement('style');
+  insuranceStyle.textContent = `.service-insurance-badge{display:inline-flex;margin-top:14px;padding:9px 11px;background:#111;color:#ffe000;border:2px solid #ffe000;font-family:"Archivo Black",sans-serif;font-size:10px;letter-spacing:.6px}.service-insurance-badge:before{content:"✓";margin-right:7px;color:#ffe000}@media(max-width:700px){.service-insurance-badge{font-size:9px;margin-top:12px}}`;
+  document.head.appendChild(insuranceStyle);
+}
+
 // Signature Storeman Finish marketing across the pages where lawn service is sold.
 const isLawnPage = location.pathname === '/lawn-garden.html';
 const isMembershipPage = location.pathname === '/membership.html';
