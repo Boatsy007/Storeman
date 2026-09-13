@@ -56,6 +56,7 @@
     const flags = fd.getAll('flag').map(safe);
     const type = safe(fd.get('propertyType'));
     if (['cornerBlock','largeProperty','acreage'].includes(type)) flags.push(type);
+    const addons = [...form.querySelectorAll('[data-addon-choice]:checked')].map((input) => safe(input.value)).filter(Boolean);
     return {
       id: leadId,
       name: safe(fd.get('name')),
@@ -66,7 +67,7 @@
       addressEntry: manualAddress ? 'manual' : 'autocomplete',
       propertyType: type,
       flags,
-      addons: fd.getAll('addon').map(safe)
+      addons
     };
   }
 
@@ -146,6 +147,21 @@
       if (requestId === addressRequest) hideSuggestions();
     }
   }
+
+  function syncAddonCategory(toggle) {
+    const key = toggle.dataset.addonToggle;
+    const options = root.querySelector(`[data-addon-options="${key}"]`);
+    if (!options) return;
+    options.hidden = !toggle.checked;
+    const radios = [...options.querySelectorAll('[data-addon-choice]')];
+    radios.forEach((radio, index) => { radio.required = toggle.checked && index === 0; });
+    if (!toggle.checked) radios.forEach((radio) => { radio.checked = false; });
+  }
+
+  root.querySelectorAll('[data-addon-toggle]').forEach((toggle) => {
+    syncAddonCategory(toggle);
+    toggle.addEventListener('change', () => syncAddonCategory(toggle));
+  });
 
   form.addEventListener('click', async (e) => {
     const manual = e.target.closest('[data-use-manual]');
