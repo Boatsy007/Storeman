@@ -15,6 +15,8 @@
   const mapPlaceholder = root.querySelector('[data-map-placeholder]');
   const mapCaption = root.querySelector('[data-map-caption]');
   const mapConfirmAddress = root.querySelector('[data-map-confirm-address]');
+  const params = new URLSearchParams(window.location.search);
+  const membershipIntent = params.get('membership') === '1';
   let currentQuote = null;
   let leadId = `stm_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
   let addressTimer = null;
@@ -106,17 +108,22 @@
       return;
     }
     const lines = q.items.map((item) => `<div class="quote-line"><span>${item.label}</span><strong>${linePrice(item)}</strong></div>`).join('');
-    result.innerHTML = `<div class="quote-card"><div class="small">YOUR STOREMAN PRICE</div><div class="price">${q.formattedTotal}</div><div class="sub">per visit · based on the property details supplied</div><div class="quote-lines">${lines}</div></div><div class="membership-offer"><div class="membership-kicker">SAVE 10% AS A MEMBER</div><h3>YOUR MEMBER PRICE</h3><div class="membership-main-price">${money(q.membership.weekly)}<span>/WEEK</span></div><p class="membership-summary"><strong>${q.membership.visits} scheduled visits per year.</strong><br>Save 10% compared with booking each visit separately.</p><div class="membership-options"><span>${money(q.membership.fortnightly)} fortnightly</span><span>${money(q.membership.monthly)} monthly</span><span>${money(q.membership.annual)} annually</span></div><p class="membership-includes">Includes mowing, snipping, edging, blow &amp; tidy on every scheduled visit.</p></div><div class="accept-row"><button type="button" class="oneoff" data-accept="oneoff">BOOK ONE-OFF</button><button type="button" class="member" data-accept="membership">BECOME A MEMBER</button></div><p class="fine">Quote based on the details supplied. Final price may vary if site conditions or scope differ on the day.</p>`;
+    const membershipHeading = membershipIntent ? 'YOUR LAWN MEMBERSHIP PRICE' : 'YOUR MEMBER PRICE';
+    const membershipIntro = membershipIntent
+      ? '<p class="membership-intent-note">You came here for membership, so your 10% member saving is already calculated below.</p>'
+      : '';
+    const membershipButton = membershipIntent ? 'START MEMBERSHIP' : 'BECOME A MEMBER';
+    result.innerHTML = `<div class="quote-card"><div class="small">YOUR STOREMAN PRICE</div><div class="price">${q.formattedTotal}</div><div class="sub">per visit · based on the property details supplied</div><div class="quote-lines">${lines}</div></div><div class="membership-offer${membershipIntent ? ' membership-priority' : ''}"><div class="membership-kicker">SAVE 10% AS A MEMBER</div><h3>${membershipHeading}</h3>${membershipIntro}<div class="membership-main-price">${money(q.membership.weekly)}<span>/WEEK</span></div><p class="membership-summary"><strong>${q.membership.visits} scheduled visits per year.</strong><br>Save 10% compared with booking each lawn visit separately.</p><div class="membership-options"><span>${money(q.membership.fortnightly)} fortnightly</span><span>${money(q.membership.monthly)} monthly</span><span>${money(q.membership.annual)} annually</span></div><p class="membership-includes">Includes mowing, snipping, edging, blow &amp; tidy on every scheduled visit. Optional add-ons and first-service extras are quoted separately.</p></div><div class="accept-row"><button type="button" class="oneoff" data-accept="oneoff">BOOK ONE-OFF</button><button type="button" class="member" data-accept="membership">${membershipButton}</button></div><p class="fine">Quote based on the details supplied. Final price may vary if site conditions or scope differ on the day.</p>`;
   }
 
   async function calculateAndSubmit() {
     if (!validateStage(4)) return;
-    status.textContent = 'Preparing your property quote…';
+    status.textContent = membershipIntent ? 'Calculating your Storeman member price…' : 'Preparing your property quote…';
     const snapshot = dataSnapshot();
     currentQuote = window.StoremanQuoteEngine.calculate(snapshot);
     let photos = [];
     try { photos = await preparePhotos(); } catch (_) {}
-    await postLead({ ...snapshot, stage:currentQuote.manualReview ? 'instant_quote_review' : 'instant_quote_generated', services:['lawn'], photos, quote:currentQuote, source:'instant_quote' });
+    await postLead({ ...snapshot, stage:currentQuote.manualReview ? 'instant_quote_review' : 'instant_quote_generated', services:['lawn'], photos, quote:currentQuote, source:membershipIntent ? 'membership_quote' : 'instant_quote', bookingChoice:membershipIntent ? 'membership_interest' : '' });
     renderQuote(currentQuote);
     setStage(5);
   }
@@ -202,7 +209,7 @@
       e.preventDefault();
       const snapshot = dataSnapshot();
       const bookingChoice = accept.dataset.accept;
-      await postLead({ ...snapshot, stage:'quote_accepted', services:['lawn'], source:'instant_quote', bookingChoice, quote:currentQuote });
+      await postLead({ ...snapshot, stage:'quote_accepted', services:['lawn'], source:membershipIntent ? 'membership_quote' : 'instant_quote', bookingChoice, quote:currentQuote });
       status.textContent = bookingChoice === 'membership' ? 'Membership selected. Storeman will continue the setup from here.' : 'One-off service selected. Storeman will continue the booking from here.';
     }
   });
