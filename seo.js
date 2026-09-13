@@ -80,6 +80,28 @@
       publisher: { '@id': `${BASE}/#organization` }
     }, 'storeman-website-schema');
 
+    const servicesSection = document.getElementById('services');
+    const servicesGrid = servicesSection?.querySelector('.service-grid');
+    const servicesHeading = servicesSection?.querySelector('.section-heading h2');
+    if (servicesGrid) {
+      if (servicesHeading) servicesHeading.textContent = 'EVERYTHING YOUR LAWN & GROUNDS NEED.';
+      servicesGrid.classList.remove('service-grid-three');
+      servicesGrid.classList.add('storeman-full-services');
+      servicesGrid.innerHTML = `
+        <a class="service-card service-lawn" href="/lawn-garden.html" aria-label="View Lawn Mowing service"><div class="service-image"><img src="/assets/mowing.jpg" alt="Storeman lawn mowing" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">01</span><h3>LAWN<br>MOWING</h3></div><p>Mow, snip, edge, blow and tidy for residential and commercial properties.</p><span class="arrow" aria-hidden="true">→</span></div></a>
+        <a class="service-card service-grounds" href="/quote.html" aria-label="Get a hedge trimming quote"><div class="service-image"><img src="/assets/grounds.jpg" alt="Storeman hedge trimming" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">02</span><h3>HEDGE<br>TRIMMING</h3></div><p>Small and medium hedge trimming, with larger hedges quoted to suit the site.</p><span class="arrow" aria-hidden="true">→</span></div></a>
+        <a class="service-card service-lawn" href="/quote.html" aria-label="Get a Lawn Green-Up quote"><div class="service-image"><img src="/assets/mowing.jpg" alt="Storeman Lawn Green-Up" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">03</span><h3>LAWN<br>GREEN-UP</h3></div><p>ColourGuard PLUS treatment to quickly improve the lawn's green appearance.</p><span class="arrow" aria-hidden="true">→</span></div></a>
+        <a class="service-card service-grounds" href="/quote.html" aria-label="Get a weed treatment quote"><div class="service-image"><img src="/assets/grounds.jpg" alt="Storeman weed treatment" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">04</span><h3>WEED<br>TREATMENT</h3></div><p>Targeted weed treatment for lawns, edges and eligible property areas.</p><span class="arrow" aria-hidden="true">→</span></div></a>
+        <a class="service-card service-grounds" href="/quote.html" aria-label="Get a garden tidy quote"><div class="service-image"><img src="/assets/grounds.jpg" alt="Storeman garden tidy" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">05</span><h3>GARDEN<br>TIDY</h3></div><p>Light to larger garden tidy-ups while our team is already onsite.</p><span class="arrow" aria-hidden="true">→</span></div></a>
+        <a class="service-card service-grounds" href="/quote.html" aria-label="Get a green waste removal quote"><div class="service-image"><img src="/assets/grounds.jpg" alt="Storeman green waste removal" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">06</span><h3>GREEN WASTE<br>REMOVAL</h3></div><p>Standard green waste removal is included free on standard properties; larger volumes can be added.</p><span class="arrow" aria-hidden="true">→</span></div></a>
+        <a class="service-card service-grounds" href="/grounds.html" aria-label="View Commercial Grounds Care service"><div class="service-image"><img src="/assets/grounds.jpg" alt="Storeman commercial grounds maintenance" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">07</span><h3>COMMERCIAL<br>GROUNDS</h3></div><p>Recurring lawn and grounds maintenance for businesses, strata and managed sites.</p><span class="arrow" aria-hidden="true">→</span></div></a>
+        <a class="service-card service-lawn" href="/membership.html" aria-label="View Storeman Lawn Membership"><div class="service-image"><img src="/assets/mowing.jpg" alt="Storeman recurring lawn membership" loading="lazy" decoding="async"></div><div class="service-copy"><div class="service-title"><span class="icon-box">08</span><h3>LAWN<br>MEMBERSHIP</h3></div><p>19 scheduled visits per year with a 10% member saving.</p><span class="arrow" aria-hidden="true">→</span></div></a>`;
+
+      const serviceStyle = document.createElement('style');
+      serviceStyle.textContent = `.storeman-full-services{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}.storeman-full-services .service-card{min-width:0}.storeman-full-services .service-image{height:175px}.storeman-full-services .service-copy{min-height:205px}.storeman-full-services .service-title h3{font-size:24px}@media(max-width:1050px){.storeman-full-services{grid-template-columns:repeat(2,minmax(0,1fr))!important}}@media(max-width:680px){.storeman-full-services{grid-template-columns:1fr!important}.storeman-full-services .service-image{height:210px}.storeman-full-services .service-copy{min-height:0}}`;
+      document.head.appendChild(serviceStyle);
+    }
+
     // Give Lawn Membership a dedicated page while keeping the homepage summary.
     document.querySelectorAll('a[href="#membership"]').forEach((link) => {
       if (link.closest('.desktop-nav') || link.closest('.footer-nav') || link.closest('.service-card')) {
