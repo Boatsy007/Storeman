@@ -3,9 +3,11 @@
     { "source": "/estimate.html", "destination": "/quote.html", "permanent": true },
     { "source": "/estimate", "destination": "/quote.html", "permanent": true },
     { "source": "/sweeping.html", "destination": "/grounds.html", "permanent": true },
-    { "source": "/commercial-sweeping-gold-coast.html", "destination": "/grounds-maintenance-gold-coast.html", "permanent": true },
-    { "source": "/commercial-sweeping-brisbane.html", "destination": "/grounds-maintenance-brisbane.html", "permanent": true },
-    { "source": "/commercial-sweeping-logan.html", "destination": "/grounds-maintenance-logan.html", "permanent": true },
-    { "source": "/commercial-sweeping-yatala.html", "destination": "/grounds-maintenance-yatala.html", "permanent": true }
+    { "source": "/commercial-sweeping-gold-coast.html", "destination": "/grounds.html", "permanent": true },
+    { "source": "/commercial-sweeping-brisbane.html", "destination": "/grounds.html", "permanent": true },
+    { "source": "/commercial-sweeping-logan.html", "destination": "/grounds.html", "permanent": true },
+    { "source": "/commercial-sweeping-yatala.html", "destination": "/grounds.html", "permanent": true },
+    { "source": "/commercial-property-services-:area.html", "destination": "/grounds.html", "permanent": true },
+    { "source": "/grounds-maintenance-:area.html", "destination": "/grounds.html", "permanent": true }
   ]
 }
