@@ -54,19 +54,16 @@
     const oneOffPrice = parseMoney(root.querySelector('.quote-card .price')?.textContent);
     if (!offer || !mainPrice || !options || !oneOffPrice) return;
 
-    const optionSpans = [...options.querySelectorAll('span')];
-    const annualSpan = optionSpans.find((span) => /annual|yearly/i.test(span.textContent));
-    if (!annualSpan) return;
-
-    const annual = parseMoney(annualSpan.textContent);
-    if (!annual) return;
-
     const visitsMatch = offer.textContent.match(/(\d+)\s+scheduled visits/i);
     const visits = visitsMatch ? Number(visitsMatch[1]) : 19;
     if (!visits) return;
 
-    const memberPerVisit = annual / visits;
-    const savingPerVisit = Math.max(0, oneOffPrice - memberPerVisit);
+    const memberPerVisit = Math.round(oneOffPrice * 0.90 * 100) / 100;
+    const savingPerVisit = Math.round((oneOffPrice - memberPerVisit) * 100) / 100;
+    const annual = Math.round(memberPerVisit * visits * 100) / 100;
+    const weekly = annual / 52;
+    const fortnightly = annual / 26;
+    const monthly = annual / 12;
 
     mainPrice.innerHTML = `${formatMoney(memberPerVisit, memberPerVisit % 1 ? 2 : 0)}<span>/VISIT</span>`;
 
@@ -78,9 +75,6 @@
     }
     saving.innerHTML = `<strong>SAVE ${formatMoney(savingPerVisit, savingPerVisit % 1 ? 2 : 0)} EVERY VISIT</strong><span>One-off ${formatMoney(oneOffPrice)} → Member ${formatMoney(memberPerVisit, memberPerVisit % 1 ? 2 : 0)}</span>`;
 
-    const weekly = annual / 52;
-    const fortnightly = annual / 26;
-    const monthly = annual / 12;
     options.innerHTML = `<span>${formatMoney(weekly, 2)} weekly</span><span>${formatMoney(fortnightly, 2)} fortnightly</span><span>${formatMoney(monthly, 2)} monthly</span><span>${formatMoney(annual, annual % 1 ? 2 : 0)} yearly</span>`;
   }
 
