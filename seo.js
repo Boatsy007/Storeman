@@ -2,9 +2,9 @@
   const BASE = 'https://storeman.com.au';
   const path = location.pathname === '/index.html' ? '/' : location.pathname;
   const url = `${BASE}${path}`;
-  const title = document.title || 'Storeman | External Property Solutions';
-  const description = document.querySelector('meta[name="description"]')?.content || 'Commercial mechanical sweeping, grounds maintenance and lawn & garden care across South East Queensland.';
-  const heroImage = document.querySelector('main img, .hero img, .loc-hero-image img, .service-hero-image img, .contact-hero-image img')?.getAttribute('src') || '/assets/hero.jpg';
+  const title = document.title || 'Storeman | Complete Exterior Care';
+  const description = document.querySelector('meta[name="description"]')?.content || 'Residential lawn mowing and grounds care across the Gold Coast, with commercial grounds maintenance also available.';
+  const heroImage = document.querySelector('main img, .hero img, .loc-hero-image img, .service-hero-image img, .contact-hero-image img')?.getAttribute('src') || '/assets/mowing.jpg';
   const absoluteImage = heroImage.startsWith('http') ? heroImage : `${BASE}${heroImage.startsWith('/') ? '' : '/'}${heroImage}`;
 
   const upsertMeta = (attr, key, content) => {
@@ -48,20 +48,18 @@
   upsertMeta('name', 'twitter:description', description);
   upsertMeta('name', 'twitter:image', absoluteImage);
 
-  // Storeman is currently represented as an Organization rather than a LocalBusiness
-  // because the public site does not publish a verified street address.
   const organization = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': `${BASE}/#organization`,
     name: 'Storeman',
-    alternateName: 'Storeman External Property Solutions',
+    alternateName: 'Storeman Complete Exterior Care',
     url: BASE,
     logo: `${BASE}/assets/storemanlogo.jpg`,
-    image: `${BASE}/assets/hero.jpg`,
+    image: `${BASE}/assets/mowing.jpg`,
     telephone: '+61 1300 786 736',
     email: 'hello@storeman.com.au',
-    description: 'Commercial mechanical sweeping, grounds maintenance and lawn & garden care across South East Queensland.',
+    description: 'Residential lawn mowing and grounds care across the Gold Coast, with commercial grounds maintenance also available across South East Queensland.',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+61 1300 786 736',
@@ -88,8 +86,8 @@
     ['sweeping.html', 'Mechanical Sweeping', 'Mechanical Sweeping'],
     ['grounds-maintenance', 'Commercial Grounds Maintenance', 'Grounds Maintenance'],
     ['grounds.html', 'Commercial Grounds Maintenance', 'Grounds Maintenance'],
-    ['lawn-garden-maintenance', 'Commercial Lawn Mowing & Garden Maintenance', 'Lawn & Garden'],
-    ['lawn-garden.html', 'Commercial Lawn Mowing & Garden Maintenance', 'Lawn & Garden']
+    ['lawn-garden-maintenance', 'Residential & Commercial Lawn Mowing and Garden Maintenance', 'Lawn & Garden'],
+    ['lawn-garden.html', 'Residential & Commercial Lawn Mowing and Garden Maintenance', 'Lawn & Garden']
   ];
 
   const serviceMatch = serviceMap.find(([needle]) => path.includes(needle));
