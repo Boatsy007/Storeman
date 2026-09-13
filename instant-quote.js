@@ -8,16 +8,34 @@
   const result = root.querySelector('[data-quote-result]');
   const photoInput = form.elements.namedItem('photos');
   const photoSummary = root.querySelector('[data-photo-summary]');
+  const address = form.elements.namedItem('address');
+  const mapAddress = root.querySelector('[data-map-address]');
+  const propertyMap = root.querySelector('[data-property-map]');
+  const mapPlaceholder = root.querySelector('[data-map-placeholder]');
+  const mapCaption = root.querySelector('[data-map-caption]');
+  const mapConfirmAddress = root.querySelector('[data-map-confirm-address]');
   let currentQuote = null;
   let leadId = `stm_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
 
   const safe = (v) => String(v || '').replace(/[<>]/g, '').trim();
   const money = window.StoremanQuoteEngine.money;
 
+  function loadPropertyMap() {
+    const value = safe(address?.value);
+    if (mapAddress) mapAddress.textContent = value;
+    if (!value || !propertyMap) return;
+    propertyMap.src = `https://www.google.com/maps?q=${encodeURIComponent(value)}&output=embed&t=k&z=20`;
+    propertyMap.hidden = false;
+    if (mapPlaceholder) mapPlaceholder.hidden = true;
+    if (mapCaption) mapCaption.hidden = false;
+    if (mapConfirmAddress) mapConfirmAddress.textContent = value;
+  }
+
   function setStage(n) {
     stages.forEach((s) => s.classList.toggle('active', Number(s.dataset.stage) === n));
     progress.forEach((p) => p.classList.toggle('active', Number(p.dataset.progress) <= n));
     status.textContent = '';
+    if (n === 2) loadPropertyMap();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -119,7 +137,8 @@
     const n = Math.min(photoInput.files.length, 3); photoSummary.textContent = n ? `${n} photo${n===1?'':'s'} selected` : 'Up to 3 photos';
   });
 
-  const address = form.elements.namedItem('address');
-  const mapAddress = root.querySelector('[data-map-address]');
-  address?.addEventListener('input', () => { if (mapAddress) mapAddress.textContent = safe(address.value); });
+  address?.addEventListener('input', () => {
+    if (mapAddress) mapAddress.textContent = safe(address.value);
+  });
+  address?.addEventListener('change', loadPropertyMap);
 })();
