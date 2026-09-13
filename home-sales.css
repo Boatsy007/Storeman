@@ -32,17 +32,15 @@
 :root{--signature-green:#1f7a3d}
 .greenup-hero-badge,.storeman-finish-badge{display:none!important}
 .greenup-word{color:var(--signature-green)!important;font-weight:950!important;font-family:"Archivo Black",sans-serif!important;letter-spacing:-.15px}
-.hero-signature-line{margin:12px 0 0!important;padding-top:12px!important;border-top:1px solid rgba(255,255,255,.14)!important;color:#d9d9d9!important;font-size:10px!important;line-height:1.45!important;font-weight:800!important;text-transform:uppercase!important;letter-spacing:.35px!important}
-.hero-signature-line strong{color:#fff!important}
-.hero-signature-line .greenup-word{background:#fff!important;padding:3px 5px!important}
+.hero-signature-line{display:none!important}
 
 .storeman-finish-band{background:#ffe000!important;color:#111!important;border-top:1px solid #111!important;border-bottom:1px solid #111!important}
-.storeman-finish-band .storeman-finish-inner{max-width:1500px!important;margin:0 auto!important;padding:14px 28px!important;display:grid!important;grid-template-columns:auto 1fr auto!important;gap:18px!important;align-items:center!important}
-.storeman-finish-copy{display:flex!important;align-items:center!important;gap:10px!important}
-.storeman-finish-copy strong{font-family:"Archivo Black",sans-serif!important;font-size:15px!important;line-height:1!important}
-.finish-green-chip{display:inline-flex!important;background:var(--signature-green)!important;color:#fff!important;padding:7px 9px!important;font-family:"Archivo Black",sans-serif!important;font-size:11px!important;line-height:1!important;letter-spacing:.15px!important}
-.storeman-finish-band .storeman-finish-inner>p{margin:0!important;color:#222!important;font-size:12px!important;font-weight:750!important}
-.storeman-finish-tag{font-family:"Archivo Black",sans-serif!important;font-size:11px!important;white-space:nowrap!important}
+.storeman-finish-band .storeman-finish-inner{max-width:1500px!important;margin:0 auto!important;padding:12px 28px!important;display:grid!important;grid-template-columns:auto 1fr auto!important;gap:14px!important;align-items:center!important}
+.storeman-finish-copy{display:flex!important;align-items:center!important;gap:9px!important}
+.storeman-finish-copy strong{font-family:"Archivo Black",sans-serif!important;font-size:14px!important;line-height:1!important}
+.finish-green-chip{display:inline-flex!important;background:var(--signature-green)!important;color:#fff!important;padding:6px 8px!important;font-family:"Archivo Black",sans-serif!important;font-size:10px!important;line-height:1!important;letter-spacing:.15px!important}
+.storeman-finish-band .storeman-finish-inner>p{margin:0!important;color:#222!important;font-size:11px!important;font-weight:750!important}
+.storeman-finish-tag{font-family:"Archivo Black",sans-serif!important;font-size:10px!important;white-space:nowrap!important}
 .storeman-finish-tag span{color:var(--signature-green)!important}
 .storeman-finish-band .storeman-finish-copy:before,.storeman-finish-band .storeman-finish-copy:after{content:none!important}
 .storeman-finish-band .storeman-finish-grid:after{content:none!important}
@@ -78,6 +76,7 @@
 }
 
 @media(max-width:680px){
+  body{padding-bottom:calc(82px + env(safe-area-inset-bottom))!important}
   .commercial-plan{padding:50px 0 54px}
   .commercial-plan-head{display:block;margin-bottom:24px}
   .commercial-plan h2{font-size:39px;line-height:.9;letter-spacing:-1.8px}
@@ -97,12 +96,12 @@
   .quote-expectation{gap:8px 12px;font-size:9px;margin-top:16px}
   .hero-quote-expectation{gap:7px 10px;font-size:8.5px;line-height:1.35;margin-top:11px}
   .cta-quote-expectation{justify-content:flex-start;gap:8px 14px;flex-wrap:wrap;font-size:9px}
-  .hero-signature-line{font-size:9px!important;margin-top:10px!important;padding-top:10px!important}
-  .storeman-finish-band .storeman-finish-inner{padding:12px 26px!important;grid-template-columns:1fr!important;gap:6px!important}
-  .storeman-finish-copy{gap:8px!important;flex-wrap:wrap!important}
-  .storeman-finish-copy strong{font-size:13px!important}
-  .finish-green-chip{font-size:9px!important;padding:6px 8px!important}
-  .storeman-finish-band .storeman-finish-inner>p{font-size:10.5px!important;line-height:1.35!important}
-  .storeman-finish-tag{font-size:9.5px!important}
+  .storeman-finish-band .storeman-finish-inner{padding:10px 26px!important;grid-template-columns:1fr!important;gap:4px!important}
+  .storeman-finish-copy{gap:7px!important;flex-wrap:wrap!important}
+  .storeman-finish-copy strong{font-size:12px!important}
+  .finish-green-chip{font-size:9px!important;padding:5px 7px!important}
+  .storeman-finish-band .storeman-finish-inner>p{font-size:10px!important;line-height:1.25!important}
+  .storeman-finish-tag{font-size:9px!important}
   .signature-service-card .service-title h3{font-size:22px!important;line-height:.95!important}
+  .sticky-mobile-quote{left:10px!important;right:10px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;min-height:54px!important}
 }
