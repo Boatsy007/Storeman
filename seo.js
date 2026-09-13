@@ -3,7 +3,7 @@
   const path = location.pathname === '/index.html' ? '/' : location.pathname;
   const url = `${BASE}${path}`;
   const title = document.title || 'Storeman | Complete Exterior Care';
-  const description = document.querySelector('meta[name="description"]')?.content || 'Professional lawn mowing and grounds care for residential and commercial properties across South East Queensland.';
+  const description = document.querySelector('meta[name="description"]')?.content || 'Professional lawn mowing and grounds care with Storeman Lawn Green-Up included in every standard lawn visit across South East Queensland.';
   const heroImage = document.querySelector('main img, .hero img, .loc-hero-image img, .service-hero-image img, .contact-hero-image img')?.getAttribute('src') || '/assets/mowing.jpg';
   const absoluteImage = heroImage.startsWith('http') ? heroImage : `${BASE}${heroImage.startsWith('/') ? '' : '/'}${heroImage}`;
 
@@ -67,7 +67,7 @@
     image: `${BASE}/assets/mowing.jpg`,
     telephone: '1300 786 736',
     email: 'hello@storeman.com.au',
-    description: 'Professional residential and commercial lawn mowing, hedge trimming and grounds care across South East Queensland.',
+    description: 'Professional residential and commercial lawn mowing and grounds care, with Storeman Lawn Green-Up included in every standard lawn visit across South East Queensland.',
     areaServed: serviceAreas,
     contactPoint: {
       '@type': 'ContactPoint',
@@ -106,8 +106,8 @@
       name:'Storeman services',
       itemListElement:[
         { '@type':'ListItem', position:1, name:'Lawn Mowing', url:`${BASE}/lawn-garden.html` },
-        { '@type':'ListItem', position:2, name:'Hedge Trimming', url:`${BASE}/lawn-garden.html#addons` },
-        { '@type':'ListItem', position:3, name:'Lawn Green-Up', url:`${BASE}/lawn-garden.html#addons` },
+        { '@type':'ListItem', position:2, name:'Storeman Lawn Green-Up — included with every standard lawn visit', url:`${BASE}/lawn-garden.html` },
+        { '@type':'ListItem', position:3, name:'Hedge Trimming', url:`${BASE}/lawn-garden.html#addons` },
         { '@type':'ListItem', position:4, name:'Weed Treatment', url:`${BASE}/lawn-garden.html#addons` },
         { '@type':'ListItem', position:5, name:'Garden Tidy', url:`${BASE}/lawn-garden.html#addons` },
         { '@type':'ListItem', position:6, name:'Green Waste Removal', url:`${BASE}/lawn-garden.html#addons` },
@@ -115,13 +115,33 @@
         { '@type':'ListItem', position:8, name:'Lawn Membership', url:`${BASE}/membership.html` }
       ]
     }, 'storeman-service-list-schema');
+
+    const greenCard = [...document.querySelectorAll('.service-card')].find((card) => card.textContent.includes('LAWN') && card.textContent.includes('GREEN-UP'));
+    if (greenCard) {
+      const copy = greenCard.querySelector('.service-copy p');
+      if (copy) copy.textContent = 'Included FREE in every standard Storeman lawn visit — our signature finishing treatment.';
+      greenCard.setAttribute('href', '/lawn-garden.html');
+    }
+
+    const heroCopy = document.querySelector('.hero-copy > p:not(.eyebrow)');
+    if (heroCopy && !heroCopy.textContent.includes('Green-Up')) {
+      heroCopy.textContent = 'STOREMAN keeps homes, businesses and managed properties looking sharp with mowing, snipping, edging, hedge trimming, weed treatment, garden tidy-ups and reliable recurring grounds care — with Lawn Green-Up included in every standard lawn visit.';
+    }
+
+    const sequenceNote = document.querySelector('.complete-visit-note strong');
+    if (sequenceNote) sequenceNote.textContent = 'MOW → SNIP → EDGE → BLOW & TIDY → LAWN GREEN-UP';
+
+    const membershipIntro = document.querySelector('.commercial-plan-intro');
+    if (membershipIntro && !membershipIntro.textContent.includes('Green-Up')) {
+      membershipIntro.textContent = 'For customers who want lawn care handled automatically. Your visits are scheduled around the seasons, Lawn Green-Up is included with every standard visit, and the annual membership can be paid weekly, fortnightly or monthly.';
+    }
   }
 
   const serviceMap = [
     ['grounds.html', 'Commercial Grounds Care', 'Commercial Grounds'],
-    ['lawn-garden-maintenance', 'Lawn Mowing & Grounds Care', 'Lawn & Grounds Care'],
-    ['lawn-garden.html', 'Lawn Mowing & Grounds Care', 'Lawn & Grounds Care'],
-    ['membership.html', 'Storeman Lawn Membership', 'Lawn Membership']
+    ['lawn-garden-maintenance', 'Lawn Mowing & Grounds Care with Lawn Green-Up Included', 'Lawn & Grounds Care'],
+    ['lawn-garden.html', 'Lawn Mowing & Grounds Care with Lawn Green-Up Included', 'Lawn & Grounds Care'],
+    ['membership.html', 'Storeman Lawn Membership with Lawn Green-Up Included', 'Lawn Membership']
   ];
   const serviceMatch = serviceMap.find(([needle]) => path.includes(needle));
   const locationMatch = path.match(/-(gold-coast|brisbane|logan|yatala)\.html$/);
