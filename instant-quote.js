@@ -19,6 +19,7 @@
   let leadId = `stm_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
   let addressTimer = null;
   let addressRequest = 0;
+  let manualAddress = false;
 
   const safe = (v) => String(v || '').replace(/[<>]/g, '').trim();
   const money = window.StoremanQuoteEngine.money;
@@ -62,6 +63,7 @@
       email: safe(fd.get('email')),
       business: safe(fd.get('business')),
       address: safe(fd.get('address')),
+      addressEntry: manualAddress ? 'manual' : 'autocomplete',
       propertyType: type,
       flags,
       addons: fd.getAll('addon').map(safe)
@@ -146,11 +148,26 @@
   }
 
   form.addEventListener('click', async (e) => {
+    const manual = e.target.closest('[data-use-manual]');
+    if (manual) {
+      e.preventDefault();
+      manualAddress = true;
+      clearTimeout(addressTimer);
+      ++addressRequest;
+      hideSuggestions();
+      address?.setAttribute('autocomplete', 'street-address');
+      address?.focus();
+      manual.textContent = 'USING MANUAL ADDRESS';
+      manual.classList.add('is-active');
+      return;
+    }
+
     const choice = e.target.closest('[data-address-choice]');
     if (choice && suggestions?._items) {
       e.preventDefault();
       const item = suggestions._items[Number(choice.dataset.addressChoice)];
       if (item?.label && address) {
+        manualAddress = false;
         address.value = item.label;
         hideSuggestions();
         loadPropertyMap();
@@ -183,6 +200,7 @@
     const value = safe(address.value);
     if (mapAddress) mapAddress.textContent = value;
     clearTimeout(addressTimer);
+    if (manualAddress) return;
     if (value.length < 3) { hideSuggestions(); return; }
     addressTimer = setTimeout(() => searchAddress(value), 250);
   });
