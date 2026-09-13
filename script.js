@@ -29,6 +29,60 @@ quoteTriggers.forEach((button) => {
   });
 });
 
+// Make the included Lawn Green-Up impossible to miss: this is the signature Storeman Finish.
+const heroCopy = document.querySelector('.hero-copy');
+if (heroCopy && !heroCopy.querySelector('.storeman-finish-badge')) {
+  const badge = document.createElement('a');
+  badge.className = 'storeman-finish-badge';
+  badge.href = '/lawn-garden.html#storeman-finish';
+  badge.setAttribute('aria-label', 'Learn about the Storeman Finish with included Lawn Green-Up');
+  badge.innerHTML = '<span class="finish-badge-mark">✓ INCLUDED</span><span><b>THE STOREMAN FINISH</b><small>Lawn Green-Up included with every standard lawn visit*</small></span><strong>→</strong>';
+  const heroActions = heroCopy.querySelector('.hero-actions');
+  heroActions?.insertAdjacentElement('afterend', badge);
+}
+
+const hero = document.querySelector('.hero');
+if (hero && !document.querySelector('.storeman-finish-band')) {
+  const band = document.createElement('section');
+  band.className = 'storeman-finish-band';
+  band.id = 'storeman-finish';
+  band.innerHTML = `<div class="container storeman-finish-inner">
+    <div class="finish-copy">
+      <p class="finish-kicker">ONLY FROM STOREMAN</p>
+      <h2>WE DON'T JUST CUT IT.<br><span>WE FINISH IT GREEN.</span></h2>
+      <p>Every standard Storeman lawn visit includes our <strong>Lawn Green-Up finish at no extra charge</strong>, where the lawn is suitable. It is the final step after the mow, snip, edge and tidy — so your lawn doesn't just look cut, it looks finished.</p>
+      <div class="finish-proof"><span>✓ INCLUDED</span><span>✓ EVERY STANDARD VISIT</span><span>✓ $0 EXTRA</span></div>
+      <a href="/quote.html" class="finish-cta">GET MY FREE INSTANT QUOTE <b>→</b></a>
+      <small class="finish-condition">*Applied where lawn and site conditions are suitable.</small>
+    </div>
+    <div class="finish-formula" aria-label="The Storeman Finish service sequence">
+      <div><b>01</b><strong>MOW</strong></div><i>→</i>
+      <div><b>02</b><strong>SNIP</strong></div><i>→</i>
+      <div><b>03</b><strong>EDGE</strong></div><i>→</i>
+      <div><b>04</b><strong>BLOW & TIDY</strong></div><i>→</i>
+      <div class="finish-final"><b>05</b><strong>GREEN-UP</strong><span>INCLUDED</span></div>
+    </div>
+  </div>`;
+  hero.insertAdjacentElement('afterend', band);
+}
+
+const standardSequence = document.querySelector('.visit-sequence');
+if (standardSequence && !standardSequence.querySelector('.visit-step-greenup')) {
+  const step = document.createElement('article');
+  step.className = 'visit-step visit-step-greenup';
+  step.innerHTML = '<div class="visit-step-media"><img src="/assets/mowing.jpg" alt="Storeman Lawn Green-Up finish included with a standard lawn visit" loading="lazy" decoding="async"><span class="greenup-image-badge">INCLUDED</span></div><div class="visit-step-body"><span class="visit-step-no">05</span><h3>GREEN-UP</h3><p>Our signature Lawn Green-Up finish is included at no extra charge where suitable.</p></div>';
+  standardSequence.appendChild(step);
+  const note = document.querySelector('.complete-visit-note strong');
+  if (note) note.textContent = 'MOW → SNIP → EDGE → BLOW & TIDY → GREEN-UP';
+  const heading = document.getElementById('complete-service-title');
+  if (heading) heading.innerHTML = 'CUT. CLEAN.<br><span>FINISHED GREEN.</span>';
+}
+
+const finishStyle = document.createElement('style');
+finishStyle.id = 'storeman-finish-marketing-style';
+finishStyle.textContent = `.storeman-finish-badge{display:flex;align-items:center;gap:12px;max-width:570px;margin:18px 0 0;padding:13px 15px;background:#ffe000;color:#111;text-decoration:none;border:2px solid #111;box-shadow:5px 5px 0 #111}.storeman-finish-badge .finish-badge-mark{background:#111;color:#ffe000;padding:7px 9px;font-family:"Archivo Black",sans-serif;font-size:10px;letter-spacing:.7px;white-space:nowrap}.storeman-finish-badge b{display:block;font-family:"Archivo Black",sans-serif;font-size:15px;line-height:1}.storeman-finish-badge small{display:block;margin-top:4px;font-size:11px;font-weight:700;line-height:1.25}.storeman-finish-badge>strong{margin-left:auto;font-size:20px}.storeman-finish-band{background:#ffe000;color:#111;padding:58px 0;border-top:2px solid #111;border-bottom:2px solid #111}.storeman-finish-inner{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:center}.finish-kicker{margin:0 0 12px;font-family:"Archivo Black",sans-serif;font-size:11px;letter-spacing:1.3px}.finish-copy h2{margin:0 0 18px;font-family:"Archivo Black",sans-serif;font-size:52px;line-height:.9;letter-spacing:-2px}.finish-copy h2 span{background:#111;color:#ffe000;padding:0 5px}.finish-copy>p:not(.finish-kicker){max-width:660px;font-size:15px;line-height:1.6}.finish-proof{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.finish-proof span{border:2px solid #111;padding:8px 10px;font-family:"Archivo Black",sans-serif;font-size:10px}.finish-cta{display:inline-flex;align-items:center;gap:20px;background:#111;color:#fff;text-decoration:none;padding:15px 18px;font-family:"Archivo Black",sans-serif;font-size:12px}.finish-cta b{font-size:18px}.finish-condition{display:block;margin-top:10px;font-size:10px;font-weight:700}.finish-formula{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:stretch}.finish-formula div{min-height:120px;background:#111;color:#fff;padding:18px;display:flex;flex-direction:column;justify-content:space-between}.finish-formula div b{color:#ffe000;font-family:"Archivo Black",sans-serif;font-size:10px}.finish-formula div strong{font-family:"Archivo Black",sans-serif;font-size:16px;line-height:1}.finish-formula i{align-self:center;font-style:normal;font-family:"Archivo Black",sans-serif;font-size:20px}.finish-formula .finish-final{grid-column:1/-1;background:#fff;color:#111;border:3px solid #111;min-height:104px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px}.finish-formula .finish-final b{color:#111}.finish-formula .finish-final strong{font-size:30px}.finish-formula .finish-final span{background:#111;color:#ffe000;padding:8px 10px;font-family:"Archivo Black",sans-serif;font-size:11px}.visit-step-greenup{outline:4px solid #ffe000;outline-offset:-4px}.visit-step-greenup .visit-step-media{position:relative}.greenup-image-badge{position:absolute;left:12px;top:12px;background:#ffe000;color:#111;border:2px solid #111;padding:7px 9px;font-family:"Archivo Black",sans-serif;font-size:10px}@media(max-width:980px){.storeman-finish-inner{grid-template-columns:1fr;gap:28px}.finish-copy h2{font-size:44px}.finish-formula{grid-template-columns:1fr auto 1fr auto 1fr}}@media(max-width:680px){.storeman-finish-badge{margin-top:14px;box-shadow:3px 3px 0 #111;align-items:flex-start}.storeman-finish-badge .finish-badge-mark{font-size:9px}.storeman-finish-badge b{font-size:13px}.storeman-finish-band{padding:42px 0}.finish-copy h2{font-size:37px;letter-spacing:-1.5px}.finish-copy>p:not(.finish-kicker){font-size:14px}.finish-proof{display:grid;grid-template-columns:1fr}.finish-proof span{text-align:center}.finish-cta{width:100%;justify-content:space-between}.finish-formula{grid-template-columns:1fr}.finish-formula i{display:none}.finish-formula div{min-height:82px}.finish-formula .finish-final{grid-column:auto;grid-template-columns:auto 1fr;min-height:100px}.finish-formula .finish-final span{grid-column:1/-1;text-align:center}.finish-formula .finish-final strong{font-size:26px}}`;
+document.head.appendChild(finishStyle);
+
 // Keep the footer branding consistent with the header.
 const footerBrand = document.querySelector('.footer-brand');
 if (footerBrand) {
