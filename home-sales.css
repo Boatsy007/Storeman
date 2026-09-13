@@ -28,6 +28,7 @@
 .hero-quote-expectation span:before{content:"✓";color:#ffe000;margin-right:6px}
 .cta-quote-expectation{grid-column:1/-1;display:flex;justify-content:center;gap:22px;margin-top:4px;color:#cfcfcf;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.35px}
 .cta-quote-expectation span:before{content:"✓";color:#ffe000;margin-right:6px}
+.storeman-trust-grid:after{content:"$20M PUBLIC LIABILITY INSURED";display:flex;align-items:center;justify-content:center;min-height:92px;padding:14px 12px;background:#111;color:#ffe000;font-family:"Archivo Black",sans-serif;font-size:11px;line-height:1.1;text-align:center;border:1px solid #333}
 
 :root{--signature-green:#1f7a3d}
 .greenup-hero-badge,.storeman-finish-badge{display:none!important}
@@ -104,4 +105,5 @@
   .storeman-finish-tag{font-size:9px!important}
   .signature-service-card .service-title h3{font-size:22px!important;line-height:.95!important}
   .sticky-mobile-quote{left:10px!important;right:10px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;min-height:54px!important}
+  .storeman-trust-grid:after{min-height:88px;font-size:10px}
 }
