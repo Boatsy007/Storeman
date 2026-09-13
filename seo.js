@@ -3,7 +3,7 @@
   const path = location.pathname === '/index.html' ? '/' : location.pathname;
   const url = `${BASE}${path}`;
   const title = document.title || 'Storeman | Complete Exterior Care';
-  const description = document.querySelector('meta[name="description"]')?.content || 'Residential lawn mowing and grounds care across the Gold Coast, with commercial grounds maintenance also available.';
+  const description = document.querySelector('meta[name="description"]')?.content || 'Professional lawn mowing and grounds care for residential and commercial properties across the Gold Coast and South East Queensland.';
   const heroImage = document.querySelector('main img, .hero img, .loc-hero-image img, .service-hero-image img, .contact-hero-image img')?.getAttribute('src') || '/assets/mowing.jpg';
   const absoluteImage = heroImage.startsWith('http') ? heroImage : `${BASE}${heroImage.startsWith('/') ? '' : '/'}${heroImage}`;
 
@@ -59,7 +59,7 @@
     image: `${BASE}/assets/mowing.jpg`,
     telephone: '+61 1300 786 736',
     email: 'hello@storeman.com.au',
-    description: 'Residential lawn mowing and grounds care across the Gold Coast, with commercial grounds maintenance also available across South East Queensland.',
+    description: 'Professional lawn mowing and grounds care for residential and commercial properties across the Gold Coast and South East Queensland.',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+61 1300 786 736',
