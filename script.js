@@ -12,6 +12,10 @@ if (menuButton && nav) {
 
 const modal = document.getElementById('quoteModal');
 const quoteTriggers = document.querySelectorAll('.quote-trigger');
+quoteTriggers.forEach((button) => {
+  button.innerHTML = 'FREE INSTANT QUOTE <span>→</span>';
+  button.setAttribute('aria-label', 'Free instant Storeman quote');
+});
 const closeTargets = document.querySelectorAll('[data-close-modal]');
 let lastFocused = null;
 let autoPopupTimer = null;
@@ -93,8 +97,8 @@ if (heroQuoteButton && heroSection) {
   const stickyQuote = document.createElement('button');
   stickyQuote.type = 'button';
   stickyQuote.className = 'sticky-mobile-quote';
-  stickyQuote.setAttribute('aria-label', 'Get your free Storeman quote');
-  stickyQuote.innerHTML = '<span>GET YOUR FREE QUOTE</span><b>→</b>';
+  stickyQuote.setAttribute('aria-label', 'Free instant Storeman quote');
+  stickyQuote.innerHTML = '<span>FREE INSTANT QUOTE</span><b>→</b>';
   stickyQuote.addEventListener('click', () => { window.location.href = '/quote.html'; });
   document.body.appendChild(stickyQuote);
 
