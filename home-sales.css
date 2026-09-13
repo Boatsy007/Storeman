@@ -36,15 +36,16 @@
 .hero-signature-line strong{color:#fff!important}
 .hero-signature-line .greenup-word{background:#fff!important;padding:3px 5px!important}
 
-.storeman-finish-band{background:#ffe000!important;color:#111!important;border:0!important;border-top:1px solid #111!important;border-bottom:1px solid #111!important;padding:0!important}
-.storeman-finish-band .storeman-finish-inner{max-width:1500px!important;margin:0 auto!important;padding:16px 28px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:22px!important}
-.storeman-finish-band .storeman-finish-kicker,.storeman-finish-band .storeman-finish-free,.storeman-finish-band .storeman-finish-copy h2,.storeman-finish-band .storeman-finish-copy h3,.storeman-finish-band .storeman-finish-flow,.storeman-finish-band .storeman-finish-cta{display:none!important}
-.storeman-finish-band .storeman-finish-grid{display:contents!important}
-.storeman-finish-band .storeman-finish-copy{display:flex!important;align-items:center!important;gap:12px!important;min-width:0!important}
-.storeman-finish-band .storeman-finish-copy:before{content:"THE STOREMAN FINISH";font-family:"Archivo Black",sans-serif;font-size:15px;white-space:nowrap}
-.storeman-finish-band .storeman-finish-copy p{display:none!important}
-.storeman-finish-band .storeman-finish-copy:after{content:"GREEN-UP";background:var(--signature-green);color:#fff;padding:8px 10px;font-family:"Archivo Black",sans-serif;font-size:12px;white-space:nowrap}
-.storeman-finish-band .storeman-finish-grid:after{content:"Included with every standard lawn visit where suitable.";font-size:12px;font-weight:750;color:#222;margin-left:auto}
+.storeman-finish-band{background:#ffe000!important;color:#111!important;border-top:1px solid #111!important;border-bottom:1px solid #111!important}
+.storeman-finish-band .storeman-finish-inner{max-width:1500px!important;margin:0 auto!important;padding:14px 28px!important;display:grid!important;grid-template-columns:auto 1fr auto!important;gap:18px!important;align-items:center!important}
+.storeman-finish-copy{display:flex!important;align-items:center!important;gap:10px!important}
+.storeman-finish-copy strong{font-family:"Archivo Black",sans-serif!important;font-size:15px!important;line-height:1!important}
+.finish-green-chip{display:inline-flex!important;background:var(--signature-green)!important;color:#fff!important;padding:7px 9px!important;font-family:"Archivo Black",sans-serif!important;font-size:11px!important;line-height:1!important;letter-spacing:.15px!important}
+.storeman-finish-band .storeman-finish-inner>p{margin:0!important;color:#222!important;font-size:12px!important;font-weight:750!important}
+.storeman-finish-tag{font-family:"Archivo Black",sans-serif!important;font-size:11px!important;white-space:nowrap!important}
+.storeman-finish-tag span{color:var(--signature-green)!important}
+.storeman-finish-band .storeman-finish-copy:before,.storeman-finish-band .storeman-finish-copy:after{content:none!important}
+.storeman-finish-band .storeman-finish-grid:after{content:none!important}
 
 .visit-step-greenup{outline:3px solid var(--signature-green)!important;outline-offset:-3px!important;border-color:var(--signature-green)!important}
 .visit-step-greenup .visit-step-body{background:#fff!important;color:#111!important;border-top-color:var(--signature-green)!important}
@@ -62,9 +63,9 @@
 .signature-service-card .arrow{color:var(--signature-green)!important}
 .signature-service-card .service-title{margin-top:-18px!important}
 .signature-service-card .icon-box{background:var(--signature-green)!important;color:#fff!important}
-.signature-service-card .service-copy p{font-size:0!important;margin-right:35px!important}
-.signature-service-card .service-copy p:before{content:"GREEN-UP";display:inline;font-family:"Archivo Black",sans-serif;font-size:13px;color:var(--signature-green);font-weight:900}
-.signature-service-card .service-copy p:after{content:" included with every standard Storeman lawn visit.";font-size:13px;color:#555;font-weight:650}
+.signature-service-card .service-copy p{font-size:13px!important;margin-right:35px!important;color:#555!important;font-weight:650!important}
+.signature-service-card .service-copy p:before,.signature-service-card .service-copy p:after{content:none!important}
+.signature-service-card .greenup-word{font-size:13px!important}
 
 @media(max-width:980px){
   .commercial-plan-head,.commercial-plan-grid{grid-template-columns:1fr;gap:24px}
@@ -72,7 +73,8 @@
   .visit-flow-step{padding:18px 12px}
   .visit-flow-step strong{font-size:16px}
   .visit-flow-step span{font-size:11px}
-  .storeman-finish-band .storeman-finish-grid:after{margin-left:0}
+  .storeman-finish-band .storeman-finish-inner{grid-template-columns:auto 1fr!important}
+  .storeman-finish-tag{grid-column:1/-1!important}
 }
 
 @media(max-width:680px){
@@ -96,10 +98,11 @@
   .hero-quote-expectation{gap:7px 10px;font-size:8.5px;line-height:1.35;margin-top:11px}
   .cta-quote-expectation{justify-content:flex-start;gap:8px 14px;flex-wrap:wrap;font-size:9px}
   .hero-signature-line{font-size:9px!important;margin-top:10px!important;padding-top:10px!important}
-  .storeman-finish-band .storeman-finish-inner{padding:13px 26px!important;display:grid!important;grid-template-columns:1fr!important;gap:7px!important}
-  .storeman-finish-band .storeman-finish-copy{gap:8px!important;flex-wrap:wrap!important}
-  .storeman-finish-band .storeman-finish-copy:before{font-size:13px!important}
-  .storeman-finish-band .storeman-finish-copy:after{font-size:10px!important;padding:6px 8px!important}
-  .storeman-finish-band .storeman-finish-grid:after{font-size:10.5px!important;line-height:1.3!important}
+  .storeman-finish-band .storeman-finish-inner{padding:12px 26px!important;grid-template-columns:1fr!important;gap:6px!important}
+  .storeman-finish-copy{gap:8px!important;flex-wrap:wrap!important}
+  .storeman-finish-copy strong{font-size:13px!important}
+  .finish-green-chip{font-size:9px!important;padding:6px 8px!important}
+  .storeman-finish-band .storeman-finish-inner>p{font-size:10.5px!important;line-height:1.35!important}
+  .storeman-finish-tag{font-size:9.5px!important}
   .signature-service-card .service-title h3{font-size:22px!important;line-height:.95!important}
 }
