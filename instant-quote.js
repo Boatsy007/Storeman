@@ -80,6 +80,21 @@
     } catch (_) { return { ok:false }; }
   }
 
+  async function getOfficialQuote(snapshot) {
+    try {
+      const res = await fetch('/api/quote', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ flags:snapshot.flags, addons:snapshot.addons })
+      });
+      const data = await res.json();
+      if (!res.ok || !data?.ok || !data?.quote) throw new Error('Quote unavailable');
+      return data.quote;
+    } catch (_) {
+      return null;
+    }
+  }
+
   function fileToDataUrl(file) { return new Promise((resolve,reject) => { const r = new FileReader(); r.onload=()=>resolve(r.result); r.onerror=reject; r.readAsDataURL(file); }); }
   async function compressPhoto(file) {
     const source = await fileToDataUrl(file);
@@ -120,10 +135,15 @@
     if (!validateStage(4)) return;
     status.textContent = membershipIntent ? 'Calculating your Storeman member price…' : 'Preparing your property quote…';
     const snapshot = dataSnapshot();
-    currentQuote = window.StoremanQuoteEngine.calculate(snapshot);
+    currentQuote = await getOfficialQuote(snapshot);
+    if (!currentQuote) {
+      status.textContent = 'We could not calculate your quote right now. Please try again.';
+      return;
+    }
     let photos = [];
     try { photos = await preparePhotos(); } catch (_) {}
-    await postLead({ ...snapshot, stage:currentQuote.manualReview ? 'instant_quote_review' : 'instant_quote_generated', services:['lawn'], photos, quote:currentQuote, source:membershipIntent ? 'membership_quote' : 'instant_quote', bookingChoice:membershipIntent ? 'membership_interest' : '' });
+    const leadResult = await postLead({ ...snapshot, stage:currentQuote.manualReview ? 'instant_quote_review' : 'instant_quote_generated', services:['lawn'], photos, source:membershipIntent ? 'membership_quote' : 'instant_quote', bookingChoice:membershipIntent ? 'membership_interest' : '' });
+    if (leadResult?.quote) currentQuote = leadResult.quote;
     renderQuote(currentQuote);
     setStage(5);
   }
@@ -209,8 +229,11 @@
       e.preventDefault();
       const snapshot = dataSnapshot();
       const bookingChoice = accept.dataset.accept;
-      await postLead({ ...snapshot, stage:'quote_accepted', services:['lawn'], source:membershipIntent ? 'membership_quote' : 'instant_quote', bookingChoice, quote:currentQuote });
-      status.textContent = bookingChoice === 'membership' ? 'Membership selected. Storeman will continue the setup from here.' : 'One-off service selected. Storeman will continue the booking from here.';
+      const accepted = await postLead({ ...snapshot, stage:'quote_accepted', services:['lawn'], source:membershipIntent ? 'membership_quote' : 'instant_quote', bookingChoice });
+      if (accepted?.quote) currentQuote = accepted.quote;
+      status.textContent = accepted?.ok
+        ? (bookingChoice === 'membership' ? 'Membership selected. Storeman will continue the setup from here.' : 'One-off service selected. Storeman will continue the booking from here.')
+        : 'We could not save that selection. Please try again.';
     }
   });
   form.addEventListener('submit', (e) => e.preventDefault());
