@@ -79,6 +79,25 @@
       name: 'Storeman',
       publisher: { '@id': `${BASE}/#organization` }
     }, 'storeman-website-schema');
+
+    // Give Lawn Membership a dedicated page while keeping the homepage summary.
+    document.querySelectorAll('a[href="#membership"]').forEach((link) => {
+      if (link.closest('.desktop-nav') || link.closest('.footer-nav') || link.closest('.service-card')) {
+        link.setAttribute('href', '/membership.html');
+      }
+    });
+
+    const membershipSection = document.getElementById('membership');
+    if (membershipSection && !membershipSection.querySelector('.membership-home-actions')) {
+      const actions = document.createElement('div');
+      actions.className = 'membership-home-actions';
+      actions.innerHTML = '<a class="button button-white" href="/membership.html">VIEW MEMBERSHIP <span>→</span></a><button class="button button-yellow membership-join-placeholder" type="button" aria-label="Become a Storeman Lawn Member">BECOME A MEMBER <span>→</span></button>';
+      membershipSection.querySelector('.container')?.appendChild(actions);
+
+      const style = document.createElement('style');
+      style.textContent = `.membership-home-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}.membership-home-actions .button{min-width:190px;justify-content:center}.membership-join-placeholder{cursor:default}@media(max-width:680px){.membership-home-actions{display:grid;grid-template-columns:1fr}.membership-home-actions .button{width:100%}}`;
+      document.head.appendChild(style);
+    }
   }
 
   const serviceMap = [
@@ -87,7 +106,8 @@
     ['grounds-maintenance', 'Commercial Grounds Maintenance', 'Grounds Maintenance'],
     ['grounds.html', 'Commercial Grounds Maintenance', 'Grounds Maintenance'],
     ['lawn-garden-maintenance', 'Residential & Commercial Lawn Mowing and Garden Maintenance', 'Lawn & Garden'],
-    ['lawn-garden.html', 'Residential & Commercial Lawn Mowing and Garden Maintenance', 'Lawn & Garden']
+    ['lawn-garden.html', 'Residential & Commercial Lawn Mowing and Garden Maintenance', 'Lawn & Garden'],
+    ['membership.html', 'Storeman Lawn Membership', 'Lawn Membership']
   ];
 
   const serviceMatch = serviceMap.find(([needle]) => path.includes(needle));
