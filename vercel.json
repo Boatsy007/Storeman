@@ -9,5 +9,19 @@
     { "source": "/commercial-sweeping-yatala.html", "destination": "/grounds.html", "permanent": true },
     { "source": "/commercial-property-services-:area.html", "destination": "/grounds.html", "permanent": true },
     { "source": "/grounds-maintenance-:area.html", "destination": "/grounds.html", "permanent": true }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/(.*).css",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
+    },
+    {
+      "source": "/(.*).js",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
+    }
   ]
 }
