@@ -1,3 +1,5 @@
+import { rateLimit } from './_security.js';
+
 function normalise(value = '') {
   return String(value)
     .toLowerCase()
@@ -103,12 +105,19 @@ async function nominatimSearch(q) {
 }
 
 export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ ok:false, error:'Method not allowed' });
   }
 
-  const q = String(req.query?.q || '').trim();
+  const limited = rateLimit(req, { key:'address', limit:60, windowMs:5 * 60 * 1000 });
+  if (!limited.ok) {
+    res.setHeader('Retry-After', String(limited.retryAfterSeconds));
+    return res.status(429).json({ ok:false, results:[], error:'Too many address searches' });
+  }
+
+  const q = String(req.query?.q || '').trim().slice(0,160);
   if (q.length < 3) return res.status(200).json({ ok:true, results:[] });
 
   try {
