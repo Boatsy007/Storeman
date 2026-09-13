@@ -1,3 +1,5 @@
+import { calculateQuote } from './_pricing.js';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -9,7 +11,7 @@ export default async function handler(req, res) {
   catch (_) { return res.status(400).json({ ok:false, error:'Invalid request body' }); }
 
   const clean = (value, max = 2000) => String(value || '').replace(/[<>]/g, '').trim().slice(0, max);
-  const cleanArray = (value, max = 20) => Array.isArray(value) ? value.slice(0, max).map((v) => clean(v, 200)) : [];
+  const cleanArray = (value, max = 20) => Array.isArray(value) ? value.slice(0, max).map((v) => clean(v, 200)).filter(Boolean) : [];
   const photos = Array.isArray(body.photos)
     ? body.photos.slice(0, 3).map((photo) => ({
         name: clean(photo?.name, 120) || 'site-photo.jpg',
@@ -18,28 +20,40 @@ export default async function handler(req, res) {
       })).filter((photo) => photo.content && photo.content.length < 1400000)
     : [];
 
-  const quote = body.quote && typeof body.quote === 'object' ? {
-    total: Number(body.quote.total || 0),
-    formattedTotal: clean(body.quote.formattedTotal, 80),
-    manualReview: Boolean(body.quote.manualReview),
-    reviewReasons: cleanArray(body.quote.reviewReasons, 10),
-    items: Array.isArray(body.quote.items) ? body.quote.items.slice(0, 20).map((item) => ({
-      id: clean(item?.id, 80), label: clean(item?.label, 160), price: Number(item?.price || 0)
-    })) : [],
-    membership: body.quote.membership && typeof body.quote.membership === 'object' ? {
-      visits: Number(body.quote.membership.visits || 0),
-      discountPercent: Number(body.quote.membership.discountPercent || 0),
-      annual: Number(body.quote.membership.annual || 0),
-      weekly: Number(body.quote.membership.weekly || 0),
-      fortnightly: Number(body.quote.membership.fortnightly || 0),
-      monthly: Number(body.quote.membership.monthly || 0)
-    } : null
-  } : null;
+  const flags = cleanArray(body.flags, 20);
+  const addons = cleanArray(body.addons, 20);
+  const stage = clean(body.stage, 80);
+  const source = clean(body.source, 80);
+  const shouldCalculateOfficialQuote = ['instant_quote_generated','instant_quote_review','quote_accepted'].includes(stage)
+    || ['instant_quote','membership_quote'].includes(source);
+
+  let quote = null;
+  if (shouldCalculateOfficialQuote) {
+    quote = calculateQuote({ flags, addons });
+  } else if (body.quote && typeof body.quote === 'object') {
+    quote = {
+      total: Number(body.quote.total || 0),
+      formattedTotal: clean(body.quote.formattedTotal, 80),
+      manualReview: Boolean(body.quote.manualReview),
+      reviewReasons: cleanArray(body.quote.reviewReasons, 10),
+      items: Array.isArray(body.quote.items) ? body.quote.items.slice(0, 20).map((item) => ({
+        id: clean(item?.id, 80), label: clean(item?.label, 160), price: Number(item?.price || 0)
+      })) : [],
+      membership: body.quote.membership && typeof body.quote.membership === 'object' ? {
+        visits: Number(body.quote.membership.visits || 0),
+        discountPercent: Number(body.quote.membership.discountPercent || 0),
+        annual: Number(body.quote.membership.annual || 0),
+        weekly: Number(body.quote.membership.weekly || 0),
+        fortnightly: Number(body.quote.membership.fortnightly || 0),
+        monthly: Number(body.quote.membership.monthly || 0)
+      } : null
+    };
+  }
 
   const lead = {
     id: clean(body.id, 120) || `stm_${Date.now().toString(36)}`,
-    stage: clean(body.stage, 80),
-    source: clean(body.source, 80),
+    stage,
+    source,
     name: clean(body.name, 160),
     business: clean(body.business, 160),
     email: clean(body.email, 200),
@@ -50,10 +64,11 @@ export default async function handler(req, res) {
     notes: clean(body.notes),
     lawnAreaM2: Number(body.lawnAreaM2 || 0),
     propertyType: clean(body.propertyType, 100),
-    flags: cleanArray(body.flags, 20),
-    addons: cleanArray(body.addons, 20),
+    flags,
+    addons,
     bookingChoice: clean(body.bookingChoice, 80),
     quote,
+    quoteVerifiedServerSide: shouldCalculateOfficialQuote,
     photoNames: photos.map((photo) => photo.name),
     siteVisitFollowUp: Boolean(body.siteVisitFollowUp),
     receivedAt: new Date().toISOString()
@@ -86,12 +101,12 @@ export default async function handler(req, res) {
     quote_accepted:'Quote accepted'
   };
   const quoteLines = lead.quote?.items?.map((item) => `<li>${item.label}: $${Number(item.price).toFixed(0)}</li>`).join('') || '';
-  const quoteHtml = lead.quote ? `<div style="background:#f7f7f3;border-left:5px solid #ffe000;padding:16px 18px;margin:18px 0"><strong>${lead.quote.manualReview ? 'MANUAL REVIEW' : `QUOTE: ${lead.quote.formattedTotal || `$${lead.quote.total}`}`}</strong>${quoteLines ? `<ul>${quoteLines}</ul>` : ''}${lead.quote.reviewReasons?.length ? `<p>Review: ${lead.quote.reviewReasons.join(', ')}</p>` : ''}</div>` : '';
+  const quoteHtml = lead.quote ? `<div style="background:#f7f7f3;border-left:5px solid #ffe000;padding:16px 18px;margin:18px 0"><strong>${lead.quote.manualReview ? 'MANUAL REVIEW' : `QUOTE: ${lead.quote.formattedTotal || `$${lead.quote.total}`}`}</strong>${lead.quoteVerifiedServerSide ? '<div style="font-size:11px;margin-top:5px">Server verified</div>' : ''}${quoteLines ? `<ul>${quoteLines}</ul>` : ''}${lead.quote.reviewReasons?.length ? `<p>Review: ${lead.quote.reviewReasons.join(', ')}</p>` : ''}</div>` : '';
 
   if (resendKey) {
     const subjectName = lead.business || lead.name;
     const subject = `Storeman: ${stageLabels[lead.stage] || 'New website lead'} — ${subjectName}`;
-    const ownerHtml = `<div style="font-family:Arial,sans-serif;max-width:680px;margin:auto;color:#111"><div style="background:#090909;padding:22px 26px;color:#ffe000;font-weight:900;font-size:24px">STOREMAN</div><div style="padding:26px;border:1px solid #e5e5e5;border-top:0"><h2>${stageLabels[lead.stage] || 'Website lead'}</h2>${quoteHtml}<p><strong>Contact:</strong> ${lead.name}</p>${lead.business ? `<p><strong>Business:</strong> ${lead.business}</p>` : ''}<p><strong>Phone:</strong> ${lead.phone}</p><p><strong>Email:</strong> ${lead.email}</p><p><strong>Address:</strong> ${lead.address}</p><p><strong>Services:</strong> ${serviceText}</p>${lead.lawnAreaM2 ? `<p><strong>Lawn area:</strong> ${lead.lawnAreaM2} m²</p>` : ''}${lead.propertyType ? `<p><strong>Property:</strong> ${lead.propertyType}</p>` : ''}${lead.flags.length ? `<p><strong>Flags:</strong> ${lead.flags.join(', ')}</p>` : ''}${lead.addons.length ? `<p><strong>Add-ons:</strong> ${lead.addons.join(', ')}</p>` : ''}${lead.bookingChoice ? `<p><strong>Customer selected:</strong> ${lead.bookingChoice}</p>` : ''}${lead.notes ? `<p><strong>Notes:</strong> ${lead.notes}</p>` : ''}${lead.photoNames.length ? `<p><strong>Photos:</strong> ${lead.photoNames.length} attached</p>` : ''}<hr style="border:0;border-top:1px solid #eee;margin:22px 0"><small>Lead ID: ${lead.id}<br>Received: ${lead.receivedAt}<br>Source: ${lead.source || 'website'}</small></div></div>`;
+    const ownerHtml = `<div style="font-family:Arial,sans-serif;max-width:680px;margin:auto;color:#111"><div style="background:#090909;padding:22px 26px;color:#ffe000;font-weight:900;font-size:24px">STOREMAN</div><div style="padding:26px;border:1px solid #e5e5e5;border-top:0"><h2>${stageLabels[lead.stage] || 'Website lead'}</h2>${quoteHtml}<p><strong>Contact:</strong> ${lead.name}</p>${lead.business ? `<p><strong>Business:</strong> ${lead.business}</p>` : ''}<p><strong>Phone:</strong> ${lead.phone}</p><p><strong>Email:</strong> ${lead.email}</p><p><strong>Address:</strong> ${lead.address}</p><p><strong>Services:</strong> ${serviceText}</p>${lead.propertyType ? `<p><strong>Property:</strong> ${lead.propertyType}</p>` : ''}${lead.flags.length ? `<p><strong>Flags:</strong> ${lead.flags.join(', ')}</p>` : ''}${lead.addons.length ? `<p><strong>Add-ons:</strong> ${lead.addons.join(', ')}</p>` : ''}${lead.bookingChoice ? `<p><strong>Customer selected:</strong> ${lead.bookingChoice}</p>` : ''}${lead.notes ? `<p><strong>Notes:</strong> ${lead.notes}</p>` : ''}${lead.photoNames.length ? `<p><strong>Photos:</strong> ${lead.photoNames.length} attached</p>` : ''}<hr style="border:0;border-top:1px solid #eee;margin:22px 0"><small>Lead ID: ${lead.id}<br>Received: ${lead.receivedAt}<br>Source: ${lead.source || 'website'}</small></div></div>`;
 
     try {
       const emailBody = { from:fromEmail, to:[notifyEmail], reply_to:lead.email, subject, html:ownerHtml };
@@ -109,5 +124,5 @@ export default async function handler(req, res) {
     }
   }
 
-  return res.status(200).json({ ok:true, id:lead.id, notified, customerNotified, forwarded, configured:Boolean(resendKey || webhook) });
+  return res.status(200).json({ ok:true, id:lead.id, quote:lead.quote, quoteVerifiedServerSide:lead.quoteVerifiedServerSide, notified, customerNotified, forwarded, configured:Boolean(resendKey || webhook) });
 }
