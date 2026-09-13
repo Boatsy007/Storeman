@@ -3,12 +3,12 @@
     currency: 'AUD',
     membershipVisits: 19,
     membershipDiscount: 0.10,
-    baseService: { id:'mow_snip_blow', label:'Mow + Snip + Blow', price:100 },
+    baseService: { id:'mow_snip_edge_blow', label:'Mow + Snip + Edge + Blow & Tidy', price:100, recurring:true },
     adjustments: {
-      cornerBlock: { label:'Corner block', price:20 },
-      difficultAccess: { label:'Restricted access', price:20 },
-      steepSlope: { label:'Steep / difficult slope', price:50 },
-      overgrown: { label:'Overgrown first service', price:50 }
+      cornerBlock: { label:'Corner block', price:20, recurring:true },
+      difficultAccess: { label:'Restricted access', price:20, recurring:true },
+      steepSlope: { label:'Steep / difficult slope', price:50, recurring:true },
+      overgrown: { label:'Overgrown first service', price:50, recurring:false }
     },
     addons: {
       hedgeSmall: { label:'Small hedge trim — up to 2m long × 1m wide', price:40 },
@@ -44,10 +44,10 @@
       else reviewReasons.push('Access requires review');
     });
 
-    const items = [{ id:CONFIG.baseService.id, label:CONFIG.baseService.label, price:CONFIG.baseService.price }];
+    const items = [{ id:CONFIG.baseService.id, label:CONFIG.baseService.label, price:CONFIG.baseService.price, recurring:true }];
 
     Object.entries(CONFIG.adjustments).forEach(([id, adjustment]) => {
-      if (flags.includes(id)) items.push({ id, label:adjustment.label, price:adjustment.price });
+      if (flags.includes(id)) items.push({ id, label:adjustment.label, price:adjustment.price, recurring:Boolean(adjustment.recurring) });
     });
 
     selectedAddons.forEach((id) => {
@@ -57,11 +57,12 @@
         reviewReasons.push(addon.reason || `${addon.label} requires a site quote`);
         return;
       }
-      items.push({ id, label:addon.label, price:addon.price, fromPrice:Boolean(addon.fromPrice) });
+      items.push({ id, label:addon.label, price:addon.price, fromPrice:Boolean(addon.fromPrice), recurring:false });
     });
 
     const total = items.reduce((sum, item) => sum + Number(item.price || 0), 0);
-    const membershipAnnual = Math.round(total * CONFIG.membershipVisits * (1 - CONFIG.membershipDiscount) * 100) / 100;
+    const recurringVisitPrice = items.filter((item) => item.recurring).reduce((sum, item) => sum + Number(item.price || 0), 0);
+    const membershipAnnual = Math.round(recurringVisitPrice * CONFIG.membershipVisits * (1 - CONFIG.membershipDiscount) * 100) / 100;
 
     return {
       items,
@@ -72,6 +73,7 @@
       membership: {
         visits:CONFIG.membershipVisits,
         discountPercent:Math.round(CONFIG.membershipDiscount * 100),
+        recurringVisitPrice,
         annual:membershipAnnual,
         weekly:Math.round((membershipAnnual / 52) * 100) / 100,
         fortnightly:Math.round((membershipAnnual / 26) * 100) / 100,
