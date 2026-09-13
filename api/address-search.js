@@ -47,6 +47,23 @@ function scoreResult(label, q) {
   return score;
 }
 
+// Photon/Nominatim sometimes return only the street even when the user entered a
+// valid house number. Preserve the number when the returned street matches the
+// requested street, so Google Maps receives the full address on the next step.
+function preserveHouseNumber(item, q) {
+  const { house, streetPhrase } = queryParts(q);
+  if (!house || !streetPhrase || !item?.label) return item;
+
+  const labelNormalised = normalise(item.label);
+  if (!labelNormalised.includes(streetPhrase)) return item;
+
+  // Leave genuine numbered results untouched, including unit-style addresses.
+  if (new RegExp(`(^|\\s)${house}(\\s|$)`).test(labelNormalised)) return item;
+  if (/^\s*\d+[a-z]?(?:\s*[-/]\s*\d+[a-z]?)?\b/i.test(item.label)) return item;
+
+  return { ...item, label: `${house} ${item.label}`, inferredHouseNumber: true };
+}
+
 function dedupe(items) {
   const seen = new Set();
   return items.filter((item) => {
@@ -62,7 +79,7 @@ async function photonSearch(q) {
   url.searchParams.set('q', `${q}, Queensland, Australia`);
   url.searchParams.set('limit', '12');
   url.searchParams.set('lang', 'en');
-  const response = await fetch(url, { headers: { 'User-Agent': 'StoremanAddressSearch/1.2 (storeman.com.au)' } });
+  const response = await fetch(url, { headers: { 'User-Agent': 'StoremanAddressSearch/1.3 (storeman.com.au)' } });
   if (!response.ok) return [];
   const data = await response.json();
   return (data.features || []).map((feature) => {
@@ -91,7 +108,7 @@ async function nominatimSearch(q) {
   url.searchParams.set('limit', '12');
   const response = await fetch(url, {
     headers: {
-      'User-Agent': 'StoremanAddressSearch/1.2 (storeman.com.au; hello@storeman.com.au)',
+      'User-Agent': 'StoremanAddressSearch/1.3 (storeman.com.au; hello@storeman.com.au)',
       'Accept-Language': 'en-AU,en'
     }
   });
@@ -122,7 +139,8 @@ export default async function handler(req, res) {
 
   try {
     const settled = await Promise.allSettled([photonSearch(q), nominatimSearch(q)]);
-    const combined = settled.flatMap((r) => r.status === 'fulfilled' ? r.value : []);
+    const combined = settled.flatMap((r) => r.status === 'fulfilled' ? r.value : [])
+      .map((item) => preserveHouseNumber(item, q));
     const ranked = dedupe(combined)
       .map((item) => ({ ...item, _score: scoreResult(item.label, q) }))
       .filter((item) => item._score > 0)
