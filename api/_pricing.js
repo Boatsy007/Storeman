@@ -4,7 +4,8 @@ export const CONFIG = {
   membershipDiscount: 0.10,
   baseService: { id:'mow_snip_edge_blow', label:'Mow + Snip + Edge + Blow & Tidy', price:100, recurring:true },
   includedServices: [
-    { id:'lawn_green_up_included', label:'Storeman Lawn Green-Up', price:0, recurring:true, included:true }
+    { id:'lawn_green_up_included', label:'Storeman Lawn Green-Up', price:0, recurring:true, included:true },
+    { id:'standard_green_waste_included', label:'Standard green waste removal', price:0, recurring:true, included:true }
   ],
   adjustments: {
     cornerBlock: { label:'Corner block', price:20, recurring:true },
@@ -22,9 +23,8 @@ export const CONFIG = {
     gardenSmall: { label:'Garden tidy — small', price:40 },
     gardenMedium: { label:'Garden tidy — medium', price:80 },
     gardenLarge: { label:'Garden tidy — large', price:100, fromPrice:true },
-    greenWasteStandard: { label:'Standard green waste removal', price:0 },
-    greenWasteMedium: { label:'Green waste removal — medium', price:50 },
-    greenWasteLarge: { label:'Green waste removal — large', price:100 }
+    greenWasteMedium: { label:'Extra green waste removal — medium', price:50 },
+    greenWasteLarge: { label:'Extra green waste removal — large', price:100 }
   },
   manualReview: { flags:['largeProperty','acreage','unsafeAccess'] }
 };
