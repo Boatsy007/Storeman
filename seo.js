@@ -102,7 +102,6 @@
       document.head.appendChild(serviceStyle);
     }
 
-    // Give Lawn Membership a dedicated page while keeping the homepage summary.
     document.querySelectorAll('a[href="#membership"]').forEach((link) => {
       if (link.closest('.desktop-nav') || link.closest('.footer-nav') || link.closest('.service-card')) {
         link.setAttribute('href', '/membership.html');
@@ -113,18 +112,16 @@
     if (membershipSection && !membershipSection.querySelector('.membership-home-actions')) {
       const actions = document.createElement('div');
       actions.className = 'membership-home-actions';
-      actions.innerHTML = '<a class="button button-white" href="/membership.html">VIEW MEMBERSHIP <span>→</span></a><button class="button button-yellow membership-join-placeholder" type="button" aria-label="Become a Storeman Lawn Member">BECOME A MEMBER <span>→</span></button>';
+      actions.innerHTML = '<a class="button button-white" href="/membership.html">VIEW MEMBERSHIP <span>→</span></a><a class="button button-yellow membership-join-link" href="/quote.html?membership=1" aria-label="Get my Storeman Lawn Membership price">GET MY MEMBER PRICE <span>→</span></a>';
       membershipSection.querySelector('.container')?.appendChild(actions);
 
       const style = document.createElement('style');
-      style.textContent = `.membership-home-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}.membership-home-actions .button{min-width:190px;justify-content:center}.membership-join-placeholder{cursor:default}@media(max-width:680px){.membership-home-actions{display:grid;grid-template-columns:1fr}.membership-home-actions .button{width:100%}}`;
+      style.textContent = `.membership-home-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}.membership-home-actions .button{min-width:190px;justify-content:center}@media(max-width:680px){.membership-home-actions{display:grid;grid-template-columns:1fr}.membership-home-actions .button{width:100%}}`;
       document.head.appendChild(style);
     }
   }
 
   const serviceMap = [
-    ['commercial-sweeping', 'Mechanical Sweeping', 'Mechanical Sweeping'],
-    ['sweeping.html', 'Mechanical Sweeping', 'Mechanical Sweeping'],
     ['grounds-maintenance', 'Commercial Grounds Maintenance', 'Grounds Maintenance'],
     ['grounds.html', 'Commercial Grounds Maintenance', 'Grounds Maintenance'],
     ['lawn-garden-maintenance', 'Residential & Commercial Lawn Mowing and Garden Maintenance', 'Lawn & Garden'],
@@ -197,11 +194,9 @@
         { name: suburbName, item: url }
       ]);
     } else if (serviceMatch && locationName) {
-      const corePath = serviceMatch[0].startsWith('commercial-sweeping')
-        ? '/sweeping.html'
-        : serviceMatch[0].startsWith('grounds-maintenance')
-          ? '/grounds.html'
-          : '/lawn-garden.html';
+      const corePath = serviceMatch[0].startsWith('grounds-maintenance')
+        ? '/grounds.html'
+        : '/lawn-garden.html';
       addBreadcrumbs([
         { name: 'Home', item: BASE },
         { name: 'Services', item: `${BASE}/#services` },
