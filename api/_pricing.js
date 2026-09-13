@@ -58,7 +58,9 @@ export function calculateQuote(input = {}) {
       reviewReasons.push(addon.reason || `${addon.label} requires a site quote`);
       return;
     }
-    items.push({ id, label:addon.label, price:addon.price, fromPrice:Boolean(addon.fromPrice), recurring:false });
+    // Extras selected as part of the quoted package are included in the membership
+    // calculation so the member price matches the service package the customer built.
+    items.push({ id, label:addon.label, price:addon.price, fromPrice:Boolean(addon.fromPrice), recurring:true });
   });
 
   const total = items.reduce((sum, item) => sum + Number(item.price || 0), 0);
