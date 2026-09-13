@@ -86,9 +86,10 @@ function getVisibleQuoteNudgeTarget(){const preferred=window.innerWidth<=980?doc
 function maybeNudgeQuoteButton(){if(quoteNudgePlayed||reduceMotion||window.scrollY<120)return;const target=getVisibleQuoteNudgeTarget();if(!target)return;quoteNudgePlayed=true;target.classList.add('quote-scroll-nudge');window.setTimeout(()=>target.classList.remove('quote-scroll-nudge'),1250);window.removeEventListener('scroll',maybeNudgeQuoteButton);}
 window.addEventListener('scroll',maybeNudgeQuoteButton,{passive:true});
 
-// Mobile conversion CTA: reveal a slim quote bar once the main hero quote button has scrolled away.
+// Mobile conversion CTA: reveal the sticky quote bar immediately after the hero is fully scrolled past.
 const heroQuoteButton = document.querySelector('.hero-actions .button-yellow.quote-trigger');
-if (heroQuoteButton) {
+const heroSection = document.querySelector('.hero');
+if (heroQuoteButton && heroSection) {
   const stickyQuote = document.createElement('button');
   stickyQuote.type = 'button';
   stickyQuote.className = 'sticky-mobile-quote';
@@ -101,22 +102,15 @@ if (heroQuoteButton) {
   stickyStyle.textContent = `.sticky-mobile-quote{display:none;position:fixed;left:14px;right:14px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:95;min-height:58px;border:2px solid #111;background:#ffe000;color:#111;padding:0 20px;font-family:"Archivo Black",sans-serif;font-size:13px;letter-spacing:-.2px;align-items:center;justify-content:space-between;box-shadow:0 8px 24px rgba(0,0,0,.24);opacity:0;transform:translateY(18px);pointer-events:none;transition:opacity .28s ease,transform .28s cubic-bezier(.22,.61,.36,1)}.sticky-mobile-quote b{font-size:20px;line-height:1}.sticky-mobile-quote.is-visible{opacity:1;transform:translateY(0);pointer-events:auto}@media(max-width:680px){.sticky-mobile-quote{display:flex}}@media(min-width:681px){.sticky-mobile-quote{display:none!important}}@media(prefers-reduced-motion:reduce){.sticky-mobile-quote{transition:none}}`;
   document.head.appendChild(stickyStyle);
 
-  let heroQuoteVisible = true;
   function syncStickyQuote() {
-    const shouldShow = window.innerWidth <= 680 && !heroQuoteVisible && window.scrollY > 850;
+    const heroBottom = heroSection.getBoundingClientRect().bottom;
+    const shouldShow = window.innerWidth <= 680 && heroBottom <= 0;
     stickyQuote.classList.toggle('is-visible', shouldShow);
   }
-  if ('IntersectionObserver' in window) {
-    const heroQuoteObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => { heroQuoteVisible = entry.isIntersecting; syncStickyQuote(); });
-    }, { threshold: 0.15 });
-    heroQuoteObserver.observe(heroQuoteButton);
-  } else {
-    const checkHeroQuote = () => { const rect = heroQuoteButton.getBoundingClientRect(); heroQuoteVisible = rect.bottom > 0 && rect.top < window.innerHeight; syncStickyQuote(); };
-    window.addEventListener('scroll', checkHeroQuote, { passive:true });
-    checkHeroQuote();
-  }
+
+  window.addEventListener('scroll', syncStickyQuote, { passive:true });
   window.addEventListener('resize', syncStickyQuote, { passive:true });
+  syncStickyQuote();
 }
 
 const params=new URLSearchParams(window.location.search);
