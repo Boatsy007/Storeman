@@ -3,15 +3,18 @@
 
 @media (max-width:680px){
   html,body{max-width:100%;overflow-x:hidden}
-  body{background:#070707}
+  body{background:#070707;padding-top:72px!important}
   .container,.header-inner{width:calc(100% - 28px)!important}
 
-  /* Compact premium header */
-  .site-header{height:72px!important}
-  .header-inner{gap:12px!important}
-  .header-brand{width:200px!important;max-width:64vw!important}
-  .header-logo{height:auto!important;max-height:48px!important;object-fit:contain!important;object-position:left center!important}
-  .menu-button{width:50px;height:50px;padding:0!important;border:1px solid #3a3a3a!important;display:grid!important;place-items:center!important;font-size:26px!important;line-height:1!important}
+  /* Compact premium header — fixed so logo/menu can never scroll away */
+  .site-header{height:72px!important;position:fixed!important;top:0!important;left:0!important;right:0!important;width:100%!important;z-index:999!important;display:block!important;background:#070707!important;border-bottom:3px solid #ffe000!important;transform:none!important;visibility:visible!important;opacity:1!important}
+  .header-inner{height:72px!important;gap:12px!important;display:flex!important;align-items:center!important;margin:0 auto!important}
+  .header-brand{width:200px!important;max-width:64vw!important;display:flex!important;align-items:center!important}
+  .header-logo{display:block!important;width:100%!important;height:auto!important;max-height:48px!important;object-fit:contain!important;object-position:left center!important}
+  .menu-button{width:50px;height:50px;padding:0!important;border:1px solid #3a3a3a!important;display:grid!important;place-items:center!important;font-size:26px!important;line-height:1!important;margin-left:auto!important;background:#111!important;color:#fff!important}
+  .desktop-nav,.header-cta,.phone-block{display:none!important}
+  .desktop-nav.mobile-open{display:flex!important;position:absolute!important;top:72px!important;left:0!important;right:0!important;background:#070707!important;padding:18px!important;flex-direction:column!important;gap:0!important;border-bottom:3px solid #ffe000!important;z-index:1000!important}
+  .desktop-nav.mobile-open a{display:block!important;width:100%!important;padding:16px 4px!important;border-bottom:1px solid #242424!important;font-size:12px!important}
 
   /* Hero — compact stacked headline with no artificial line gaps */
   .hero-inner{display:block!important;min-height:auto!important;overflow:hidden!important}
