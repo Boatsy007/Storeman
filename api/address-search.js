@@ -16,20 +16,29 @@ function queryParts(q = '') {
   const n = normalise(q);
   const tokens = n.split(/\s+/).filter(Boolean);
   const house = tokens.find((t) => /^\d+[a-z]?$/.test(t)) || '';
-  const suburbWords = new Set(['upper','coomera','gold','coast','queensland','qld','australia']);
-  const streetTokens = tokens.filter((t) => t !== house && !suburbWords.has(t) && !['st','rd','dr','ave','ct','pl','cres'].includes(t));
-  return { n, tokens, house, streetTokens };
+  const roadTypes = new Set(['st','rd','dr','ave','ct','pl','cres']);
+  const houseIndex = house ? tokens.indexOf(house) : -1;
+  const typeIndex = tokens.findIndex((t, i) => i > houseIndex && roadTypes.has(t));
+  const streetPhrase = typeIndex > houseIndex
+    ? tokens.slice(houseIndex + 1, typeIndex + 1).join(' ')
+    : tokens.slice(houseIndex + 1, Math.min(tokens.length, houseIndex + 3)).join(' ');
+  const localityTokens = typeIndex >= 0 ? tokens.slice(typeIndex + 1) : [];
+  return { n, tokens, house, streetPhrase, localityTokens };
 }
 
 function scoreResult(label, q) {
   const l = normalise(label);
-  const { house, streetTokens } = queryParts(q);
+  const { house, streetPhrase, localityTokens } = queryParts(q);
+  if (streetPhrase && !l.includes(streetPhrase)) return -999;
   let score = 0;
-  if (house && new RegExp(`(^|\\s)${house}(\\s|$)`).test(l)) score += 4;
-  for (const token of streetTokens) {
-    if (l.includes(token)) score += 3;
-    else score -= 4;
+  if (house) {
+    if (new RegExp(`(^|\\s)${house}(\\s|$)`).test(l)) score += 8;
+    else score -= 2;
   }
+  if (streetPhrase && l.includes(streetPhrase)) score += 12;
+  localityTokens.forEach((token) => {
+    if (token.length >= 3 && l.includes(token)) score += 3;
+  });
   if (l.includes('upper coomera')) score += 3;
   if (l.includes('queensland') || l.includes('qld')) score += 1;
   if (l.includes('australia')) score += 1;
@@ -49,9 +58,9 @@ function dedupe(items) {
 async function photonSearch(q) {
   const url = new URL('https://photon.komoot.io/api/');
   url.searchParams.set('q', `${q}, Queensland, Australia`);
-  url.searchParams.set('limit', '10');
+  url.searchParams.set('limit', '12');
   url.searchParams.set('lang', 'en');
-  const response = await fetch(url, { headers: { 'User-Agent': 'StoremanAddressSearch/1.1 (storeman.com.au)' } });
+  const response = await fetch(url, { headers: { 'User-Agent': 'StoremanAddressSearch/1.2 (storeman.com.au)' } });
   if (!response.ok) return [];
   const data = await response.json();
   return (data.features || []).map((feature) => {
@@ -77,10 +86,10 @@ async function nominatimSearch(q) {
   url.searchParams.set('format', 'jsonv2');
   url.searchParams.set('addressdetails', '1');
   url.searchParams.set('countrycodes', 'au');
-  url.searchParams.set('limit', '10');
+  url.searchParams.set('limit', '12');
   const response = await fetch(url, {
     headers: {
-      'User-Agent': 'StoremanAddressSearch/1.1 (storeman.com.au; hello@storeman.com.au)',
+      'User-Agent': 'StoremanAddressSearch/1.2 (storeman.com.au; hello@storeman.com.au)',
       'Accept-Language': 'en-AU,en'
     }
   });
