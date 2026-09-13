@@ -1,24 +1,33 @@
 import { calculateQuote } from './_pricing.js';
+import { honeypotTriggered, rateLimit, validatePhotos } from './_security.js';
 
 export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
+  }
+
+  const limited = rateLimit(req, { key:'lead', limit:10, windowMs:10 * 60 * 1000 });
+  if (!limited.ok) {
+    res.setHeader('Retry-After', String(limited.retryAfterSeconds));
+    return res.status(429).json({ ok:false, error:'Too many requests. Please try again shortly.' });
   }
 
   let body = {};
   try { body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {}); }
   catch (_) { return res.status(400).json({ ok:false, error:'Invalid request body' }); }
 
+  if (honeypotTriggered(body)) {
+    return res.status(200).json({ ok:true, id:`stm_${Date.now().toString(36)}` });
+  }
+
   const clean = (value, max = 2000) => String(value || '').replace(/[<>]/g, '').trim().slice(0, max);
   const cleanArray = (value, max = 20) => Array.isArray(value) ? value.slice(0, max).map((v) => clean(v, 200)).filter(Boolean) : [];
-  const photos = Array.isArray(body.photos)
-    ? body.photos.slice(0, 3).map((photo) => ({
-        name: clean(photo?.name, 120) || 'site-photo.jpg',
-        type: clean(photo?.type, 80) || 'image/jpeg',
-        content: String(photo?.content || '')
-      })).filter((photo) => photo.content && photo.content.length < 1400000)
-    : [];
+
+  const photoCheck = validatePhotos(body.photos);
+  if (!photoCheck.ok) return res.status(400).json({ ok:false, error:photoCheck.error });
+  const photos = photoCheck.photos.map((photo) => ({ ...photo, name:clean(photo.name,120) || 'site-photo.jpg' }));
 
   const flags = cleanArray(body.flags, 20);
   const addons = cleanArray(body.addons, 20);
@@ -56,7 +65,7 @@ export default async function handler(req, res) {
     source,
     name: clean(body.name, 160),
     business: clean(body.business, 160),
-    email: clean(body.email, 200),
+    email: clean(body.email, 200).toLowerCase(),
     phone: clean(body.phone, 80),
     address: clean(body.address, 300),
     services: cleanArray(body.services, 10),
@@ -76,6 +85,13 @@ export default async function handler(req, res) {
 
   if (!lead.name || !lead.email || !lead.phone || !lead.address) {
     return res.status(400).json({ ok: false, error: 'Missing required lead details' });
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(lead.email)) {
+    return res.status(400).json({ ok:false, error:'Please enter a valid email address' });
+  }
+  const phoneDigits = lead.phone.replace(/\D/g, '');
+  if (phoneDigits.length < 8 || phoneDigits.length > 15) {
+    return res.status(400).json({ ok:false, error:'Please enter a valid phone number' });
   }
 
   const notifyEmail = process.env.LEAD_NOTIFY_EMAIL || 'hello@storeman.com.au';
