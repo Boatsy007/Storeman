@@ -9,6 +9,7 @@
   const photoInput = form.elements.namedItem('photos');
   const photoSummary = root.querySelector('[data-photo-summary]');
   const address = form.elements.namedItem('address');
+  const suggestions = root.querySelector('[data-address-suggestions]');
   const mapAddress = root.querySelector('[data-map-address]');
   const propertyMap = root.querySelector('[data-property-map]');
   const mapPlaceholder = root.querySelector('[data-map-placeholder]');
@@ -16,6 +17,8 @@
   const mapConfirmAddress = root.querySelector('[data-map-confirm-address]');
   let currentQuote = null;
   let leadId = `stm_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+  let addressTimer = null;
+  let addressRequest = 0;
 
   const safe = (v) => String(v || '').replace(/[<>]/g, '').trim();
   const money = window.StoremanQuoteEngine.money;
@@ -115,7 +118,46 @@
     setStage(5);
   }
 
+  function hideSuggestions() {
+    if (!suggestions) return;
+    suggestions.hidden = true;
+    suggestions.innerHTML = '';
+    address?.setAttribute('aria-expanded', 'false');
+  }
+
+  function renderSuggestions(items) {
+    if (!suggestions || !items.length) { hideSuggestions(); return; }
+    suggestions.innerHTML = items.map((item, index) => `<button type="button" class="address-suggestion" data-address-choice="${index}"><span>${safe(item.label)}</span></button>`).join('');
+    suggestions._items = items;
+    suggestions.hidden = false;
+    address?.setAttribute('aria-expanded', 'true');
+  }
+
+  async function searchAddress(value) {
+    const requestId = ++addressRequest;
+    try {
+      const response = await fetch(`/api/address-search?q=${encodeURIComponent(value)}`);
+      const data = await response.json();
+      if (requestId !== addressRequest) return;
+      renderSuggestions(Array.isArray(data.results) ? data.results : []);
+    } catch (_) {
+      if (requestId === addressRequest) hideSuggestions();
+    }
+  }
+
   form.addEventListener('click', async (e) => {
+    const choice = e.target.closest('[data-address-choice]');
+    if (choice && suggestions?._items) {
+      e.preventDefault();
+      const item = suggestions._items[Number(choice.dataset.addressChoice)];
+      if (item?.label && address) {
+        address.value = item.label;
+        hideSuggestions();
+        loadPropertyMap();
+        address.focus();
+      }
+      return;
+    }
     const next = e.target.closest('[data-next]');
     if (next) { e.preventDefault(); const from = Number(next.dataset.next) - 1; if (validateStage(from)) setStage(Number(next.dataset.next)); return; }
     const back = e.target.closest('[data-back]');
@@ -126,9 +168,9 @@
     if (accept && currentQuote) {
       e.preventDefault();
       const snapshot = dataSnapshot();
-      const choice = accept.dataset.accept;
-      await postLead({ ...snapshot, stage:'quote_accepted', services:['lawn'], source:'instant_quote', bookingChoice:choice, quote:currentQuote });
-      status.textContent = choice === 'membership' ? 'Membership selected. Storeman will continue the setup from here.' : 'One-off service selected. Storeman will continue the booking from here.';
+      const bookingChoice = accept.dataset.accept;
+      await postLead({ ...snapshot, stage:'quote_accepted', services:['lawn'], source:'instant_quote', bookingChoice, quote:currentQuote });
+      status.textContent = bookingChoice === 'membership' ? 'Membership selected. Storeman will continue the setup from here.' : 'One-off service selected. Storeman will continue the booking from here.';
     }
   });
   form.addEventListener('submit', (e) => e.preventDefault());
@@ -138,7 +180,17 @@
   });
 
   address?.addEventListener('input', () => {
-    if (mapAddress) mapAddress.textContent = safe(address.value);
+    const value = safe(address.value);
+    if (mapAddress) mapAddress.textContent = value;
+    clearTimeout(addressTimer);
+    if (value.length < 3) { hideSuggestions(); return; }
+    addressTimer = setTimeout(() => searchAddress(value), 250);
+  });
+  address?.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideSuggestions();
   });
   address?.addEventListener('change', loadPropertyMap);
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.address-field')) hideSuggestions();
+  });
 })();
